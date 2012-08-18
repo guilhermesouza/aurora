@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load url from future %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -75,14 +76,14 @@
               <li class="nav-header">Projects</li>
                 {% if projects%}
                   {% for p in projects %}             
-                    <li{% if active_project == p.name %} class="active"{%endif%}><a href="{% url project p.id %}">{{ p.name }}</a></li>
+                    <li{% if active_project == p.name %} class="active"{%endif%}><a href="{% url 'project' p.id %}">{{ p.name }}</a></li>
                   {% endfor %}
                 {% else %}
-                  No projects found, please <a href="{% url new_project %}">set up new project.</a>
+                  No projects found, please <a href="{% url 'new_project' %}">set up new project.</a>
                 {% endif %}
               <li class="nav-header">Tasks</li>
               {% for t in tasks %}             
-                <li{% if active_task == t.name %} class="active"{%endif%}><a href="{% url task t.id %}">{{ t.name }}</a></li>
+                <li{% if active_task == t.name %} class="active"{%endif%}><a href="{% url 'task' t.id %}">{{ t.name }}</a></li>
               {% endfor %}         
             </ul>
           </div><!--/.well -->
