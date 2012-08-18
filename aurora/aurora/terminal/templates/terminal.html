@@ -1,0 +1,31 @@
+<iframe id="terminal-view" src="/terminal/get_log/{{ stage }}/" width="100%" height="75%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+<form id="terminal-form" action="/terminal/send/" method="POST">
+{%csrf_token%}
+<input type='text' id="terminal-message" name='message'>
+<input type='hidden' name='stage' value='{{ stage }}'>
+<input type='button' value='Send' id="send_button">
+</form>
+<script src="{{STATIC_URL}}/bootstrap/js/jquery.js"></script>
+
+<script>
+$(window).load(function ()
+{
+    var $contents = $('#terminal-view').contents();
+    $contents.scrollTop($contents.height());
+
+    $("#send_button").click(function() {
+        $.ajax({
+                type: 'POST',
+                url: '/terminal/send/',
+                data: $('#terminal-form').serialize(),
+            });
+        $("#terminal-message").val("");
+        reloadFrame();
+    });
+});
+
+function reloadFrame()
+{
+    $( '#terminal-view' ).attr( 'src', function ( i, val ) { return val; });
+}
+</script>
