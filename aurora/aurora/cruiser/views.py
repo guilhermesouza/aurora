@@ -1,4 +1,4 @@
-from models import Project, ProjectParams, Stage
+from models import Project, ProjectParam, Stage
 from annoying.decorators import render_to
 
 
