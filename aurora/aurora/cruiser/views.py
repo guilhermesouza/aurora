@@ -14,13 +14,14 @@ def index(request):
 
 @render_to('project.html')
 def project(request, project_id):
-    from models import ProjectParam
+    from models import Stage, Deploy
     project = get_object_or_None(Project, id=project_id)
     if not project:
         return {}
     else:
-        p_params = ProjectParam.objects.filter(project=project).order_by('name',)
-        return {'p': project, 'params': p_params}
+        stages = Stage.objects.filter(project=project).order_by('name',)
+        deployments = Deploy.objects.filter(stage__in=stages).order_by('-finished_at',)
+        return {'p': project, 'stages': stages, 'deps': deployments}
 
 
 def new_project(request):

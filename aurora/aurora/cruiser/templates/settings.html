@@ -1,0 +1,25 @@
+{% load action_button_tag%}
+<hr>
+<h3>Settings</h3><br/>
+<table class="table table-bordered table-striped">
+    <thead>
+      <tr>                    
+        <th>Name</th>
+        <th>Value</th>
+        <th>Description</th>
+        <th>&nbsp;</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for p in params%}
+          <tr>                        
+            <td>{{ p.name }}</td>
+            <td>{{ p.value }}</td>
+            <td>{{ p.comment }}</td>
+            <td>
+               {% show_action_button p %}
+            </td>
+          </tr>                 
+        {% endfor%}
+    </tbody>
+</table>

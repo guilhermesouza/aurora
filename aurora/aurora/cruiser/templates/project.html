@@ -1,42 +1,48 @@
 {% extends "base.html" %} 
-    {% block title %} - project {{ p.name }}{% endblock %} 
-    
-    {% block content %}
+{% load settings_tag %}
+{% load action_button_tag%}
+    {% block title %} - project {{ p.name }}{% endblock %}     
+    {% block content %}    
         <h2>Project {{ p.name }}</h2> 
-        <div class="span8">
+        <div class="span8">            
+            {% show_project_settings p%}        
+            
             <hr>
-            <h3>Project settings</h3><br/>
+            <h3>Project stages</h3><br/>
             <table class="table table-bordered table-striped">
                 <thead>
                   <tr>                    
-                    <th>Name</th>
-                    <th>Value</th>
-                    <th>Description</th>
+                    <th>Name</th>                    
+                    <th>Deployments</th>
                     <th>&nbsp;</th>
                   </tr>
                 </thead>
                 <tbody>
-                    {% for pp in params%}
+                    {% for s in stages %}            
                       <tr>                        
-                        <td>{{ pp.name }}</td>
-                        <td>{{ pp.value }}</td>
-                        <td>{{ pp.comment }}</td>
+                        <td>{{ s.name }}</td>
+                        <td>{{ s.deployment_sum }}</td>                        
                         <td>
-                            <div class="btn-group">
-                              <button class="btn">Action</button>
-                              <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-                              <ul class="dropdown-menu">
-                                <li><a href="{{ pp.get_change_url }}">Modify</a></li>
-                                <li><a href="{{ pp.get_delete_url }}">Delete</a></li>                                                              
-                              </ul>
-                            </div>
+                           {% show_action_button s %}
                         </td>
                       </tr>                 
                     {% endfor%}
                 </tbody>
-            </table>
-            </dl>
-        </div>
-        {% load admin_urls %}
+            </table>            
+
+            <hr>
+            <h3>Recent deployments</h3><br/>
+                {% for d in deps %} 
+                {{d.status}}
+                    <div class="alert {% if d.status == '' %}alert-success{%endif%}">
+                        {{d.stage}}
+                        {{d.revision}}
+                        {{d.started_at}}
+                        {{d.finished_at}}
+                        {{d.branch}}
+                        {{d.task}}                        
+                    </div>
+                {% endfor%}
+        </div>    
     {% endblock %}
 
