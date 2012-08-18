@@ -1,7 +1,9 @@
-from models import Project, ProjectParam, Stage
+from models import Project, Task
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 import aurora.settings as settings
+from django.http import HttpResponseRedirect
+from django.core import urlresolvers
 
 
 @render_to('base.html')
@@ -17,6 +19,19 @@ def project(request, project_id):
         return {}
     else:
         return {'project': project}
+
+
+def new_project(request):
+    return HttpResponseRedirect(urlresolvers.reverse('admin:cruiser_project_add'))
+
+
+@render_to('task.html')
+def task(request, task_id):
+    task = get_object_or_None(Task, id=task_id)
+    if not task:
+        return {}
+    else:
+        return {'task': task}
 
 
 @render_to('500.html')
