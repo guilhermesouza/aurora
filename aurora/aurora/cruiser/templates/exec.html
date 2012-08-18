@@ -1,0 +1,22 @@
+{% extends "base.html" %} 
+{% load url from future %}
+{% load settings_tag %}
+{% load action_button_tag%}
+{% load recent_deployments_tag %}
+    {% block title %} - {{ p.name }} - {{ s.name }} - {{ t.name }}{% endblock %}     
+    {% block content %}    
+    <div class="span8">
+        {% if busy %}
+            <h2>{{ busy }}</h2> 
+        {% else %}
+            <h2>Ready to go?</h2>
+            <form action="" method="post">
+                <p>You may fill branch or comment field if you want. <br> This value will be available as env.branch in fabfile.</p>
+                {% csrf_token %}
+                {{ form.as_p}}
+                <button type="submit" class="btn btn-primary btn-large"><b>Go!</b></button>
+            </form>
+        {% endif %}
+    </div>    
+    {% endblock %}
+

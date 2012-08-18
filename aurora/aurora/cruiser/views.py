@@ -3,6 +3,7 @@ from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 import aurora.settings as settings
 from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.core import urlresolvers
 
 
@@ -28,9 +29,14 @@ def new_project(request):
     return HttpResponseRedirect(urlresolvers.reverse('admin:cruiser_project_add'))
 
 
+def new_task(request):
+    return HttpResponseRedirect(urlresolvers.reverse('admin:cruiser_task_add'))
+
+
 @render_to('stage.html')
 def stage(request, stage_id):
     from models import Stage, Deploy
+    busy = False
     stage = get_object_or_None(Stage, id=stage_id)
     if not stage:
         return {}
@@ -38,7 +44,8 @@ def stage(request, stage_id):
         project = stage.project
         tasks = stage.tasks.all()
         deployments = Deploy.objects.filter(stage=stage).order_by('-finished_at',)[:3]
-        return {'p': project, 's': stage, 'tasks': tasks, 'deps': deployments}
+        busy = stage.already_deploying()        
+        return {'p': project, 's': stage, 'tasks': tasks, 'deps': deployments, 'busy': busy}
 
 
 @render_to('task.html')
@@ -57,25 +64,24 @@ def server_error(request):
 
 @render_to('exec.html')
 def exec_task(request, stage_id, task_id):
-    from models import Stage, Task
-    from forms import ExecForm
-    stage = get_object_or_None(Stage, id=stage_id)
-    task = get_object_or_None(Task, id=task_id)
-    if stage and task:
-        try:
-            task = stage.tasks.filter(task=task)
-        except:
-            pass
-        if request.method == 'POST':
-            form = ExecForm(request.POST)
-            if form.is_valid():
-                if form.cleaned_data['branch'] != '':
-                    return HttpResponseNotFound('<h1>Fuck you, robot.</h1>')
-                email = form.cleaned_data['email']
-                создать деплой
-                return {}
-            else:
-                form = ExecForm()
-            return {'form': form}
+    from models import Stage, Task, Deploy, StageTask
+    from forms import ExecTaskForm
+    busy = None
+    stage = get_object_or_404(Stage, id=stage_id)
+    task = get_object_or_404(Task, id=task_id)
+    get_object_or_404(StageTask, stage=stage, task=task)
+    if stage.already_deploying:
+        busy = 'Sorry stage is deploing now. Please wait a bit and try again.'
+    if request.method == 'POST':
+        form = ExecTaskForm(request.POST)
+        if form.is_valid():
+            if form.cleaned_data['branch'] != '':
+                pass
+            #email = form.cleaned_data['email']
+            #deploy = Deploy
+            return HttpResponseRedirect('/')
     else:
-        return {}
+        form = ExecTaskForm()
+    return {'form': form, 'p': stage.project, 's': stage, 't': task, 'busy': busy}
+
+
