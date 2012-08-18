@@ -84,6 +84,9 @@ class Stage(models.Model):
         """List of tasks"""
         return [task.body for task in self.tasks.all()]
 
+    def dep_count(self):
+        """deployments count for given stage"""
+        return None #2do
 
 class StageParam(models.Model):
     """Specified param for stage environment"""
@@ -146,6 +149,14 @@ class Deploy(models.Model):
         (CANCELED, _('CANCELED')),
         (FAILED, _('FAILED')),
     )
+    # CSS classes from Twi Bootstrap http://twitter.github.com/bootstrap/components.html#typography
+    STATUS_CSS = {
+        READY: '',
+        RUNNING: 'alert-info',
+        COMPLETED: 'alert-success',
+        CANCELED: 'alert-error',
+        FAILED: 'alert-error',
+    }
 
     user = models.ForeignKey(User, verbose_name=_('user'))
     stage = models.ForeignKey(Stage, verbose_name=_('stage'))
@@ -202,3 +213,6 @@ class Deploy(models.Model):
             params.update({'branch': self.branch})
 
         return params
+
+    def css(self):
+        return self.STATUS_CSS[self.status]

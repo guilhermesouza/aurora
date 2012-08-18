@@ -5,8 +5,9 @@ register = template.Library()
 
 
 def show_project_settings(project):
-    params = ProjectParam.objects.filter(project=project).order_by('name',)
-    return {'params': params}
+#    params = ProjectParam.objects.filter(project=project).order_by('name',)
+    print project.params()
+    return {'params': project.params()}
 
 
 def show_stage_settings(stage):
