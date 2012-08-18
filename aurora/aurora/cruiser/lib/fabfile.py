@@ -1,5 +1,7 @@
 from django.template.loader import render_to_string
 
+import os
+
 
 class Fabfile:
     """Fabfile class for generation fabfile"""
@@ -11,30 +13,37 @@ class Fabfile:
         self.__file_path = path
         self.__env_params = env_params
 
-    def imports_block(self):
+    def _imports_block(self):
         """imports block"""
         return self.__imports
 
-    def params(self):
+    def _params(self):
         """env params"""
         return self.__env_params.items()
 
-    def tasks(self):
+    def _tasks(self):
         """tasks block"""
         return self.__tasks
 
+    def _file_path(self):
+        """File dir"""
+        return self.__file_path
+
+    def _file_content(self):
+        """generate and return fabfile content"""
+        context = {'imports': self._imports_block(),
+                   'params': self._params(),
+                   'tasks': self._tasks()}
+        return render_to_string('fabfile.template', context)
+
     def file_name(self):
         """Full file name"""
-        return "%s/fabfile.py" % self.__file_path
-
-    def file_content(self):
-        """generate and return fabfile content"""
-        context = {'imports': self.imports_block(),
-                   'params': self.params(),
-                   'tasks': self.tasks()}
-        return render_to_string('fabfile.template', context)
+        return "%s/fabfile.py" % self._file_path()
 
     def build(self):
         """build fabfile and save to file_path"""
+        if not os.path.exists(self._file_path()):
+            os.makedirs(self._file_path())
+
         with open(self.file_name(), 'w') as f:
-            f.write(self.file_content())
+            f.write(self._file_content())

@@ -10,8 +10,10 @@ import datetime
 #TODO move it to file?
 DEFAULT_IMPORT_BLOCK = "import fabric"
 
+
 def present(val):
-    return all([val != None, str(val).strip() != ''])
+    return all([val is not None, str(val).strip() != ''])
+
 
 class Project(models.Model):
     """Available projects"""
@@ -29,7 +31,9 @@ class Project(models.Model):
         if present(self.repository):
             params['repository'] = self.repository
 
-        return params.update(dict((x.name, x.value) for x in self.projectparam_set.all()))
+        params.update(dict((x.name, x.value) for x in self.projectparam_set.all()))
+
+        return params
 
 
 class ProjectParam(models.Model):
@@ -78,7 +82,9 @@ class Stage(models.Model):
         if present(self.branch):
             params['branch'] = self.branch
 
-        return params.update(dict((x.name, x.value) for x in self.stageparam_set.all()))
+        params.update(dict((x.name, x.value) for x in self.stageparam_set.all()))
+
+        return params
 
     def usage_tasks(self):
         """List of tasks"""
