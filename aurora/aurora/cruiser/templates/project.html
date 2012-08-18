@@ -6,6 +6,7 @@
         <h2>Project {{ p.name }}</h2> 
         <div class="span8">            
             {% show_project_settings p%}        
+            
             <hr>
             <h3>Project stages</h3><br/>
             <table class="table table-bordered table-striped">
@@ -28,6 +29,20 @@
                     {% endfor%}
                 </tbody>
             </table>            
+
+            <hr>
+            <h3>Recent deployments</h3><br/>
+                {% for d in deps %} 
+                {{d.status}}
+                    <div class="alert {% if d.status == '' %}alert-success{%endif%}">
+                        {{d.stage}}
+                        {{d.revision}}
+                        {{d.started_at}}
+                        {{d.finished_at}}
+                        {{d.branch}}
+                        {{d.task}}                        
+                    </div>
+                {% endfor%}
         </div>    
     {% endblock %}
 
