@@ -59,8 +59,8 @@ class Project(ModelWithAdminUrl):
         return params
 
     def dep_count(self):
-        """deployments count for given stage"""
-        return None #2do
+        """deployments count for project"""
+        return Deploy.objects.filter(stage__project_id=self.id).count()
 
 
 class ProjectParam(ModelWithAdminUrl):
@@ -116,6 +116,14 @@ class Stage(ModelWithAdminUrl):
     def usage_tasks(self):
         """List of tasks"""
         return [task.body for task in self.tasks.all()]
+
+    def dep_count(self):
+        """deployments count for stage"""
+        return Deploy.objects.filter(stage_id=self.id).count()
+
+    def already_deploying(self):
+        """Rrturn true if stage deploying now"""
+        return self.deploy_set.filter(status=Deploy.RUNNING).count() > 0
 
 
 class StageParam(ModelWithAdminUrl):
@@ -225,7 +233,7 @@ class Deploy(models.Model):
 
     def ready(self):
         """Ready for run"""
-        return RUNNING == self.status
+        return READY == self.status
 
     def build_fabfile(self):
         """Generate fabfile and save to fs"""
