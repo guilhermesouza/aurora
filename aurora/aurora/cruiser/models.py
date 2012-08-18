@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
+from django.core import urlresolvers
+from django.contrib.contenttypes.models import ContentType
 
 import datetime
 
@@ -30,6 +32,14 @@ class ProjectParam(models.Model):
 
     def __unicode__(self):
         return "%s: %s = %s " % (self.project.name, self.name, self.value)
+
+    def get_change_url(self):
+        content_type = ContentType.objects.get_for_model(self.__class__)
+        return urlresolvers.reverse("admin:%s_%s_change" % (content_type.app_label, content_type.model), args=(self.id,))
+
+    def get_delete_url(self):
+        content_type = ContentType.objects.get_for_model(self.__class__)
+        return urlresolvers.reverse("admin:%s_%s_delete" % (content_type.app_label, content_type.model), args=(self.id,))
 
 
 class Stage(models.Model):

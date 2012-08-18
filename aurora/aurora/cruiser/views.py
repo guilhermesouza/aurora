@@ -14,11 +14,13 @@ def index(request):
 
 @render_to('project.html')
 def project(request, project_id):
+    from models import ProjectParam
     project = get_object_or_None(Project, id=project_id)
     if not project:
         return {}
     else:
-        return {'project': project}
+        p_params = ProjectParam.objects.filter(project=project).order_by('name',)
+        return {'p': project, 'params': p_params}
 
 
 def new_project(request):

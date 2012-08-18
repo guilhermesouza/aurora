@@ -1,0 +1,42 @@
+{% extends "base.html" %} 
+    {% block title %} - project {{ p.name }}{% endblock %} 
+    
+    {% block content %}
+        <h2>Project {{ p.name }}</h2> 
+        <div class="span8">
+            <hr>
+            <h3>Project settings</h3><br/>
+            <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>                    
+                    <th>Name</th>
+                    <th>Value</th>
+                    <th>Description</th>
+                    <th>&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for pp in params%}
+                      <tr>                        
+                        <td>{{ pp.name }}</td>
+                        <td>{{ pp.value }}</td>
+                        <td>{{ pp.comment }}</td>
+                        <td>
+                            <div class="btn-group">
+                              <button class="btn">Action</button>
+                              <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                              <ul class="dropdown-menu">
+                                <li><a href="{{ pp.get_change_url }}">Modify</a></li>
+                                <li><a href="{{ pp.get_delete_url }}">Delete</a></li>                                                              
+                              </ul>
+                            </div>
+                        </td>
+                      </tr>                 
+                    {% endfor%}
+                </tbody>
+            </table>
+            </dl>
+        </div>
+        {% load admin_urls %}
+    {% endblock %}
+

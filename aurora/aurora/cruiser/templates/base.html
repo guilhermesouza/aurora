@@ -82,13 +82,12 @@
                 {% endif %}
               <li class="nav-header">Tasks</li>
               {% for t in tasks %}             
-                <li{% if active_task == t.name %} class="active"{%endif%}><a href="{% url task t.id %}">t.name</a></li>
+                <li{% if active_task == t.name %} class="active"{%endif%}><a href="{% url task t.id %}">{{ t.name }}</a></li>
               {% endfor %}         
             </ul>
           </div><!--/.well -->
         </div><!--/span-->
-        <div class="span9">          
-            <h1>Welcome to Aurora</h1>            
+        <div class="span9">                      
           <div class="row-fluid">
             {% block content %}
               <h2>Recent deployments</h2>
@@ -106,13 +105,10 @@
     </div><!--/.fluid-container-->
 
     <!-- Le javascript
-    
+    -->
     <script src="{{STATIC_URL}}/bootstrap/js/jquery.js"></script>
-    <script src="{{STATIC_URL}}/bootstrap/js/bootstrap-transition.js"></script>
-    <script src="{{STATIC_URL}}/bootstrap/js/bootstrap-alert.js"></script>
-    <script src="{{STATIC_URL}}/bootstrap/js/bootstrap-modal.js"></script>
     <script src="{{STATIC_URL}}/bootstrap/js/bootstrap-dropdown.js"></script>
-    <script src="{{STATIC_URL}}/bootstrap/js/bootstrap-scrollspy.js"></script>
+    <!--<script src="{{STATIC_URL}}/bootstrap/js/bootstrap-scrollspy.js"></script>
     <script src="{{STATIC_URL}}/bootstrap/js/bootstrap-tab.js"></script>
     <script src="{{STATIC_URL}}/bootstrap/js/bootstrap-tooltip.js"></script>
     <script src="{{STATIC_URL}}/bootstrap/js/bootstrap-popover.js"></script>
