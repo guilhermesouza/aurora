@@ -20,13 +20,16 @@ def project(request, project_id):
         return {}
     else:
         stages = Stage.objects.filter(project=project).order_by('name',)
-        deployments = Deploy.objects.filter(stage__in=stages).order_by('-finished_at',)
+        deployments = Deploy.objects.filter(stage__in=stages).order_by('-finished_at',)[:3]
         return {'p': project, 'stages': stages, 'deps': deployments}
 
 
 def new_project(request):
     return HttpResponseRedirect(urlresolvers.reverse('admin:cruiser_project_add'))
 
+
+def stage(request, stage_id):
+    pass
 
 @render_to('task.html')
 def task(request, task_id):

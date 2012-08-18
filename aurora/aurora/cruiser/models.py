@@ -53,6 +53,10 @@ class Project(ModelWithAdminUrl):
 
         return params
 
+    def dep_count(self):
+        """deployments count for given stage"""
+        return None #2do
+
 
 class ProjectParam(ModelWithAdminUrl):
     """Common param for project environment"""
