@@ -10,10 +10,30 @@ import datetime
 #TODO move it to file?
 DEFAULT_IMPORT_BLOCK = "import fabric"
 
-def present(val):
-    return all([val != None, str(val).strip() != ''])
 
-class Project(models.Model):
+def present(val):
+    return all([val is not None, str(val).strip() != ''])
+
+
+class ModelWithAdminUrl(models.Model):
+    """Model with admin urls"""
+    class Meta:
+        abstract = True
+
+    def get_add_url(self):
+        content_type = ContentType.objects.get_for_model(self.__class__)
+        return urlresolvers.reverse("admin:%s_%s_add" % (content_type.app_label, content_type.model))
+
+    def get_change_url(self):
+        content_type = ContentType.objects.get_for_model(self.__class__)
+        return urlresolvers.reverse("admin:%s_%s_change" % (content_type.app_label, content_type.model), args=(self.id,))
+
+    def get_delete_url(self):
+        content_type = ContentType.objects.get_for_model(self.__class__)
+        return urlresolvers.reverse("admin:%s_%s_delete" % (content_type.app_label, content_type.model), args=(self.id,))
+
+
+class Project(ModelWithAdminUrl):
     """Available projects"""
     name = models.CharField(verbose_name=_('name'), max_length=32)
     description = models.CharField(verbose_name=_('description'), max_length=128, null=True, blank=True)
@@ -29,10 +49,12 @@ class Project(models.Model):
         if present(self.repository):
             params['repository'] = self.repository
 
-        return params.update(dict((x.name, x.value) for x in self.projectparam_set.all()))
+        params.update(dict((x.name, x.value) for x in self.projectparam_set.all()))
+
+        return params
 
 
-class ProjectParam(models.Model):
+class ProjectParam(ModelWithAdminUrl):
     """Common param for project environment"""
     project = models.ForeignKey(Project, verbose_name=_('project'))
     name = models.CharField(verbose_name=_('name'), max_length=16, help_text=_('env.[name] in recipes'))
@@ -44,20 +66,12 @@ class ProjectParam(models.Model):
     def __unicode__(self):
         return "%s: %s = %s " % (self.project.name, self.name, self.value)
 
-    def get_change_url(self):
-        content_type = ContentType.objects.get_for_model(self.__class__)
-        return urlresolvers.reverse("admin:%s_%s_change" % (content_type.app_label, content_type.model), args=(self.id,))
-
-    def get_delete_url(self):
-        content_type = ContentType.objects.get_for_model(self.__class__)
-        return urlresolvers.reverse("admin:%s_%s_delete" % (content_type.app_label, content_type.model), args=(self.id,))
-
     def to_param(self):
         """Return dict {name:value}"""
         return dict([[self.name, self.value]])
 
 
-class Stage(models.Model):
+class Stage(ModelWithAdminUrl):
     """Stages for deployment"""
     name = models.CharField(verbose_name=_('name'), max_length=32)
     project = models.ForeignKey(Project, verbose_name=_('project'))
@@ -78,7 +92,9 @@ class Stage(models.Model):
         if present(self.branch):
             params['branch'] = self.branch
 
-        return params.update(dict((x.name, x.value) for x in self.stageparam_set.all()))
+        params.update(dict((x.name, x.value) for x in self.stageparam_set.all()))
+
+        return params
 
     def usage_tasks(self):
         """List of tasks"""
@@ -88,7 +104,7 @@ class Stage(models.Model):
         """deployments count for given stage"""
         return None #2do
 
-class StageParam(models.Model):
+class StageParam(ModelWithAdminUrl):
     """Specified param for stage environment"""
     stage = models.ForeignKey(Stage, verbose_name=_('stage'))
     name = models.CharField(verbose_name=_('name'), max_length=16, help_text=_('env.[name] in recipes'))
@@ -115,7 +131,7 @@ class StageUser(models.Model):
         return "%s - %s" % (self.user, self.stage)
 
 
-class Task(models.Model):
+class Task(ModelWithAdminUrl):
     """Task for fabfile"""
     name = models.CharField(verbose_name=_('name'), max_length=32)
     description = models.CharField(verbose_name=_('description'), max_length=128, null=True, blank=True)
