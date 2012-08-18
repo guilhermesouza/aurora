@@ -10,9 +10,9 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', index, name='index'),
-    url(r'^projects/(\d{4})$', project, name='project'),
+    url(r'^projects/(?P<project_id>\d+)$', project, name='project'),
     url(r'^projects/new$', new_project, name='new_project'),
-    url(r'^tasks/(\d{4})$', task, name='task'),
+    url(r'^tasks/(?P<task_id>\d+)$', task, name='task'),
     url(r'^admin/', include(admin.site.urls)),
 )
 
