@@ -1,9 +1,6 @@
 from annoying.decorators import render_to
 from django.http import HttpResponseRedirect, HttpResponse
 import pexpect
-import md5
-import datetime
-import os
 
 stages = []
 
@@ -17,13 +14,12 @@ def monitor(request, stage):
 def start(request, stage):
     """Starts deploy"""
     logfile = open('/tmp/output%s.log' % stage, 'w')
-    child = pexpect.spawn('fab hello', logfile=logfile)
-
-    delete_stage(stage, stages)
+    child = pexpect.spawn('fab task', logfile=logfile)
+    child.setecho(False)
 
     child_dict = {'stage': child, 'id': stage, 'messages': []}
     stages.append(child_dict)
-    safe_expect(child_dict)
+    child.expect(pexpect.EOF)
     return HttpResponseRedirect("/terminal/monitor/%s" % stage)
 
 
@@ -39,7 +35,7 @@ def send(request):
         if child['id'] == stage:
             child['stage'].sendline(message)
             child['messages'].append(message)
-    safe_expect(child)
+    child['stage'].expect(pexpect.EOF)
     return HttpResponseRedirect("/terminal/monitor/%s" % stage)
 
 
@@ -47,30 +43,11 @@ def send(request):
 def get_log(request, stage):
     """Returning log of deploy"""
     output = open('/tmp/output%s.log' % stage, 'r').readlines()[1:]
-    return {'output': output, 'stage': stage}
+    status = False if get_alive_status(stage) is None else get_alive_status(stage)
+    return {'output': output, 'stage': stage, 'isactive': status}
 
 
-#TODO REPLACE IT OMG
-def safe_expect(child):
-    try:
-        child['stage'].expect(get_hash())
-    except:
-        content = open('/tmp/output%s.log' % child['id'], 'r').readlines()
-        logfile = open('/tmp/output%s.log' % child['id'], 'w')
-        new_content = ""
-        for message in child['messages']:
-            for line in content:
-                new_content += line.replace(message + message, message)
-        logfile.write(new_content)
-        logfile.close()
-
-
-def get_hash():
-    return md5.new(str(datetime.datetime.now())).hexdigest()
-
-
-def delete_stage(stage, stages):
+def get_alive_status(id):
     for item in stages:
-        if ('id', stage) in item.items():
-            stages.remove(item)
-    return stages
+        if id == item['id']:
+            return item['stage'].isalive()
