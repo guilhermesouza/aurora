@@ -3,46 +3,39 @@
 {% load settings_tag %}
 {% load action_button_tag%}
 {% load recent_deployments_tag %}
-    {% block title %} - project {{ p.name }}{% endblock %}     
+    {% block title %} - project {{ p.name }} - stage {{ s.name }}{% endblock %}     
     {% block content %}    
     <div class="span8">            
-        <h2>Project {{ p.name }}</h2>
+        <h2>Stage {{ s.name }}</h2>
         <dl class="dl-horizontal">
             <dt>Description: </dt>
             <dd>{{p.description}}</dd>
             <dt>#Deployments:</dt>
-            <dd>&nbsp;{{p.dep_count}}</dd>
-            <dt>Stages: </dt>
-            <dd>
-                {% for s in stages %}
-                    <a href="{%url 'stage' s.id%}">{{s.name}}</a><br>                    
-                {% endfor%}
-            </dd>
+            <dd>&nbsp;{{s.dep_count}}</dd>
+            <dt>Host:</dt>
+            <dd>&nbsp;{{s.host}}</dd>            
         </dl>        
         <br>
         <hr>                
             <h3>Settings</h3><br/>
-                {% show_project_settings p%}                                    
+                {% show_stage_settings s%}                                    
                 <hr>
-                <br>
-            
-            <h3>Stages</h3><br/>
+                <br>            
+            <h3>Tasks</h3><br/>
             <table class="table table-bordered table-striped">
                 <thead>
                   <tr>                    
                     <th>Name</th>                    
-                    <th>Deployments</th>
-                    <th>&nbsp;</th>
+                    <th>Description</th>                    
+                    <th>&nbsp;</th>                    
                   </tr>
                 </thead>
                 <tbody>
-                    {% for s in stages %}            
+                    {% for t in tasks %}            
                       <tr>                        
-                        <td>{{ s.name }}</td>
-                        <td>{{ s.deployment_sum }}</td>                        
-                        <td>
-                           {% show_action_button s %}
-                        </td>
+                        <td>{{ t.name }}</td>
+                        <td>{{ t.description }}</td>                        
+                        <td><button class="btn btn-info" href="{% url 'exec_task' s.id t.id %}">Exec {{ t.name }}</button></td>
                       </tr>                 
                     {% endfor%}
                 </tbody>
@@ -50,7 +43,7 @@
 
             <hr>
             <h3>Recent deployments</h3><br/>
-            {% show_recent_deployments deps%}     
+            {% show_recent_deployments deps%}      
         </div>    
     {% endblock %}
 

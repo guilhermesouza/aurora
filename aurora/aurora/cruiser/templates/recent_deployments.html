@@ -1,0 +1,17 @@
+{% for d in deps %}                
+    <div class="alert {{d.css}}">
+        <h3>{{d.status}}</h3>
+        <div class="span2">
+            <b>Stage: </b> {{d.stage.name}}<br/>
+            <b>Task: </b> {{d.task}}
+        </div>
+        <div class="span2">
+            <b>Rev: </b> {{d.revision}}<br/>
+            <b>Branch: </b> {{d.branch}}
+        </div>
+        <div>
+            <b>Started at: </b>{{d.started_at}}<br/>
+            <b>Finished at: </b>{{d.finished_at}}
+        </div>                        
+    </div>
+{% endfor%}

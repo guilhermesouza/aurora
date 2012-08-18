@@ -251,6 +251,9 @@ class Deploy(models.Model):
 
         return params
 
+    def css(self):
+        return self.STATUS_CSS[self.status]
+
 
 def prepare_fields(sender, instance, **kwargs):
     instance.prepare_data()
