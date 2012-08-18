@@ -1,17 +1,16 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls.defaults import include, patterns, url, handler500
+from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+admin.autodiscover()
 
-# Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+handler500 = 'cruiser.views.server_error'
+
+from cruiser.views import index
+admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'aurora.views.home', name='home'),
-    # url(r'^aurora/', include('aurora.foo.urls')),
-
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
-    # url(r'^admin/', include(admin.site.urls)),
+    url(r'^$', index, name='index'),
+    url(r'^admin/', include(admin.site.urls)),
 )
+
+urlpatterns += staticfiles_urlpatterns()
