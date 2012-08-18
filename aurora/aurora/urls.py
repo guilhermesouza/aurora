@@ -5,11 +5,12 @@ admin.autodiscover()
 
 handler500 = 'cruiser.views.server_error'
 
-from cruiser.views import index
+from cruiser.views import index, project
 admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', index, name='index'),
+    url(r'^projects/(\d{4})$', project, name='project'),
     url(r'^admin/', include(admin.site.urls)),
 )
 
