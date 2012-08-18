@@ -4,6 +4,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.core import urlresolvers
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
+from django.db.models import signals
+from validators import validate_presence
 
 import datetime
 
@@ -43,11 +45,14 @@ class Project(ModelWithAdminUrl):
     def __unicode__(self):
         return self.name
 
+    def prepare_data(self):
+        self.repository = self.repository.strip()
+
     def params(self):
         """Rerun dict of project params"""
         params = {}
         if present(self.repository):
-            params['repository'] = self.repository
+            params['repository'] = "'%s'" % self.repository
 
         params.update(dict((x.name, x.value) for x in self.projectparam_set.all()))
 
@@ -57,14 +62,18 @@ class Project(ModelWithAdminUrl):
 class ProjectParam(ModelWithAdminUrl):
     """Common param for project environment"""
     project = models.ForeignKey(Project, verbose_name=_('project'))
-    name = models.CharField(verbose_name=_('name'), max_length=16, help_text=_('env.[name] in recipes'))
-    value = models.CharField(verbose_name=_('name'), max_length=128, help_text=_('use " for strings'))
+    name = models.CharField(verbose_name=_('name'), max_length=16, validators=[validate_presence], help_text=_('env.[name] in recipes'))
+    value = models.CharField(verbose_name=_('value'), max_length=128, validators=[validate_presence], help_text=_('use " for strings'))
 
     class Meta:
         unique_together = ("project", "name", "value")
 
     def __unicode__(self):
         return "%s: %s = %s " % (self.project.name, self.name, self.value)
+
+    def prepare_data(self):
+        self.name = self.name.strip()
+        self.value = self.value.strip()
 
     def to_param(self):
         """Return dict {name:value}"""
@@ -83,14 +92,18 @@ class Stage(ModelWithAdminUrl):
     def __unicode__(self):
         return "%s: %s" % (self.project, self.name)
 
+    def prepare_data(self):
+        self.branch = self.branch.strip()
+        self.host = self.host.strip()
+
     def params(self):
         """Rerun list of project params"""
         params = {}
         if present(self.host):
-            params['host'] = self.host
+            params['host'] = "'%s'" % self.host
 
         if present(self.branch):
-            params['branch'] = self.branch
+            params['branch'] = "'%s'" % self.branch
 
         params.update(dict((x.name, x.value) for x in self.stageparam_set.all()))
 
@@ -104,14 +117,18 @@ class Stage(ModelWithAdminUrl):
 class StageParam(ModelWithAdminUrl):
     """Specified param for stage environment"""
     stage = models.ForeignKey(Stage, verbose_name=_('stage'))
-    name = models.CharField(verbose_name=_('name'), max_length=16, help_text=_('env.[name] in recipes'))
-    value = models.CharField(verbose_name=_('value'), max_length=128, help_text=_('use " for strings'))
+    name = models.CharField(verbose_name=_('name'), max_length=16, validators=[validate_presence], help_text=_('env.[name] in recipes'))
+    value = models.CharField(verbose_name=_('value'), max_length=128, validators=[validate_presence], help_text=_('use " for strings'))
 
     class Meta:
         unique_together = ("stage", "name", "value")
 
     def __unicode__(self):
         return "%s: %s = %s " % (self.stage.name, self.name, self.value)
+
+    def prepare_data(self):
+        self.name = self.name.strip()
+        self.value = self.value.strip()
 
     def to_param(self):
         """Return dict {name:value}"""
@@ -176,6 +193,9 @@ class Deploy(models.Model):
     def __unicode__(self):
         return "%s: %s - %s" % (self.stage, self.task, self.started_at)
 
+    def prepare_data(self):
+        self.branch = self.branch.strip()
+
     def run(self):
         """Run deploy"""
         if not self.ready():
@@ -215,6 +235,16 @@ class Deploy(models.Model):
         params = self.stage.project.params()
         params.update(self.stage.params())
         if present(self.branch):
-            params.update({'branch': self.branch})
+            params.update({'branch': "'%s'" % self.branch})
 
         return params
+
+
+def prepare_fields(sender, instance, **kwargs):
+    instance.prepare_data()
+
+signals.pre_save.connect(prepare_fields, sender=Project)
+signals.pre_save.connect(prepare_fields, sender=ProjectParam)
+signals.pre_save.connect(prepare_fields, sender=Stage)
+signals.pre_save.connect(prepare_fields, sender=StageParam)
+signals.pre_save.connect(prepare_fields, sender=Deploy)
