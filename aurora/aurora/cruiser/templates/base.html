@@ -73,12 +73,17 @@
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
               <li class="nav-header">Projects</li>
-              {% for p in projects %}             
-                <li{% if a_proj == p.name %} class="active"{%endif%}><a href={% url projects p.id %}>p.name</a></li>
-              {% endfor %}
-              
+                {% if projects%}
+                  {% for p in projects %}             
+                    <li{% if active_project == p.name %} class="active"{%endif%}><a href="{% url projects p.id %}">p.name</a></li>
+                  {% endfor %}
+                {% else %}
+                  No projects found, please <a href="{% url new_project %}">set up new project.</a>
+                {% endif %}
               <li class="nav-header">Tasks</li>
-              <li><a href="#">Link</a></li>              
+              {% for t in tasks %}             
+                <li{% if active_task == t.name %} class="active"{%endif%}><a href="{% url tasks t.id %}">t.name</a></li>
+              {% endfor %}         
             </ul>
           </div><!--/.well -->
         </div><!--/span-->

@@ -37,19 +37,19 @@ class Stage(models.Model):
     name = models.CharField(verbose_name=_('name'), max_length=32)
     project = models.ForeignKey(Project, verbose_name=_('project'))
     branch = models.CharField(verbose_name=_('branch'), help_text=_('will be available in recipes as env.branch'), max_length=16, null=True, blank=True)
-    host = models.CharField(verbose_name=_('branch'), help_text=_('will be available in recipes as env.host'), max_length=64, null=True, blank=True)
+    host = models.CharField(verbose_name=_('host'), help_text=_('will be available in recipes as env.host'), max_length=64, null=True, blank=True)
     users = models.ManyToManyField(User, verbose_name=_('users'), through='StageUser', related_name=_('users'))
     tasks = models.ManyToManyField('Task', verbose_name=_('tasks'), through='StageTask', related_name=_('tasks'))
 
     def __unicode__(self):
-        return self.name
+        return "%s: %s" % (self.project, self.name)
 
 
 class StageParam(models.Model):
     """Specified param for stage environment"""
     stage = models.ForeignKey(Stage, verbose_name=_('stage'))
     name = models.CharField(verbose_name=_('name'), max_length=16, help_text=_('env.[name] in recipes'))
-    value = models.CharField(verbose_name=_('name'), max_length=128, help_text=_('use " for strings'))
+    value = models.CharField(verbose_name=_('value'), max_length=128, help_text=_('use " for strings'))
 
     class Meta:
         unique_together = ("stage", "name", "value")
