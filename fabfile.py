@@ -5,7 +5,7 @@ from time import gmtime, strftime
 
 PROJECT_PATH = path.abspath(path.dirname(__file__))
 # globals
-env.project_name = 'aurora.local'
+env.project_name = 'aurora.fefelovgroup.com'
 env.version = strftime("%Y%m%d%H%M", gmtime())
 
 
@@ -16,7 +16,7 @@ def prod():
     env.user = 'deploy'  # have to be set up on server
     env.apache_user = 'www-data'  # default owner
     env.code_root_parent = '/web'
-    env.hosts = ['axium@www.test-axium.com']
+    env.hosts = ['fefelov@aurora.fefelovgroup.com']
     env.release = env.version
     env.code_root = env.code_root_parent + '/' + env.project_name
     env.activate = 'source %s/bin/activate' % (env.code_root)
