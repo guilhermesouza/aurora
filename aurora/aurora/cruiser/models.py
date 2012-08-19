@@ -287,6 +287,21 @@ class Deploy(models.Model):
     def get_absolute_url(self):
         return ('deployment_monitor', (), {'deploy_id': self.id})
 
+    def get_status_from_log(self):
+        log = self.get_log()
+        last_row = log.strip('\n').split('\n')[-1]
+
+        if 'Done.' in last_row:
+            return self.COMPLETED
+
+        if 'Stopped.' in last_row:
+            return self.CANCELED
+
+        if 'Aborting.' in last_row:
+            return self.FAILED
+
+        return self.FAILED
+
 
 def prepare_fields(sender, instance, **kwargs):
     instance.prepare_data()

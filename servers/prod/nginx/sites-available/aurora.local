@@ -1,6 +1,6 @@
 server {
         listen     80;
-        server_name aurora.local *.aurora.local;
+        server_name test-axium.com *.test-axium.com;
         access_log /var/log/nginx/aurora.local.log;
         error_log /var/log/nginx/aurora.local-error.log info;
         location / {
