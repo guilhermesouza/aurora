@@ -108,7 +108,7 @@ class Stage(ModelWithAdminUrl):
         """Rerun list of project params"""
         params = {}
         if present(self.hosts):
-            params['hosts'] = "'%s'" % self.hosts
+            params['hosts'] = self.hosts
 
         if present(self.branch):
             params['branch'] = "'%s'" % self.branch
