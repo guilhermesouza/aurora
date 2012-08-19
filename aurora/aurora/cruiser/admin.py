@@ -6,6 +6,16 @@ class ProjectAdm(admin.ModelAdmin):
     list_display = ('name', 'repository')
     search_fields = ('name',)
 
+    class Media:
+        css = {
+            'all': ('codemirror/codemirror.css',)
+        }
+        js = (
+            'codemirror/codemirror.js',
+            'codemirror/python.js',
+            'codemirror/setup-project.js',
+        )
+
 
 class ProjectParamAdm(admin.ModelAdmin):
     list_display = ('project', 'name', 'value')
@@ -46,7 +56,7 @@ class TaskAdm(admin.ModelAdmin):
         js = (
             'codemirror/codemirror.js',
             'codemirror/python.js',
-            'codemirror/setup.js',
+            'codemirror/setup-task.js',
         )
 
 
