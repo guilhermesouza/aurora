@@ -1,8 +1,4 @@
 <div class="btn-group">
-  <button class="btn">Action</button>
-  <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-  <ul class="dropdown-menu">
-    <li><a href="{{ o.get_change_url }}">Modify</a></li>
-    <li><a href="{{ o.get_delete_url }}">Delete</a></li>                                                              
-  </ul>
+    <a href="{{ o.get_change_url }}" class="btn btn-mini btn-info">Modify</a>
+    <a href="{{ o.get_delete_url }}" class="btn btn-mini btn-danger">Delete</a>                                                              
 </div>

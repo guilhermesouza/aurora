@@ -6,18 +6,19 @@ admin.autodiscover()
 
 handler500 = 'cruiser.views.server_error'
 
-from cruiser.views import index, project, task, new_project, stage, exec_task, new_task
+from cruiser.views import index, project, task, new_project, stage, exec_task, new_task, new_stage
 admin.autodiscover()
 
 urlpatterns = patterns(
     '',
     url(r'^$', index, name='index'),
-    url(r'^projects/(?P<project_id>\d+)$', project, name='project'),
-    url(r'^projects/new$', new_project, name='new_project'),
-    url(r'^tasks/(?P<task_id>\d+)$', task, name='task'),
-    url(r'^tasks/new$', new_task, name='new_task'),
-    url(r'^stages/(?P<stage_id>\d+)$', stage, name='stage'),
-    url(r'^stages/(?P<stage_id>\d+)/(?P<task_id>\d+)/exec$', exec_task, name='exec_task'),
+    url(r'^project/(?P<project_id>\d+)$', project, name='project'),
+    url(r'^project/new$', new_project, name='new_project'),
+    url(r'^task/(?P<task_id>\d+)$', task, name='task'),
+    url(r'^task/new$', new_task, name='new_task'),
+    url(r'^stage/(?P<stage_id>\d+)$', stage, name='stage'),
+    url(r'^stage/(?P<stage_id>\d+)/(?P<task_id>\d+)/exec$', exec_task, name='exec_task'),
+    url(r'^stage/new$', new_stage, name='new_stage'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^', include('aurora.terminal.urls'), name="terminal-urls"),
     url(r'^accounts/login/$', login, name='login'),

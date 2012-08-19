@@ -37,6 +37,10 @@ def new_task(request):
     return HttpResponseRedirect(urlresolvers.reverse('admin:cruiser_task_add'))
 
 
+def new_stage(request):
+    return HttpResponseRedirect(urlresolvers.reverse('admin:cruiser_stage_add'))
+
+
 @login_required
 @render_to('stage.html')
 def stage(request, stage_id):
