@@ -41,12 +41,12 @@ class TaskAdm(admin.ModelAdmin):
 
     class Media:
         css = {
-            'all': ('admin/codemirror/codemirror.css',)
+            'all': ('codemirror/codemirror.css',)
         }
         js = (
-            'admin/codemirror/codemirror.js',
-            'admin/codemirror/python.js',
-            'admin/codemirror/setup.js',
+            'codemirror/codemirror.js',
+            'codemirror/python.js',
+            'codemirror/setup.js',
         )
 
 
