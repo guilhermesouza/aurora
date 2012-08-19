@@ -1,12 +1,12 @@
-from models import Project, Task
-from annoying.decorators import render_to
-from annoying.functions import get_object_or_None
-import aurora.settings as settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.core import urlresolvers
 from django.contrib.auth import logout, login
 from django.contrib.auth.decorators import login_required
+from annoying.decorators import render_to
+from annoying.functions import get_object_or_None
+import aurora.settings as settings
+from models import Project, Task, StageTask
 
 
 @render_to('base.html')
@@ -57,9 +57,10 @@ def stage(request, stage_id):
 def task(request, task_id):
     task = get_object_or_None(Task, id=task_id)
     if not task:
-        return {}
+        return {'error': "Task is not found"}
     else:
-        return {'task': task}
+        stages = StageTask.objects.filter(task=task)
+        return {'task': task, 'stages': stages}
 
 
 @render_to('500.html')
