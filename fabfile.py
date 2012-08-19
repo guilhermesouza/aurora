@@ -92,6 +92,7 @@ def deploy():
     migrate()
     restart_webservers()
     setup_permissions()
+    collectstatic()
 
 
 @with_settings(warn_only=True)
@@ -134,7 +135,16 @@ def restart_webservers():
 
 
 def migrate():
-    "Update the database--Need to be fixed"
-    require('project_name')
+    """
+    Migrate databases
+    """
     sudo(env.activate)
     sudo('cd %s' % env.whole_path_symlinked + '/aurora; python manage.py syncdb; python manage.py migrate;')
+
+
+def collectstatic():
+    """
+    Collects static files on server
+    """
+    sudo(env.activate)
+    sudo('cd %s' % env.whole_path_symlinked + '/aurora; python manage.py collectstatic;')
