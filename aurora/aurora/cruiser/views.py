@@ -8,7 +8,7 @@ from django.core import urlresolvers
 from django.contrib.auth.decorators import login_required
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
-from models import Project, Stage, Task, Deploy, StageTask
+from models import Project, Stage, Task, Deploy, StageTask, StageUser
 from forms import UploadFabFileForm
 from lib.fabfile_parser import get_source
 
@@ -52,11 +52,14 @@ def project(request, project_id):
             project.import_block = import_block
             stage = Stage(name="Imported", project=project)
             stage.save()
+            stage_user = StageUser(user=request.user, stage=stage)
+            stage_user.save()
             for task in tasks:
                 task_obj = Task(name=task['name'], body=task['body'])
                 task_obj.save()
                 stage_task = StageTask(task=task_obj, stage=stage)
                 stage_task.save()
+
     else:
         form = UploadFabFileForm()
 
