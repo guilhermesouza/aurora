@@ -8,10 +8,11 @@ import aurora.settings as settings
 from models import Project, Task, StageTask
 
 
+@login_required
 @render_to('base.html')
 def index(request):
     from models import Deploy
-    deployments = Deploy.objects.all().order_by('-finished_at',)[:5]
+    deployments = Deploy.objects.all().order_by('-finished_at',)[:10]
     return {'deps': deployments}
 
 
@@ -40,7 +41,7 @@ def new_task(request):
 @render_to('stage.html')
 def stage(request, stage_id):
     from models import Stage, Deploy
-    busy = False
+    busy = None
     stage = get_object_or_None(Stage, id=stage_id)
     if not stage:
         return {}
@@ -48,7 +49,7 @@ def stage(request, stage_id):
         project = stage.project
         tasks = stage.tasks.all()
         deployments = Deploy.objects.filter(stage=stage).order_by('-finished_at',)[:3]
-        busy = stage.already_deploying()        
+        busy = check_perm(stage, request.user)
         return {'p': project, 's': stage, 'tasks': tasks, 'deps': deployments, 'busy': busy}
 
 
@@ -77,17 +78,24 @@ def exec_task(request, stage_id, task_id):
     stage = get_object_or_404(Stage, id=stage_id)
     task = get_object_or_404(Task, id=task_id)
     get_object_or_404(StageTask, stage=stage, task=task)
-    if stage.already_deploying():
-        busy = 'Sorry stage is deploing now. Please wait a bit and try again.'
+    busy = check_perm(stage, request.user)
     if request.method == 'POST':
         form = ExecTaskForm(request.POST)
         if form.is_valid():
             if form.cleaned_data['branch'] != '':
                 branch = form.cleaned_data['branch']
             comment = form.cleaned_data['comment']
-            deploy = Deploy(stage=stage, task=task, branch=branch, user=user)
+            deploy = Deploy(stage=stage, task=task, branch=branch, user=request.user, comment=comment)
             deploy.save()
             return HttpResponseRedirect('/')
     else:
         form = ExecTaskForm()
     return {'form': form, 'p': stage.project, 's': stage, 't': task, 'busy': busy}
+
+
+def check_perm(stage, user):
+    from models import StageUser
+    if stage.already_deploying():
+        return 'Sorry stage is deploing now. Please wait a bit and try again.'
+    if not get_object_or_None(StageUser, stage=stage, user=user):
+        return 'You have no rights to exec.'

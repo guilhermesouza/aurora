@@ -36,7 +36,7 @@
                         <td>{{ t.name }}</td>
                         <td>{{ t.description }}</td>                        
                         <td>{% if busy %}
-                                <span class="label label-important">Can not exec, until deploy runing</span>
+                                <span class="label label-important">{{ busy }}</span>
                             {% else %}
                                 <a href="{% url 'exec_task' s.id t.id %}" class="btn btn-info ">Exec {{ t.name }}</a>
                             {% endif %}
