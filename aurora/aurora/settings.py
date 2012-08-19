@@ -1,7 +1,7 @@
 # Django settings for aurora project.
 import os
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 PROJECT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -49,12 +49,11 @@ USE_TZ = True
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
 MEDIA_ROOT = PROJECT_DIR + '/media'
-print MEDIA_ROOT
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = 'http://www.test-axium.com'
+MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -64,7 +63,7 @@ STATIC_ROOT = MEDIA_ROOT + '/static'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = MEDIA_URL + '/static/'
+STATIC_URL = '/media/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -160,7 +159,7 @@ LOGGING = {
 }
 LOGIN_REDIRECT_URL = '/'
 if DEBUG:
-    MEDIA_URL = 'http://127.0.0.1:8000/media'
+    #MEDIA_URL = 'http://127.0.0.1:8000/media'
     MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
     INTERNAL_IPS = ('127.0.0.1',)
     INSTALLED_APPS += ('debug_toolbar',)
