@@ -3,7 +3,7 @@ import os
 from django.http import HttpResponse
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
-from cruiser.models import Deploy
+from aurora.cruiser.models import Deploy
 
 deploys = []
 
