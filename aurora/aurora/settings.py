@@ -124,7 +124,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'aurora.cruiser',
     'aurora.terminal',
-    'south',    
+    'south',
 )
 
 #Directory for fabfiles
