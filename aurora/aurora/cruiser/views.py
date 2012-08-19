@@ -83,9 +83,9 @@ def exec_task(request, stage_id, task_id):
         if form.is_valid():
             if form.cleaned_data['branch'] != '':
                 branch = form.cleaned_data['branch']
-                comment = form.cleaned_data['comment']
-                deploy = Deploy(stage=stage, task=task, branch=branch, user=user)
-                deploy.save()
+            comment = form.cleaned_data['comment']
+            deploy = Deploy(stage=stage, task=task, branch=branch, user=user)
+            deploy.save()
             return HttpResponseRedirect('/')
     else:
         form = ExecTaskForm()
