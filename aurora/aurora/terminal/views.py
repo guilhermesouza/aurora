@@ -1,53 +1,60 @@
-from annoying.decorators import render_to
-from django.http import HttpResponseRedirect, HttpResponse
 import pexpect
+import os
+from django.http import HttpResponse
+from annoying.decorators import render_to
+from annoying.functions import get_object_or_None
+from aurora.cruiser.models import Deploy
 
-stages = []
+deploys = {}
 
 
 @render_to('terminal.html')
-def monitor(request, stage):
+def monitor(request, deploy_id):
     """Allow to watch deploying process"""
-    return {'request': request, 'stage': stage}
+    return {'request': request, 'deploy_id': deploy_id}
 
 
-def start(request, stage):
+def start(request):
     """Starts deploy"""
-    logfile = open('/tmp/output%s.log' % stage, 'w')
-    child = pexpect.spawn('fab task', logfile=logfile)
-    child.setecho(False)
+    deploy_id = request.POST.get('deploy_id')
 
-    child_dict = {'stage': child, 'id': stage, 'messages': []}
-    stages.append(child_dict)
-    child.expect(pexpect.EOF)
-    return HttpResponseRedirect("/terminal/monitor/%s" % stage)
+    if not deploy_id:
+        return HttpResponse('Forbidden')
+
+    deploy = get_object_or_None(Deploy, id=deploy_id)
+    deploy_path = deploy.fabfile_path()
+
+    os.chdir(deploy_path)
+    logfile = open('output.log', 'w')
+    process = pexpect.spawn('fab task', logfile=logfile)
+    process.setecho(False)
+
+    deploys[deploy_id] = process
+    process.expect(pexpect.EOF)
+    return HttpResponse("OK")
 
 
 def send(request):
     """Sends a message to process"""
-    stage = request.POST.get('stage')
+    deploy_id = request.POST.get('deploy_id')
     message = request.POST.get('message')
 
-    if not stage or not message:
+    if not deploy_id or not message:
         return HttpResponse('Forbidden')
 
-    for child in stages:
-        if child['id'] == stage:
-            child['stage'].sendline(message)
-            child['messages'].append(message)
-    child['stage'].expect(pexpect.EOF)
-    return HttpResponseRedirect("/terminal/monitor/%s" % stage)
+    process = deploys.get(deploy_id)
+    process.sendline(message)
+    process.expect(pexpect.EOF)
+    return HttpResponse("OK")
 
 
 @render_to('log-view.html')
-def get_log(request, stage):
+def get_log(request, deploy_id):
     """Returning log of deploy"""
-    output = open('/tmp/output%s.log' % stage, 'r').readlines()[1:]
-    status = False if get_alive_status(stage) is None else get_alive_status(stage)
-    return {'output': output, 'stage': stage, 'isactive': status}
+    deploy = get_object_or_None(Deploy, id=deploy_id)
+    deploy_path = deploy.fabfile_path()
 
-
-def get_alive_status(id):
-    for item in stages:
-        if id == item['id']:
-            return item['stage'].isalive()
+    os.chdir(deploy_path)
+    output = open('output.log', 'r').readlines()[1:]
+    status = deploys.get(deploy_id).isalive() or False
+    return {'output': output, 'isactive': status}

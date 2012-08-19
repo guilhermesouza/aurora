@@ -222,18 +222,18 @@ class Deploy(models.Model):
             return False
 
         self.started_at = datetime.datetime.now()
-        self.status = RUNNING
+        self.status = self.RUNNING
         self.save()
 
         #do_something
 
         self.finished_at = datetime.datetime.now()
-        self.status = COMPLETED
+        self.status = self.COMPLETED
         self.save()
 
     def ready(self):
         """Ready for run"""
-        return READY == self.status
+        return self.READY == self.status
 
     def build_fabfile(self):
         """Generate fabfile and save to fs"""
