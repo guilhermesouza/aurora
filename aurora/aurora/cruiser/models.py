@@ -76,8 +76,10 @@ class ProjectParam(ModelWithAdminUrl):
         return "%s: %s = %s " % (self.project.name, self.name, self.value)
 
     def prepare_data(self):
-        self.name = self.name.strip()
-        self.value = self.value.strip()
+        if self.name:
+            self.name = self.name.strip()
+        if self.value:
+            self.value = self.value.strip()
 
     def to_param(self):
         """Return dict {name:value}"""
@@ -97,8 +99,10 @@ class Stage(ModelWithAdminUrl):
         return "%s: %s" % (self.project, self.name)
 
     def prepare_data(self):
-        self.branch = self.branch.strip()
-        self.hosts = self.hosts.strip()
+        if self.branch:
+            self.branch = self.branch.strip()
+        if self.hosts:
+            self.hosts = self.hosts.strip()
 
     def params(self):
         """Rerun list of project params"""
@@ -282,6 +286,21 @@ class Deploy(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('deployment_monitor', (), {'deploy_id': self.id})
+
+    def get_status_from_log(self):
+        log = self.get_log()
+        last_row = log.strip('\n').split('\n')[-1]
+
+        if 'Done.' in last_row:
+            return self.COMPLETED
+
+        if 'Stopped.' in last_row:
+            return self.CANCELED
+
+        if 'Aborting.' in last_row:
+            return self.FAILED
+
+        return self.FAILED
 
 
 def prepare_fields(sender, instance, **kwargs):

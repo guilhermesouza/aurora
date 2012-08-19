@@ -35,7 +35,7 @@
                 <tbody>
                     {% for t in tasks %}            
                       <tr>                        
-                        <td>{{ t.name }}</td>
+                        <td><a href="{% url 'task' t.id %}">{{ t.name }}</a></td>
                         <td>{{ t.description }}</td>                        
                         <td>{% if busy %}
                                 <span class="label label-important">{{ busy }}</span>

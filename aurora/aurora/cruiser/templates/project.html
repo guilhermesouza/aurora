@@ -18,8 +18,15 @@
                     <a href="{%url 'stage' s.id%}">{{s.name}}</a><br>                    
                 {% endfor%}
             </dd>
-        </dl>
-        {% show_action_button p %}        
+            <dt>Fabfile import:</dt>
+            <dd>
+                <form method='POST' enctype="multipart/form-data">
+                    {%csrf_token%}
+                    {{ form.as_p}}
+                    <input type='submit' value='Upload' class='btn btn-primary'>
+                </form>
+            </dd>
+        </dl>        
         <br>
         <hr>                
             <h3>Settings</h3><br/>
@@ -52,6 +59,6 @@
             <hr>
             <h3>Recent deployments</h3><br/>
             {% show_recent_deployments deps%}     
-        </div>    
+        </div>
     {% endblock %}
 
