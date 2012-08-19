@@ -7,26 +7,25 @@
     </div>
 
     <p><button id="autoscroll" class='btn btn-info'>Autoscroll</button></p>
-    <form id="terminal-form" action="/terminal/send/" method="POST">
+    <form id="terminal-form" action="{% url send_to_deployment deploy.id %}" method="POST">
     {%csrf_token%}
-    <input type='hidden' name='deploy_id' value='{{ deploy_id }}'>
     <p><input type='text' id="terminal-message" name='message'></p>
     <p><input type='button' class='btn' value='Send' id="send_button"></p>
     </form>
 
     <script>
         $(document).ready(function () {
-            $('#terminal-view').load("/terminal/get_log/{{ deploy_id }}/");
+            $('#terminal-view').load("{% url deployment_log deploy.id%}");
 
             setInterval(function() {
-                $('#terminal-view').load("/terminal/get_log/{{ deploy_id }}/");
+                $('#terminal-view').load("{% url deployment_log deploy.id%}");
             }, 1000)
 
             $("#send_button").click(function() {
                 $.ajax({
                         type: 'POST',
-                        url: '/terminal/send/',
-                        data: $('#terminal-form').serialize(),
+                        url: "{% url send_to_deployment deploy.id %}",
+                        data: $('#terminal-form').serialize()
                     });
                 $("#terminal-message").val("");
             });

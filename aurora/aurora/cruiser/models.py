@@ -209,6 +209,7 @@ class Deploy(models.Model):
     log = models.TextField(verbose_name=_('log'), default="")
     status = models.CharField(verbose_name=_('status'), max_length=16, choices=STATUS_CHOICES, default=READY)
     branch = models.CharField(verbose_name=_('branch'), max_length=16, null=True, blank=True)
+    comment = models.CharField(verbose_name=_('comment'), max_length=128, null=True, blank=True)
 
     def __unicode__(self):
         return "%s: %s - %s" % (self.stage, self.task, self.started_at)
@@ -224,12 +225,7 @@ class Deploy(models.Model):
         self.started_at = datetime.datetime.now()
         self.status = self.RUNNING
         self.save()
-
-        #do_something
-
-        self.finished_at = datetime.datetime.now()
-        self.status = self.COMPLETED
-        self.save()
+        return True
 
     def ready(self):
         """Ready for run"""
@@ -241,14 +237,14 @@ class Deploy(models.Model):
 
         fabfile = Fabfile(self.stage.project.import_block,
                           self.stage.usage_tasks(),
-                          self.fabfile_path(),
+                          self.working_path(),
                           self.env_params())
 
         fabfile.build()
 
-    def fabfile_path(self):
+    def working_path(self):
         """Path to file"""
-        return '%s/deploy_%s/' % (settings.FABFILE_DIR, self.id)
+        return '%sdeploy_%s/' % (settings.FABFILE_DIR, self.id)
 
     def env_params(self):
         """Get params for current deployment"""
@@ -261,6 +257,23 @@ class Deploy(models.Model):
 
     def css(self):
         return self.STATUS_CSS[self.status]
+
+    def get_log(self):
+        """Get log from output file or from base"""
+        if self.RUNNING == self.status:
+            with open('%soutput.log' % self.working_path(), 'r') as f:
+                log = ''.join(f.readlines())
+        else:
+            log = self.log
+
+        return log
+
+    def finish_with_status(self, status):
+        """Mark as finished"""
+        self.log = self.get_log()
+        self.status = status
+        self.finished_at = datetime.datetime.now()
+        self.save()
 
 
 def prepare_fields(sender, instance, **kwargs):

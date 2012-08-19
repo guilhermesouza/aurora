@@ -123,7 +123,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'aurora.cruiser',
-    'aurora.terminal',
     'south',
 )
 
