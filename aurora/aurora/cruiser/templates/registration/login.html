@@ -6,22 +6,12 @@
     {% else%}
         <h2>You should login first</h2>
     {% endif %}
-{% endblock %}
-{% block login %}
-    <form method="post" action="{% url 'login' %}">
-    {% csrf_token %}
-    <table>
-    <tr>
-        <td>{{ form.username.label_tag }}</td>
-        <td>{{ form.username }}</td>
-    </tr>
-    <tr>
-        <td>{{ form.password.label_tag }}</td>
-        <td>{{ form.password }}</td>
-    </tr>
-    </table>
-
-    <input type="submit" value="login" />
-    <input type="hidden" name="next" value="{{ next }}" />
+    <form method="post" action="{% url 'login' %}" class="form-horizontal">
+      {% csrf_token %}
+      <label>Login:</label>{{ form.username }}              
+      <label>Password:</label>{{ form.password }}<hr>
+      <button type="submit" class="btn btn-primary">Log in</button>
+      <input type="hidden" name="next" value="{{ next }}" />              
     </form>
 {% endblock %}
+

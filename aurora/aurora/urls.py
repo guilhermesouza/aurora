@@ -21,7 +21,7 @@ urlpatterns = patterns(
     url(r'^admin/', include(admin.site.urls)),
     url(r'^', include('aurora.terminal.urls'), name="terminal-urls"),
     url(r'^accounts/login/$', login, name='login'),
-    url(r'^accounts/logout/$', logout, name='logout'),
+    url(r'^accounts/logout/$', logout, {'next_page': '/'}, name='logout', ),
 )
 
 urlpatterns += staticfiles_urlpatterns()

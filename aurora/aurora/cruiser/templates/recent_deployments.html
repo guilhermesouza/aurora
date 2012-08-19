@@ -1,6 +1,7 @@
 {% for d in deps %}                
     <div class="alert {{d.css}}">
         <h3>{{d.status}}</h3>
+        <h4>{{d.stage.project.name}}</h4>
         <div class="span2">
             <b>Stage: </b> {{d.stage.name}}<br/>
             <b>Task: </b> {{d.task}}

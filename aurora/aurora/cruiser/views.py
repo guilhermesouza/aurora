@@ -5,14 +5,14 @@ import aurora.settings as settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.core import urlresolvers
-from django.contrib.auth import logout, login
 from django.contrib.auth.decorators import login_required
 
 
 @render_to('base.html')
 def index(request):
-    pass
-    return {}
+    from models import Deploy
+    deployments = Deploy.objects.all().order_by('-finished_at',)[:5]
+    return {'deps': deployments}
 
 
 @login_required

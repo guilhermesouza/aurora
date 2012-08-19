@@ -158,7 +158,7 @@ LOGGING = {
         },
     }
 }
-
+LOGIN_REDIRECT_URL = '/'
 if DEBUG:
     MEDIA_URL = 'http://127.0.0.1:8000/media'
     MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
@@ -175,3 +175,6 @@ if DEBUG:
         'debug_toolbar.panels.signals.SignalDebugPanel',
         'debug_toolbar.panels.logger.LoggingPanel',
     )
+    DEBUG_TOOLBAR_CONFIG = {
+        'INTERCEPT_REDIRECTS': False,
+    }

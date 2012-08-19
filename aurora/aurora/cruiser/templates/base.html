@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load url from future %}
+{% load recent_deployments_tag %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -47,23 +48,16 @@
           </a>
           <a class="brand" href="#">Aurora</a>
           <div class="btn-group pull-right">
-            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-              <i class="icon-user"></i> Username
-              <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-              <li><a href="#">Profile</a></li>
-              <li class="divider"></li>
-              <li><a href="#">Sign Out</a></li>
-            </ul>
+            {% block login %}
+              {% if user.is_authenticated %}
+                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="{% url 'logout' %}">
+                    <i class="icon-user"></i>Logout {{user.username}}                    
+                  </a>                    
+              {% else %}             
+                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="{% url 'login' %}">Login</a>                          
+              {% endif %}
+            {% endblock %}
           </div>
-          <div class="nav-collapse">
-            <ul class="nav">
-              <li class="active"><a href="#">Home</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
-            </ul>
-          </div><!--/.nav-collapse -->
         </div>
       </div>
     </div>
@@ -94,6 +88,8 @@
           <div class="row-fluid">
             {% block content %}
               <h2>Recent deployments</h2>
+              <hr>
+              {% show_recent_deployments deps%}
             {% endblock%}     
           </div><!--/row-->
         </div><!--/span-->
