@@ -117,17 +117,17 @@ def exec_task(request, stage_id, task_id):
     task = get_object_or_404(Task, id=task_id)
     get_object_or_404(StageTask, stage=stage, task=task)
     busy = check_perm(stage, request.user)
-    if request.method == 'POST':
-        form = ExecTaskForm(request.POST)
-        if form.is_valid():
-            branch = form.cleaned_data['branch']
-            comment = form.cleaned_data['comment']
-            deploy = Deploy(stage=stage, task=task, branch=branch, user=request.user, comment=comment)
-            deploy.save()
 
-            run_deploy(deploy)
-    else:
-        form = ExecTaskForm()
+    form = ExecTaskForm(request.POST or None)
+    if form.is_valid():
+        branch = form.cleaned_data['branch']
+        comment = form.cleaned_data['comment']
+        deploy = Deploy(stage=stage, task=task, branch=branch, user=request.user, comment=comment)
+        deploy.save()
+
+        run_deploy(deploy)
+        return HttpResponseRedirect(deploy.get_absolute_url())
+
     return {'form': form, 'p': stage.project, 's': stage, 't': task, 'busy': busy}
 
 
@@ -157,7 +157,8 @@ def send(request, deploy_id):
         return HttpResponse('Forbidden')
 
     process = deploys.get(int(deploy_id))
-    process.sendline(message)
+    if process:
+        process.sendline(message)
 
     return HttpResponse("OK")
 
@@ -171,9 +172,21 @@ def get_log(request, deploy_id):
     active_deploy = deploys.get(deploy.id)
     if active_deploy:
         active_deploy.expect([pexpect.TIMEOUT, pexpect.EOF], timeout=1)
-        if not active_deploy.isalive():
+        if not active_deploy.isalive() and deploy.running():
             deploy.finish_with_status(Deploy.COMPLETED)
 
     log = deploy.get_log()
 
     return {'log': log, 'status': deploy.get_status_display()}
+
+
+@login_required
+def cancel(request, deploy_id):
+    """Returning log of deploy"""
+    deploy = get_object_or_404(Deploy, id=deploy_id)
+
+    active_deploy = deploys.get(deploy.id)
+    if active_deploy and active_deploy.terminate():
+        deploy.finish_with_status(Deploy.CANCELED)
+
+    return HttpResponseRedirect(deploy.get_absolute_url())
