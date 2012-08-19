@@ -76,8 +76,10 @@ class ProjectParam(ModelWithAdminUrl):
         return "%s: %s = %s " % (self.project.name, self.name, self.value)
 
     def prepare_data(self):
-        self.name = self.name.strip()
-        self.value = self.value.strip()
+        if self.name:
+            self.name = self.name.strip()
+        if self.value:
+            self.value = self.value.strip()
 
     def to_param(self):
         """Return dict {name:value}"""
@@ -97,8 +99,10 @@ class Stage(ModelWithAdminUrl):
         return "%s: %s" % (self.project, self.name)
 
     def prepare_data(self):
-        self.branch = self.branch.strip()
-        self.host = self.host.strip()
+        if self.branch:
+            self.branch = self.branch.strip()
+        if self.host:
+            self.host = self.host.strip()
 
     def params(self):
         """Rerun list of project params"""

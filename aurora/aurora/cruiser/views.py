@@ -2,13 +2,15 @@ import os
 import pexpect
 import aurora.settings as settings
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.core import urlresolvers
 from django.contrib.auth.decorators import login_required
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 from models import Project, Stage, Task, Deploy, StageTask
+from forms import UploadFabFileForm
+from lib.fabfile_parser import get_source
 
 deploys = {}
 
@@ -31,7 +33,6 @@ def run_deploy(deploy):
 @login_required
 @render_to('base.html')
 def index(request):
-    from models import Deploy
     deployments = Deploy.objects.all().order_by('-finished_at',)[:10]
     return {'deps': deployments}
 
@@ -39,14 +40,29 @@ def index(request):
 @login_required
 @render_to('project.html')
 def project(request, project_id):
-    from models import Stage, Deploy
     project = get_object_or_None(Project, id=project_id)
     if not project:
         return {}
+    if request.method == 'POST':
+        form = UploadFabFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            fabfile = request.FILES['file']
+            content = fabfile.readlines()
+            import_block, tasks = get_source(content)
+            project.import_block = import_block
+            stage = Stage(name="Imported", project=project)
+            stage.save()
+            for task in tasks:
+                task_obj = Task(name=task['name'], body=task['body'])
+                task_obj.save()
+                stage_task = StageTask(task=task_obj, stage=stage)
+                stage_task.save()
     else:
-        stages = Stage.objects.filter(project=project).order_by('name',)
-        deployments = Deploy.objects.filter(stage__in=stages).order_by('-finished_at',)[:3]
-        return {'p': project, 'stages': stages, 'deps': deployments}
+        form = UploadFabFileForm()
+
+    stages = Stage.objects.filter(project=project).order_by('name',)
+    deployments = Deploy.objects.filter(stage__in=stages).order_by('-finished_at',)[:3]
+    return {'p': project, 'stages': stages, 'deps': deployments, 'form': form}
 
 
 def new_project(request):
@@ -64,7 +80,6 @@ def new_stage(request):
 @login_required
 @render_to('stage.html')
 def stage(request, stage_id):
-    from models import Stage, Deploy
     busy = None
     stage = get_object_or_None(Stage, id=stage_id)
     if not stage:
