@@ -1,22 +1,20 @@
-from os import getenv
-from fabric.api import *
-from fabric.contrib.project import rsync_project
-from fabric.contrib import files, console
-from fabric import utils
-from fabric.operations import *
+from os import path
+from fabric.api import sudo, put, env, require, local
 from fabric.decorators import with_settings
 from time import gmtime, strftime
 
-PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
+PROJECT_PATH = path.abspath(path.dirname(__file__))
 # globals
 env.project_name = 'aurora.local'
 env.version = strftime("%Y%m%d%H%M", gmtime())
-HOME = getenv('HOME')
 
 
 def prod():
+    """
+    Production config
+    """
     env.user = 'deploy'  # have to be set up on server
-    env.media_owner = 'www-data'  # default owner
+    env.apache_user = 'www-data'  # default owner
     env.code_root_parent = '/web'
     env.hosts = ['axium@www.test-axium.com']
     #env.host = env.user + '@' + env.project_name
@@ -29,15 +27,11 @@ def prod():
     env.branch = 'develop'
 
 
-def virtualenv(command):
-    sudo('cd ' + env.code_root + ';' + env.activate + '&&' + command, user=env.deploy_user)
-
-
 def reset_permissions():
     """
     Updates permissions on given project root
     """
-    sudo('chown %s:%s -R %s' % (env.media_owner, env.media_owner, env.code_root_parent))
+    sudo('chown %s:%s -R %s' % (env.apache_user, env.apache_user, env.whole_path_symlinked))
 
 
 @with_settings(warn_only=True)
@@ -76,14 +70,12 @@ def setup():
     sudo('apt-get install -y python-setuptools')
     sudo('easy_install pip')
     sudo('pip install virtualenv')
-    sudo('apt-get -y install git-core')
     sudo('aptitude install -y apache2')
     sudo('aptitude install -y libapache2-mod-wsgi')
     sudo('apt-get install -y nginx')
     update_webserver_config()
-    sudo('mkdir -p %s; cd %s; virtualenv .;source ./bin/activate' % (env.code_root, env.code_root))
+    sudo('mkdir -p %s; cd %s; virtualenv .;' % (env.code_root, env.code_root))
     sudo('cd %s;mkdir releases; mkdir shared; mkdir packages; mkdir shared/media; mkdir shared/media/file;' % (env.code_root))
-    reset_permissions()
     deploy()
 
 
@@ -109,7 +101,7 @@ def upload_tar_from_git(path):
     """
     require('release', provided_by=[prod])
     require('whole_path', provided_by=[prod])
-    require('branch', provided_by=[prod])    
+    require('branch', provided_by=[prod])
     local('git checkout %s' % (env.branch))
     local('git archive --format=tar %s | gzip > %s.tar.gz' % (env.branch, env.release))
     sudo('mkdir -p %s' % (path))
@@ -122,18 +114,18 @@ def upload_tar_from_git(path):
 
 def install_requirements():
     "Install the required packages from the requirements file using pip"
-    require('release', provided_by=[deploy, setup])
-    require('whole_path', provided_by=[deploy, setup])
-    sudo('cd %s; source ./bin/activate; pip install -r %s/requirements.txt' % (env.code_root, env.whole_path))
-    reset_permissions()
+    require('whole_path', provided_by=[prod])
+    sudo(env.activate)
+    sudo('pip install -r %s/requirements.txt' % (env.whole_path))
 
 
+@with_settings(warn_only=True)
 def symlink_current_release():
     "Symlink current release"
     require('release', provided_by=[prod])
-    sudo('cd %s/releases;rm current; ln -s %s current; chown %s -R current; chgrp %s -R current' % (env.code_root, env.release, env.user, env.user))
+    sudo('cd %s/releases;rm current; ln -s %s current;' % (env.code_root, env.release))
     sudo('cd %s/media; ln -s %s/shared/media/file;' % (env.whole_path_symlinked, env.code_root))
-    sudo('chown -R %s:%s %s/shared' % (env.media_owner, env.media_owner, env.code_root))
+    #sudo('chown -R %s:%s %s/shared' % (env.apache_user, env.apache_user, env.code_root))
 
 
 def restart_webservers():
@@ -145,9 +137,5 @@ def restart_webservers():
 def migrate():
     "Update the database--Need to be fixed"
     require('project_name')
-    sudo('cd %s;  source ./bin/activate; cd ./releases/current/%s;  python manage.py syncdb; python manage.py migrate' % (env.code_root, env.project_name))
-
-
-def dump():
-    "Dump production databse to local machine"
-    pass
+    sudo(env.activate)
+    sudo('cd %s' % env.whole_path_symlinked + '/aurora; python manage.py syncdb; python manage.py migrate;')

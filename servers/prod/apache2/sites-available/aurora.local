@@ -5,7 +5,7 @@
        processes=2 threads=4 maximum-requests=100 display-name=aurora.local-wsgi
     WSGIProcessGroup aurora.local
     WSGIApplicationGroup aurora.local
-    WSGIScriptAlias / /web/aurora.local/releases/current/aurora.local/wsgi/aurora.local.wsgi
+    WSGIScriptAlias / /web/aurora.local/releases/current/aurora.local/aurora/aurora/wsgi.pu
     
     ErrorLog    /var/log/apache2/aurora.local-error.log
     CustomLog   /var/log/apache2/aurora.local-access.log combined
