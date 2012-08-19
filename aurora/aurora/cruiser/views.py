@@ -144,6 +144,8 @@ def check_perm(stage, user):
 def monitor(request, deploy_id):
     """Allow to watch deploying process"""
     deploy = get_object_or_404(Deploy, id=deploy_id)
+    if not deploy.stage.permitted_for(request.user):
+        return HttpResponse(status=403)
 
     return {'deploy': deploy}
 
@@ -168,6 +170,8 @@ def send(request, deploy_id):
 def get_log(request, deploy_id):
     """Returning log of deploy"""
     deploy = get_object_or_404(Deploy, id=deploy_id)
+    if not deploy.stage.permitted_for(request.user):
+        return HttpResponse(status=403)
 
     active_deploy = deploys.get(deploy.id)
     if active_deploy and active_deploy.isalive():
@@ -187,6 +191,8 @@ def get_log(request, deploy_id):
 def cancel(request, deploy_id):
     """Returning log of deploy"""
     deploy = get_object_or_404(Deploy, id=deploy_id)
+    if not deploy.stage.permitted_for(request.user):
+        return HttpResponse(status=403)
 
     active_deploy = deploys.get(deploy.id)
     if active_deploy and active_deploy.terminate():

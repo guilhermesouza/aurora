@@ -129,6 +129,10 @@ class Stage(ModelWithAdminUrl):
         """Rrturn true if stage deploying now"""
         return self.deploy_set.filter(status=Deploy.RUNNING).count() > 0
 
+    def permitted_for(self, user):
+        """Check user permissions"""
+        return user in self.users.all()
+
 
 class StageParam(ModelWithAdminUrl):
     """Specified param for stage environment"""
