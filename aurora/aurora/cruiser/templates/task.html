@@ -18,15 +18,19 @@
             <dd>{{stages|length}}</dd>
             <dd>
                 {% for s in stages %}
-                    <a href="{%url 'stage' s.stage.id%}">{{s.stage.name}}</a><br>                    
+                    <a href="{%url 'project' s.stage.project.id%}">{{s.stage.project.name}}</a> - <a href="{%url 'stage' s.stage.id%}">{{s.stage.name}}</a><br>                    
                 {% endfor%}
             </dd>
             <hr/>
             <dt>Body: </dt>
             <dd>
-                <code>{{task.body}}</code>
+                <textarea id="task-body" rows="10" cols="40" style="display: none">{{task.body}}</textarea>
             </dd>
         </dl> 
+        <link href="/static/codemirror/codemirror.css" type="text/css" media="all" rel="stylesheet" />
+        <script type="text/javascript" src="/static/codemirror/codemirror.js"></script>
+        <script type="text/javascript" src="/static/codemirror/python.js"></script>
+        <script type="text/javascript" src="/static/codemirror/setup-readOnly.js"></script>
         {% endif %}
     </div>    
     {% endblock %}
