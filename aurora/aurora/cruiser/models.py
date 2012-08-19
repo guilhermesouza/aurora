@@ -101,8 +101,8 @@ class Stage(ModelWithAdminUrl):
     def prepare_data(self):
         if self.branch:
             self.branch = self.branch.strip()
-        if self.host:
-            self.host = self.host.strip()
+        if self.hosts:
+            self.hosts = self.hosts.strip()
 
     def params(self):
         """Rerun list of project params"""

@@ -8,3 +8,4 @@ var editor = CodeMirror.fromTextArea(document.getElementById("task-body"), {
     matchBrackets: true,
     readOnly: true
 });
+editor.setSize("100%", "100%");
