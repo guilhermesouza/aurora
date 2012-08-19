@@ -39,6 +39,16 @@ class TaskAdm(admin.ModelAdmin):
     list_display = ('name', 'description')
     search_fields = ('name',)
 
+    class Media:
+        css = {
+            'all': ('admin/codemirror/codemirror.css',)
+        }
+        js = (
+            'admin/codemirror/codemirror.js',
+            'admin/codemirror/python.js',
+            'admin/codemirror/setup.js',
+        )
+
 
 admin.site.register(Project, ProjectAdm)
 admin.site.register(ProjectParam, ProjectParamAdm)
