@@ -7,6 +7,7 @@ Inspired by [Webistrano](https://github.com/peritor/webistrano/).
 demo
 ====
 [Is here](http://aurora.fefelovgroup.com/)
+Credentials are tycky:tycky
 
 features
 ========
