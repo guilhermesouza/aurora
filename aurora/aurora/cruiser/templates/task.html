@@ -1,5 +1,6 @@
 {% extends "base.html" %} 
 {% load url from future %}
+{% load action_button_tag%}
     {% block title %} - {% if error %}{{ error }}{%  else %}{{ task.name }}{% endif %}{% endblock %}     
     {% block content %}    
     <div class="span8">
@@ -7,6 +8,7 @@
             <h2>{{ error }}</h2> 
         {% else %}
             <h2>Task {{ task.name }}</h2>
+            {% show_action_button task %}
             <dl class="dl-horizontal">
                 <dt>Description: </dt>
                 <dd>{{task.description}}</dd>
@@ -23,7 +25,7 @@
                 <dd>
                     <textarea id="task-body" rows="10" cols="40" style="display: none">{{task.body}}</textarea>
                 </dd>
-            </dl> 
+            </dl>
             <link href="{{STATIC_URL}}codemirror/codemirror.css" type="text/css" media="all" rel="stylesheet" />
             <script type="text/javascript" src="{{STATIC_URL}}codemirror/codemirror.js"></script>
             <script type="text/javascript" src="{{STATIC_URL}}codemirror/python.js"></script>

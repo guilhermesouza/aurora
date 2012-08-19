@@ -14,7 +14,8 @@
             <dd>&nbsp;{{s.dep_count}}</dd>
             <dt>Host:</dt>
             <dd>&nbsp;{{s.host}}</dd>            
-        </dl>        
+        </dl>
+        {% show_action_button s %}        
         <br>
         <hr>                
             <h3>Settings</h3><br/>
@@ -28,6 +29,7 @@
                     <th>Name</th>                    
                     <th>Description</th>                    
                     <th>&nbsp;</th>                    
+                    <th>&nbsp;</th>     
                   </tr>
                 </thead>
                 <tbody>
@@ -37,10 +39,11 @@
                         <td>{{ t.description }}</td>                        
                         <td>{% if busy %}
                                 <span class="label label-important">{{ busy }}</span>
-                            {% else %}
-                                <a href="{% url 'exec_task' s.id t.id %}" class="btn btn-info ">Exec {{ t.name }}</a>
+                            {% else %}                                
+                                <a href="{% url 'exec_task' s.id t.id %}" class="btn btn-mini btn-info ">Exec {{ t.name }}</a>
                             {% endif %}
                         </td>
+                        <td>{% show_action_button t %}</td>
                       </tr>                 
                     {% endfor%}
                 </tbody>
