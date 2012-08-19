@@ -157,9 +157,21 @@ def get_log(request, deploy_id):
     active_deploy = deploys.get(deploy.id)
     if active_deploy:
         active_deploy.expect([pexpect.TIMEOUT, pexpect.EOF], timeout=1)
-        if not active_deploy.isalive():
+        if not active_deploy.isalive() and deploy.running():
             deploy.finish_with_status(Deploy.COMPLETED)
 
     log = deploy.get_log()
 
     return {'log': log, 'status': deploy.get_status_display()}
+
+
+@login_required
+def cancel(request, deploy_id):
+    """Returning log of deploy"""
+    deploy = get_object_or_404(Deploy, id=deploy_id)
+
+    active_deploy = deploys.get(deploy.id)
+    if active_deploy and active_deploy.terminate():
+        deploy.finish_with_status(Deploy.CANCELED)
+
+    return HttpResponseRedirect(deploy.get_absolute_url())

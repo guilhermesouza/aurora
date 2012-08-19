@@ -231,6 +231,10 @@ class Deploy(models.Model):
         """Ready for run"""
         return self.READY == self.status
 
+    def running(self):
+        """Running this time"""
+        return self.RUNNING == self.status
+
     def build_fabfile(self):
         """Generate fabfile and save to fs"""
         from aurora.cruiser.lib.fabfile import Fabfile
@@ -260,7 +264,7 @@ class Deploy(models.Model):
 
     def get_log(self):
         """Get log from output file or from base"""
-        if self.RUNNING == self.status:
+        if self.running():
             with open('%soutput.log' % self.working_path(), 'r') as f:
                 log = ''.join(f.readlines())
         else:

@@ -28,6 +28,7 @@ urlpatterns += patterns(
     url(r'^deployment/(?P<deploy_id>\d+)/$', 'monitor', name='deployment_monitor'),
     url(r'^deployment/(?P<deploy_id>\d+)/send/$', 'send', name='send_to_deployment'),
     url(r'^deployment/(?P<deploy_id>\d+)/get_log/$', 'get_log', name='deployment_log'),
+    url(r'^deployment/(?P<deploy_id>\d+)/cancel/$', 'cancel', name='cancel_deployment'),
 )
 
 urlpatterns += staticfiles_urlpatterns()
