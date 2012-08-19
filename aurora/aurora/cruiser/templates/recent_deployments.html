@@ -1,6 +1,7 @@
-{% for d in deps %}                
+{% load url from future %}
+{% for d in deps %}  
     <div class="alert {{d.css}}">
-        <h3>{{d.status}}</h3>
+        <h3><a href="{% url 'deployment_monitor' d.id %}">{{d.status}}</a></h3>
         <h4>{{d.stage.project.name}}</h4>
         <div class="span2">
             <b>Stage: </b> {{d.stage.name}}<br/>
