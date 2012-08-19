@@ -3,34 +3,34 @@
 {% load settings_tag %}
 {% load action_button_tag%}
 {% load recent_deployments_tag %}
-    {% block title %} - {{task.name}}{% endblock %}     
+    {% block title %} - {% if error %}{{ error }}{%  else %}{{ task.name }}{% endif %}{% endblock %}     
     {% block content %}    
     <div class="span8">
         {% if error %}
             <h2>{{ error }}</h2> 
         {% else %}
-        <h2>Task {{ task.name }}</h2>
-        <dl class="dl-horizontal">
-            <dt>Description: </dt>
-            <dd>{{task.description}}</dd>
-            <hr/>
-            <dt>#Stages: </dt>
-            <dd>{{stages|length}}</dd>
-            <dd>
-                {% for s in stages %}
-                    <a href="{%url 'project' s.stage.project.id%}">{{s.stage.project.name}}</a> - <a href="{%url 'stage' s.stage.id%}">{{s.stage.name}}</a><br>                    
-                {% endfor%}
-            </dd>
-            <hr/>
-            <dt>Body: </dt>
-            <dd>
-                <textarea id="task-body" rows="10" cols="40" style="display: none">{{task.body}}</textarea>
-            </dd>
-        </dl> 
-        <link href="/static/codemirror/codemirror.css" type="text/css" media="all" rel="stylesheet" />
-        <script type="text/javascript" src="/static/codemirror/codemirror.js"></script>
-        <script type="text/javascript" src="/static/codemirror/python.js"></script>
-        <script type="text/javascript" src="/static/codemirror/setup-readOnly.js"></script>
+            <h2>Task {{ task.name }}</h2>
+            <dl class="dl-horizontal">
+                <dt>Description: </dt>
+                <dd>{{task.description}}</dd>
+                <hr/>
+                <dt>#Stages: </dt>
+                <dd>{{stages|length}}</dd>
+                <dd>
+                    {% for s in stages %}
+                        <a href="{%url 'project' s.stage.project.id%}">{{s.stage.project.name}}</a> - <a href="{%url 'stage' s.stage.id%}">{{s.stage.name}}</a><br>                    
+                    {% endfor%}
+                </dd>
+                <hr/>
+                <dt>Body: </dt>
+                <dd>
+                    <textarea id="task-body" rows="10" cols="40" style="display: none">{{task.body}}</textarea>
+                </dd>
+            </dl> 
+            <link href="/static/codemirror/codemirror.css" type="text/css" media="all" rel="stylesheet" />
+            <script type="text/javascript" src="/static/codemirror/codemirror.js"></script>
+            <script type="text/javascript" src="/static/codemirror/python.js"></script>
+            <script type="text/javascript" src="/static/codemirror/setup-readOnly.js"></script>
         {% endif %}
     </div>    
     {% endblock %}
