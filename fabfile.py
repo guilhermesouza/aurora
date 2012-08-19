@@ -17,7 +17,6 @@ def prod():
     env.apache_user = 'www-data'  # default owner
     env.code_root_parent = '/web'
     env.hosts = ['axium@www.test-axium.com']
-    #env.host = env.user + '@' + env.project_name
     env.release = env.version
     env.code_root = env.code_root_parent + '/' + env.project_name
     env.activate = 'source %s/bin/activate' % (env.code_root)
@@ -27,7 +26,7 @@ def prod():
     env.branch = 'develop'
 
 
-def reset_permissions():
+def setup_permissions():
     """
     Updates permissions on given project root
     """
@@ -92,7 +91,7 @@ def deploy():
     symlink_current_release()
     migrate()
     restart_webservers()
-    reset_permissions()
+    setup_permissions()
 
 
 @with_settings(warn_only=True)
@@ -126,7 +125,6 @@ def symlink_current_release():
     require('release', provided_by=[prod])
     sudo('cd %s/releases;rm current; ln -s %s current;' % (env.code_root, env.release))
     sudo('cd %s/media; ln -s %s/shared/media/file;' % (env.whole_path_symlinked, env.code_root))
-    #sudo('chown -R %s:%s %s/shared' % (env.apache_user, env.apache_user, env.code_root))
 
 
 def restart_webservers():
