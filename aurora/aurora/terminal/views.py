@@ -5,7 +5,7 @@ from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 from aurora.cruiser.models import Deploy
 
-deploys = []
+deploys = {}
 
 
 @render_to('terminal.html')
@@ -29,7 +29,7 @@ def start(request):
     process = pexpect.spawn('fab task', logfile=logfile)
     process.setecho(False)
 
-    deploys.append({deploy_id: process})
+    deploys[deploy_id] = process
     process.expect(pexpect.EOF)
     return HttpResponse("OK")
 
