@@ -8,7 +8,7 @@ server {
                 include /etc/nginx/proxy.conf;
         }
         location /media/ {
-                root /web/aurora.local/releases/current/aurora.local;
+                root /web/aurora.local/releases/current/aurora.local/aurora;
                 expires 30d;
         }
 
