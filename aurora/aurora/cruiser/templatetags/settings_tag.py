@@ -12,9 +12,9 @@ def show_project_settings(project):
 
 def show_stage_settings(stage):
     params = StageParam.objects.filter(stage=stage).order_by('name',)
-    host = stage.host
+    hosts = stage.hosts
     branch = stage.branch
-    return {'params': params, 'host': host, 'branch': branch}
+    return {'params': params, 'host': hosts, 'branch': branch}
 
 register.inclusion_tag('settings.html')(show_project_settings)
 register.inclusion_tag('settings.html')(show_stage_settings)

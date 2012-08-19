@@ -2,7 +2,7 @@ import os
 import pexpect
 import aurora.settings as settings
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.core import urlresolvers
 from django.contrib.auth.decorators import login_required
@@ -102,17 +102,17 @@ def exec_task(request, stage_id, task_id):
     task = get_object_or_404(Task, id=task_id)
     get_object_or_404(StageTask, stage=stage, task=task)
     busy = check_perm(stage, request.user)
-    if request.method == 'POST':
-        form = ExecTaskForm(request.POST)
-        if form.is_valid():
-            branch = form.cleaned_data['branch']
-            comment = form.cleaned_data['comment']
-            deploy = Deploy(stage=stage, task=task, branch=branch, user=request.user, comment=comment)
-            deploy.save()
 
-            run_deploy(deploy)
-    else:
-        form = ExecTaskForm()
+    form = ExecTaskForm(request.POST or None)
+    if form.is_valid():
+        branch = form.cleaned_data['branch']
+        comment = form.cleaned_data['comment']
+        deploy = Deploy(stage=stage, task=task, branch=branch, user=request.user, comment=comment)
+        deploy.save()
+
+        run_deploy(deploy)
+        return HttpResponseRedirect(deploy.get_absolute_url())
+
     return {'form': form, 'p': stage.project, 's': stage, 't': task, 'busy': busy}
 
 
@@ -142,7 +142,8 @@ def send(request, deploy_id):
         return HttpResponse('Forbidden')
 
     process = deploys.get(int(deploy_id))
-    process.sendline(message)
+    if process:
+        process.sendline(message)
 
     return HttpResponse("OK")
 
