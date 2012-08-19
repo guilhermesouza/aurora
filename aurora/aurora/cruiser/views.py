@@ -5,6 +5,8 @@ import aurora.settings as settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.core import urlresolvers
+from django.contrib.auth import logout, login
+from django.contrib.auth.decorators import login_required
 
 
 @render_to('base.html')
@@ -13,6 +15,7 @@ def index(request):
     return {}
 
 
+@login_required
 @render_to('project.html')
 def project(request, project_id):
     from models import Stage, Deploy
@@ -33,6 +36,7 @@ def new_task(request):
     return HttpResponseRedirect(urlresolvers.reverse('admin:cruiser_task_add'))
 
 
+@login_required
 @render_to('stage.html')
 def stage(request, stage_id):
     from models import Stage, Deploy
@@ -48,6 +52,7 @@ def stage(request, stage_id):
         return {'p': project, 's': stage, 'tasks': tasks, 'deps': deployments, 'busy': busy}
 
 
+@login_required
 @render_to('task.html')
 def task(request, task_id):
     task = get_object_or_None(Task, id=task_id)
@@ -62,6 +67,7 @@ def server_error(request):
     return {'STATIC_URL': settings.STATIC_URL}
 
 
+@login_required
 @render_to('exec.html')
 def exec_task(request, stage_id, task_id):
     from models import Stage, Task, Deploy, StageTask
@@ -70,18 +76,17 @@ def exec_task(request, stage_id, task_id):
     stage = get_object_or_404(Stage, id=stage_id)
     task = get_object_or_404(Task, id=task_id)
     get_object_or_404(StageTask, stage=stage, task=task)
-    if stage.already_deploying:
+    if stage.already_deploying():
         busy = 'Sorry stage is deploing now. Please wait a bit and try again.'
     if request.method == 'POST':
         form = ExecTaskForm(request.POST)
         if form.is_valid():
             if form.cleaned_data['branch'] != '':
-                pass
-            #email = form.cleaned_data['email']
-            #deploy = Deploy
+                branch = form.cleaned_data['branch']
+                comment = form.cleaned_data['comment']
+                deploy = Deploy(stage=stage, task=task, branch=branch, user=user)
+                deploy.save()
             return HttpResponseRedirect('/')
     else:
         form = ExecTaskForm()
     return {'form': form, 'p': stage.project, 's': stage, 't': task, 'busy': busy}
-
-

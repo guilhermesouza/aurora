@@ -77,7 +77,6 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -125,7 +124,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'aurora.cruiser',
     'aurora.terminal',
-    'south',
+    'south',    
 )
 
 #Directory for fabfiles
