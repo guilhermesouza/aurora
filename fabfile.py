@@ -92,6 +92,7 @@ def deploy():
     symlink_current_release()
     migrate()
     restart_webservers()
+    reset_permissions()
 
 
 @with_settings(warn_only=True)
