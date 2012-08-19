@@ -6,6 +6,7 @@
     WSGIProcessGroup aurora.fefelovgroup.com
     WSGIApplicationGroup aurora.fefelovgroup.com
     WSGIScriptAlias / /web/aurora.fefelovgroup.com/releases/current/aurora.fefelovgroup.com/aurora/aurora/wsgi.py
+    WSGIRestrictSignal Off
     
     ErrorLog    /var/log/apache2/aurora.fefelovgroup.com-error.log
     CustomLog   /var/log/apache2/aurora.fefelovgroup.com-access.log combined
