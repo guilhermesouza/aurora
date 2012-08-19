@@ -40,20 +40,23 @@ def index(request):
 @login_required
 @render_to('project.html')
 def project(request, project_id):
-    project = get_object_or_None(Project, id=project_id)
-    if not project:
-        return {}
+    project = get_object_or_404(Project, id=project_id)
+
     if request.method == 'POST':
         form = UploadFabFileForm(request.POST, request.FILES)
         if form.is_valid():
             fabfile = request.FILES['file']
             content = fabfile.readlines()
             import_block, tasks = get_source(content)
+
             project.import_block = import_block
+            project.save()
+
             stage = Stage(name="Imported", project=project)
             stage.save()
             stage_user = StageUser(user=request.user, stage=stage)
             stage_user.save()
+
             for task in tasks:
                 task_obj = Task(name=task['name'], body=task['body'])
                 task_obj.save()
@@ -63,7 +66,7 @@ def project(request, project_id):
     else:
         form = UploadFabFileForm()
 
-    stages = Stage.objects.filter(project=project).order_by('name',)
+    stages = project.stage_set.order_by('name',)
     deployments = Deploy.objects.filter(stage__in=stages).order_by('-finished_at',)[:3]
     return {'p': project, 'stages': stages, 'deps': deployments, 'form': form}
 
@@ -83,16 +86,13 @@ def new_stage(request):
 @login_required
 @render_to('stage.html')
 def stage(request, stage_id):
-    busy = None
-    stage = get_object_or_None(Stage, id=stage_id)
-    if not stage:
-        return {}
-    else:
-        project = stage.project
-        tasks = stage.tasks.all()
-        deployments = Deploy.objects.filter(stage=stage).order_by('-finished_at',)[:3]
-        busy = check_perm(stage, request.user)
-        return {'p': project, 's': stage, 'tasks': tasks, 'deps': deployments, 'busy': busy}
+    stage = get_object_or_404(Stage, id=stage_id)
+
+    project = stage.project
+    tasks = stage.tasks.all()
+    deployments = stage.deploy_set.order_by('-finished_at',)[:3]
+    busy = check_perm(stage, request.user)
+    return {'p': project, 's': stage, 'tasks': tasks, 'deps': deployments, 'busy': busy}
 
 
 @login_required
@@ -102,7 +102,7 @@ def task(request, task_id):
     if not task:
         return {'error': "Task is not found"}
     else:
-        stages = StageTask.objects.filter(task=task)
+        stages = task.stagetask_set.all()
         return {'task': task, 'stages': stages}
 
 
@@ -135,10 +135,9 @@ def exec_task(request, stage_id, task_id):
 
 
 def check_perm(stage, user):
-    from models import StageUser
     if stage.already_deploying():
         return 'Sorry stage is deploing now. Please wait a bit and try again.'
-    if not get_object_or_None(StageUser, stage=stage, user=user):
+    if not stage.permitted_for(user):
         return 'You have no rights to exec.'
 
 
