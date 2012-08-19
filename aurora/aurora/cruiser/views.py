@@ -155,10 +155,13 @@ def get_log(request, deploy_id):
     deploy = get_object_or_404(Deploy, id=deploy_id)
 
     active_deploy = deploys.get(deploy.id)
-    if active_deploy:
-        active_deploy.expect([pexpect.TIMEOUT, pexpect.EOF], timeout=1)
-        if not active_deploy.isalive() and deploy.running():
-            deploy.finish_with_status(Deploy.COMPLETED)
+    if active_deploy and active_deploy.isalive():
+        active_deploy.expect([pexpect.EOF, pexpect.TIMEOUT], timeout=0.5)
+    elif deploy.running():
+        if active_deploy:
+            del(deploys[deploy.id])
+        status = deploy.get_status_from_log()
+        deploy.finish_with_status(status)
 
     log = deploy.get_log()
 
@@ -172,6 +175,7 @@ def cancel(request, deploy_id):
 
     active_deploy = deploys.get(deploy.id)
     if active_deploy and active_deploy.terminate():
+        del(deploys[deploy.id])
         deploy.finish_with_status(Deploy.CANCELED)
 
     return HttpResponseRedirect(deploy.get_absolute_url())
