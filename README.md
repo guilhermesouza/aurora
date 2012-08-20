@@ -7,6 +7,7 @@ Inspired by [Webistrano](https://github.com/peritor/webistrano/).
 demo
 ====
 [Is here](http://aurora.fefelovgroup.com/)
+Credentials are tycky:tycky
 
 features
 ========
@@ -20,7 +21,16 @@ features
 * Support for prompting (user input) available on non mod_wsgi (special realization of signals)
 * Provided with fabfile for aurora
 
+install
+=======
+* Run `pip install -r requirements.txt`
+* Go in project folder `cd aurora`
+* Run `python manage.py syncdb`
+* Run `python manage.py migrate`
+* Change DEBUG in aurora/settings.py
+* Run `python manage.py runserver`
+
 license
 ====
-
+* Open http://127.0.0.1:8000/
 Aurora is released under the MIT [license](www.opensource.org/licenses/MIT)
