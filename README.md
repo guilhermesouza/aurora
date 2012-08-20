@@ -29,8 +29,8 @@ install
 * Run `python manage.py migrate`
 * Change DEBUG in aurora/settings.py
 * Run `python manage.py runserver`
+* Open http://127.0.0.1:8000/
 
 license
 ====
-* Open http://127.0.0.1:8000/
 Aurora is released under the MIT [license](www.opensource.org/licenses/MIT)
