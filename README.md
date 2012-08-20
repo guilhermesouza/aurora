@@ -19,3 +19,8 @@ features
 * Import/Export fabfile
 * Support for prompting (user input) available on non mod_wsgi (special realization of signals)
 * Provided with fabfile for aurora
+
+license
+====
+
+Aurora is released under the MIT [license](www.opensource.org/licenses/MIT)
