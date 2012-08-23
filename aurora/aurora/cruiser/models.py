@@ -10,7 +10,9 @@ from validators import validate_presence
 import datetime
 
 #TODO move it to file?
-DEFAULT_IMPORT_BLOCK = "import fabric"
+DEFAULT_IMPORT_BLOCK = """from fabric.api import *
+from fabric.operations import *
+from fabric.decorators import *"""
 
 
 def present(val):

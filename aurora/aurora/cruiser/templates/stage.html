@@ -9,11 +9,11 @@
         <h2>Stage {{ s.name }}</h2>
         <dl class="dl-horizontal">
             <dt>Description: </dt>
-            <dd>{{p.description}}</dd>
+            <dd>{{p.description|default:"None"}}</dd>
             <dt>#Deployments:</dt>
-            <dd>&nbsp;{{s.dep_count}}</dd>
+            <dd>{{s.dep_count}}</dd>
             <dt>Host:</dt>
-            <dd>&nbsp;{{s.host}}</dd>            
+            <dd>{{s.host|default:"None"}}</dd>
         </dl>
         {% show_action_button s %}        
         <br>
