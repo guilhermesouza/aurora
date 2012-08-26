@@ -4,11 +4,6 @@ aurora
 aurora is a web interface for deploy tool fabric created for remote deploying and "console scared" boys.
 Inspired by [Webistrano](https://github.com/peritor/webistrano/).
 
-demo
-====
-[Is here](http://aurora.fefelovgroup.com/)
-Credentials are tycky:tycky
-
 features
 ========
 * Remote deploy anywhere
