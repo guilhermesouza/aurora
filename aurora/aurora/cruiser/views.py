@@ -26,8 +26,8 @@ def run_deploy(deploy):
     command = 'fab %s' % deploy.task.name
     process = pexpect.spawn(command, logfile=logfile)
     process.setecho(False)
-
     deploys[deploy.id] = process
+    process.expect([pexpect.EOF, pexpect.TIMEOUT], timeout=120)
 
 
 @login_required

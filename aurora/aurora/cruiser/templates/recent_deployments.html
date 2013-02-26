@@ -8,8 +8,13 @@
             <b>Task: </b> {{d.task}}
         </div>
         <div class="span2">
-            <b>Rev: </b> {{d.revision}}<br/>
-            <b>Branch: </b> {{d.branch}}
+            {% if d.revision %}
+                <b>Rev: </b> {{d.revision}}<br/>
+            {% endif %}
+
+            {% if d.branch %}
+                <b>Branch: </b> {{d.branch}}
+            {% endif %}
         </div>
         <div>
             <b>Started at: </b>{{d.started_at}}<br/>
