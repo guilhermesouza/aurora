@@ -10,7 +10,9 @@ from validators import validate_presence
 import datetime
 
 #TODO move it to file?
-DEFAULT_IMPORT_BLOCK = "import fabric"
+DEFAULT_IMPORT_BLOCK = """from fabric.api import *
+from fabric.operations import *
+from fabric.decorators import *"""
 
 
 def present(val):
@@ -39,7 +41,7 @@ class Project(ModelWithAdminUrl):
     """Available projects"""
     name = models.CharField(verbose_name=_('name'), max_length=32)
     description = models.CharField(verbose_name=_('description'), max_length=128, null=True, blank=True)
-    repository = models.CharField(verbose_name=_('repository'), help_text=_('will be available in recipes as env.repository'), max_length=128)
+    repository = models.CharField(verbose_name=_('repository'), help_text=_('will be available in recipes as env.repository'), max_length=128, blank=True)
     import_block = models.TextField(verbose_name=_('import block'), help_text=_('used in fabfile import block'), default=DEFAULT_IMPORT_BLOCK)
 
     def __unicode__(self):
