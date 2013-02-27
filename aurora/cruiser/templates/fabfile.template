@@ -1,0 +1,12 @@
+{% autoescape off %}
+{{imports}}
+
+{% for param, value in params %}
+env.{{param}} = {{value}}
+{% endfor %}
+
+{% for task in tasks %}
+{{task}}
+
+{% endfor %}
+{% endautoescape %}
