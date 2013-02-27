@@ -2,9 +2,16 @@ from django.contrib import admin
 from models import *
 
 
+class ProjectStageInline(admin.TabularInline):
+    model = Stage
+
+
 class ProjectAdm(admin.ModelAdmin):
     list_display = ('name', 'repository')
     search_fields = ('name',)
+    inlines = [
+        ProjectStageInline
+    ]
 
     class Media:
         css = {
@@ -60,8 +67,13 @@ class TaskAdm(admin.ModelAdmin):
         )
 
 
+class DeployAdm(admin.ModelAdmin):
+    list_display = ('stage', 'user', 'status')
+
+
 admin.site.register(Project, ProjectAdm)
 admin.site.register(ProjectParam, ProjectParamAdm)
 admin.site.register(Stage, StageAdm)
 admin.site.register(StageParam, StageParamAdm)
 admin.site.register(Task, TaskAdm)
+admin.site.register(Deploy, DeployAdm)

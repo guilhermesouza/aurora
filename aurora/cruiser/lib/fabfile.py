@@ -47,3 +47,9 @@ class Fabfile:
 
         with open(self.file_name(), 'w') as f:
             f.write(self._file_content())
+
+    def mark_executable_task(self, task_name):
+        """Adds a done marker to the end of task. Because of fabric."""
+        for task in self.__tasks:
+            if task_name in task.split('\n')[0]:
+                task += '    print "Done."\n'

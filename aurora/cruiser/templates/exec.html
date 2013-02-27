@@ -11,7 +11,7 @@
         {% else %}
             <h2>Ready to go?</h2>
             <form action="" method="post">
-                <p>You may fill branch or comment field if you want. <br> This value will be available as env.branch in fabfile.</p>
+                <p>You may fill branch or comment field if you want.</p>
                 {% csrf_token %}
                 {{ form.as_p}}
                 <button type="submit" class="btn btn-primary btn-large"><b>Go!</b></button>

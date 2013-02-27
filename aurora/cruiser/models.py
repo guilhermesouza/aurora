@@ -91,7 +91,7 @@ class ProjectParam(ModelWithAdminUrl):
 class Stage(ModelWithAdminUrl):
     """Stages for deployment"""
     name = models.CharField(verbose_name=_('name'), max_length=32)
-    project = models.ForeignKey(Project, verbose_name=_('project'))
+    project = models.ForeignKey(Project, verbose_name=_('project'), related_name=_('stages'))
     branch = models.CharField(verbose_name=_('branch'), help_text=_('will be available in recipes as env.branch'), max_length=16, null=True, blank=True)
     hosts = models.CharField(verbose_name=_('hosts'), help_text=_('will be available in recipes as env.hosts'), max_length=64, null=True, blank=True)
     users = models.ManyToManyField(User, verbose_name=_('users'), through='StageUser', related_name=_('users'))
@@ -213,7 +213,7 @@ class Deploy(models.Model):
     user = models.ForeignKey(User, verbose_name=_('user'))
     stage = models.ForeignKey(Stage, verbose_name=_('stage'))
     task = models.ForeignKey(Task, verbose_name=_('task'))
-    revision = models.CharField(verbose_name=_('revision'), max_length=32)
+    revision = models.CharField(verbose_name=_('revision'), max_length=32, blank=True)
     started_at = models.DateTimeField(verbose_name=_('started at'), null=True)
     finished_at = models.DateTimeField(verbose_name=_('finished at'), null=True)
     log = models.TextField(verbose_name=_('log'), default="")
@@ -255,6 +255,7 @@ class Deploy(models.Model):
                           self.env_params())
 
         fabfile.build()
+        fabfile.mark_executable_task(self.task.name)
 
     def working_path(self):
         """Path to file"""

@@ -1,5 +1,6 @@
 import os
 import pexpect
+from multiprocessing import Process
 import aurora.settings as settings
 
 from django.http import HttpResponseRedirect, HttpResponse
@@ -27,13 +28,18 @@ def run_deploy(deploy):
     process = pexpect.spawn(command, logfile=logfile)
     process.setecho(False)
     deploys[deploy.id] = process
-    process.expect([pexpect.EOF, pexpect.TIMEOUT], timeout=120)
+
+    try:
+        os.fork()
+        process.expect([pexpect.EOF, pexpect.TIMEOUT], timeout=0.5)
+    except:
+        pass
 
 
 @login_required
 @render_to('base.html')
 def index(request):
-    deployments = Deploy.objects.all().order_by('-finished_at',)[:10]
+    deployments = Deploy.objects.all().order_by('-started_at',)[:10]
     return {'deps': deployments}
 
 
@@ -66,8 +72,8 @@ def project(request, project_id):
     else:
         form = UploadFabFileForm()
 
-    stages = project.stage_set.order_by('name',)
-    deployments = Deploy.objects.filter(stage__in=stages).order_by('-finished_at',)[:3]
+    stages = project.stages.order_by('name',)
+    deployments = Deploy.objects.filter(stage__in=stages).order_by('-started_at',)[:3]
     return {'p': project, 'stages': stages, 'deps': deployments, 'form': form}
 
 
@@ -90,7 +96,7 @@ def stage(request, stage_id):
 
     project = stage.project
     tasks = stage.tasks.all()
-    deployments = stage.deploy_set.order_by('-finished_at',)[:3]
+    deployments = stage.deploy_set.order_by('-started_at',)[:3]
     busy = check_perm(stage, request.user)
     return {'p': project, 's': stage, 'tasks': tasks, 'deps': deployments, 'busy': busy}
 
