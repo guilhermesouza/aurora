@@ -24,7 +24,7 @@ How to run it?
 * Run `pip install fabric`
 * Go in project folder `cd aurora`
 * Run `fab local_setup`
-* Run `python manage.py runserver`
+* Run `python manage.py run_gunicorn`
 * Open http://127.0.0.1:8000/ in browser
 
 

@@ -31,7 +31,7 @@ def run_deploy(deploy):
 
     try:
         os.fork()
-        process.expect([pexpect.EOF, pexpect.TIMEOUT], timeout=0.5)
+        process.expect([pexpect.EOF, pexpect.TIMEOUT], timeout=2)
     except:
         pass
 

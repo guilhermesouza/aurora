@@ -122,6 +122,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'aurora.cruiser',
     'south',
+    'gunicorn'
 )
 
 #Directory for fabfiles

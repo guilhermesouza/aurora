@@ -255,7 +255,6 @@ class Deploy(models.Model):
                           self.env_params())
 
         fabfile.build()
-        fabfile.mark_executable_task(self.task.name)
 
     def working_path(self):
         """Path to file"""
