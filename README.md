@@ -4,6 +4,8 @@ What is it?
 Aurora is a web interface for deploy tool fabric created for remote deploying and "console scared" boys.
 Inspired by [Webistrano](https://github.com/peritor/webistrano/).
 
+Aurora is unstable and some things may not work.
+
 
 Features:
 ========
@@ -13,7 +15,7 @@ Features:
 * Supports custom branchs for deployments
 * Deployment history
 * Granularity permissions for stages and users control
-* Import/Export fabfile
+* Import fabfile
 * Support for prompting (user input) available on non mod_wsgi (special realization of signals)
 
 
