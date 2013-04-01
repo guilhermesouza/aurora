@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block body %}
+    <div id='logo'>
+        <!-- Photo address: http://www.flickr.com/photos/lit_foto/329884074/in/set-72157610911446183/ -->
+        <a href="{{ url_for('main.index') }}"><img src="{{ url_for('static', filename='images/logo.jpg') }}" /></a>
+    </div>
+
+    <hr/>
+
+    <div id="login-block">
+        <h1 class='center'>Please, log in:</h1>
+        <form action="{{ url_for('main.login') }}" method="post" >
+        </form>
+    </div>
+{% endblock %}
+
+{% block footer %}
+    <a href="http://github.com/ak3n/aurora"><img style="position: fixed; top: 0; right: 0; border: 0;"
+    src="http://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+{% endblock %}

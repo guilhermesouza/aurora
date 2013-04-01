@@ -1,0 +1,5 @@
+body {font-family: 'Georgia', serif; font-size: 17px; color: #000;}
+#content {width: auto; margin: 50px auto;}
+#logo, #login-block {width: 500px; margin: auto;}
+
+.center {text-align: center;}
