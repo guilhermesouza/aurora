@@ -12,7 +12,16 @@
 
     <div id="login-block">
         <h1 class='center'>Please, log in:</h1>
-        <form action="{{ url_for('main.login') }}" method="post" >
+        <form class='center' action="" method="post" name="login" >
+            {{ form.hidden_tag() }}
+            <p><label for="username">Username:</label></p>
+            <p>{{ form.username }}</p>
+
+            <p><label for="password">Password:</label></p>
+            <p>{{ form.password }}</p>
+
+            <p><label for="remember_me">Remember Me</label> {{ form.remember_me }}</p>
+            <p><input type="submit" value="Sign In"></p>
         </form>
     </div>
 {% endblock %}
