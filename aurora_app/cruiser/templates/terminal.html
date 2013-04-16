@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="span8">
+    <h2>Deployment #{{ deploy.id }}</h2>
+
+    <div id="terminal-view">
+    </div>
+
+    {% if deploy.running %}
+        {% include "_deploy_toolbar.html" %}
+    {% endif %}
+
+    <script>
+        $(document).ready(function () {
+            $('#terminal-view').load("{% url deployment_log deploy.id%}");
+        });
+    </script>
+</div>
+{% endblock %}

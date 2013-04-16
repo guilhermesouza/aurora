@@ -1,0 +1,65 @@
+{% extends "base.html" %} 
+{% load url from future %}
+{% load settings_tag %}
+{% load action_button_tag%}
+{% load recent_deployments_tag %}
+    {% block title %} - project {{ p.name }}{% endblock %}     
+    {% block content %}    
+    <div class="span8">            
+        <h2>Project: {{ p.name }}</h2>
+        <dl class="dl-horizontal">
+            <dt>Description: </dt>
+            <dd>{{p.description|default:"None"}}</dd>
+            <dt>#Deployments:</dt>
+            <dd>{{p.dep_count}}</dd>
+            <dt>Stages: </dt>
+            <dd>
+                {% for s in stages %}
+                    <a href="{%url 'stage' s.id%}">{{s.name}}</a><br>                    
+                {% endfor%}
+            </dd>
+            <dt>Fabfile import:</dt>
+            <dd>
+                <form method='POST' enctype="multipart/form-data">
+                    {%csrf_token%}
+                    {{ form.as_p}}
+                    <input type='submit' value='Upload' class='btn btn-primary'>
+                </form>
+            </dd>
+        </dl>        
+        {% show_action_button p %}
+        <br>
+        <hr>                
+            <h3>Settings</h3><br/>
+                {% show_project_settings p%}                                    
+                <hr>
+                <br>
+            
+            <h3>Stages</h3><br/>
+            <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>                    
+                    <th>Name</th>                    
+                    <th>Deployments</th>
+                    <th>&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for s in stages %}            
+                      <tr>                        
+                        <td>{{ s.name }}</td>
+                        <td>{{ s.dep_count }}</td>                        
+                        <td>
+                           {% show_action_button s %}
+                        </td>
+                      </tr>                 
+                    {% endfor%}
+                </tbody>
+            </table>            
+
+            <hr>
+            <h3>Recent deployments</h3><br/>
+            {% show_recent_deployments deps%}     
+        </div>
+    {% endblock %}
+

@@ -1,0 +1,57 @@
+{% extends "base.html" %} 
+{% load url from future %}
+{% load settings_tag %}
+{% load action_button_tag%}
+{% load recent_deployments_tag %}
+    {% block title %} - project {{ p.name }} - stage {{ s.name }}{% endblock %}     
+    {% block content %}    
+    <div class="span8">            
+        <h2>Stage: {{ s.name }}</h2>
+        <dl class="dl-horizontal">
+            <dt>Description: </dt>
+            <dd>{{p.description|default:"None"}}</dd>
+            <dt>#Deployments:</dt>
+            <dd>{{s.dep_count}}</dd>
+            <dt>Host:</dt>
+            <dd>{{s.host|default:"None"}}</dd>
+        </dl>
+        {% show_action_button s %}        
+        <br>
+        <hr>                
+            <h3>Settings</h3><br/>
+                {% show_stage_settings s%}                                    
+                <hr>
+                <br>            
+            <h3>Tasks</h3><br/>
+            <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>                    
+                    <th>Name</th>                    
+                    <th>Description</th>                    
+                    <th>&nbsp;</th>                    
+                    <th>&nbsp;</th>     
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for t in tasks %}            
+                      <tr>                        
+                        <td><a href="{% url 'task' t.id %}">{{ t.name }}</a></td>
+                        <td>{{ t.description }}</td>                        
+                        <td>{% if busy %}
+                                <span class="label label-important">{{ busy }}</span>
+                            {% else %}                                
+                                <a href="{% url 'exec_task' s.id t.id %}" class="btn btn-mini btn-info ">Exec {{ t.name }}</a>
+                            {% endif %}
+                        </td>
+                        <td>{% show_action_button t %}</td>
+                      </tr>                 
+                    {% endfor%}
+                </tbody>
+            </table>            
+
+            <hr>
+            <h3>Recent deployments</h3><br/>
+            {% show_recent_deployments deps%}      
+        </div>    
+    {% endblock %}
+
