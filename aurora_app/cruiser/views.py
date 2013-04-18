@@ -27,13 +27,9 @@ def run_deploy(deploy):
     command = 'fab %s' % deploy.task.name
     process = pexpect.spawn(command, logfile=logfile)
     process.setecho(False)
-    deploys[deploy.id] = process
+    process.expect([pexpect.EOF, pexpect.TIMEOUT], timeout=20)
 
-    try:
-        os.fork()
-        process.expect([pexpect.EOF, pexpect.TIMEOUT], timeout=2)
-    except:
-        pass
+    deploys[deploy.id] = process
 
 
 @login_required
@@ -98,7 +94,8 @@ def stage(request, stage_id):
     tasks = stage.tasks.all()
     deployments = stage.deploy_set.order_by('-started_at',)[:3]
     busy = check_perm(stage, request.user)
-    return {'p': project, 's': stage, 'tasks': tasks, 'deps': deployments, 'busy': busy}
+    return {'p': project, 's': stage, 'tasks': tasks, 'deps': deployments,
+            'busy': busy}
 
 
 @login_required
@@ -131,13 +128,15 @@ def exec_task(request, stage_id, task_id):
     if form.is_valid():
         branch = form.cleaned_data['branch']
         comment = form.cleaned_data['comment']
-        deploy = Deploy(stage=stage, task=task, branch=branch, user=request.user, comment=comment)
+        deploy = Deploy(stage=stage, task=task, branch=branch,
+                        user=request.user, comment=comment)
         deploy.save()
 
         run_deploy(deploy)
         return HttpResponseRedirect(deploy.get_absolute_url())
 
-    return {'form': form, 'p': stage.project, 's': stage, 't': task, 'busy': busy}
+    return {'form': form, 'p': stage.project, 's': stage, 't': task,
+            'busy': busy}
 
 
 def check_perm(stage, user):
@@ -156,21 +155,6 @@ def monitor(request, deploy_id):
         return HttpResponse(status=403)
 
     return {'deploy': deploy}
-
-
-@login_required
-def send(request, deploy_id):
-    """Sends a message to process"""
-    message = request.POST.get('message')
-
-    if not message:
-        return HttpResponse('Forbidden')
-
-    process = deploys.get(int(deploy_id))
-    if process:
-        process.sendline(message)
-
-    return HttpResponse("OK")
 
 
 @login_required

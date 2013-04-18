@@ -26,7 +26,6 @@ urlpatterns += patterns(
     url(r'^stage/(?P<stage_id>\d+)/(?P<task_id>\d+)/exec$', 'exec_task', name='exec_task'),
     url(r'^stage/new$', 'new_stage', name='new_stage'),
     url(r'^deployment/(?P<deploy_id>\d+)/$', 'monitor', name='deployment_monitor'),
-    url(r'^deployment/(?P<deploy_id>\d+)/send/$', 'send', name='send_to_deployment'),
     url(r'^deployment/(?P<deploy_id>\d+)/get_log/$', 'get_log', name='deployment_log'),
     url(r'^deployment/(?P<deploy_id>\d+)/cancel/$', 'cancel', name='cancel_deployment'),
 )

@@ -1,5 +1,5 @@
 What is it?
-======
+===========
 
 Aurora is a web interface for deploy tool fabric created for remote deploying and "console scared" boys.
 Inspired by [Webistrano](https://github.com/peritor/webistrano/).
@@ -16,17 +16,15 @@ Features:
 * Deployment history
 * Granularity permissions for stages and users control
 * Import fabfile
-* Support for prompting (user input) available on non mod_wsgi (special realization of signals)
 
 
 How to run it?
-=======
+==============
 
 * Create env `virtualenv aurora` somewhere and activate it: `source aurora/bin/activate`
 * Run `pip install fabric`
 * Go in project folder `cd aurora`
-* Run `fab local_setup`
-* Run `python manage.py run_gunicorn`
+* Run `fab setup`
 * Open http://127.0.0.1:8000/ in browser
 
 
