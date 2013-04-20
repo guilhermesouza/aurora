@@ -1,7 +1,14 @@
-from flask.ext.wtf import Form, Required, TextField, BooleanField, PasswordField
+from flask.ext.wtf import (Form, Required, TextField, BooleanField,
+                           PasswordField, TextAreaField)
 
 
 class LoginForm(Form):
-    username = TextField('username', validators=[Required()])
-    password = PasswordField('password', validators=[Required()])
-    remember_me = BooleanField('remember_me', default=False)
+    username = TextField('Username', validators=[Required()])
+    password = PasswordField('Password', validators=[Required()])
+    remember_me = BooleanField('Remember me', default=False)
+
+
+class CreateProjectForm(Form):
+    name = TextField('Name', validators=[Required()])
+    description = TextAreaField('Description')
+    repo_path = TextField('Repo path')

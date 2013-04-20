@@ -36,7 +36,7 @@ class User(db.Model):
         return unicode(self.id)
 
     def __repr__(self):
-        return '<User {}>'.format(self.username)
+        return u'<User {}>'.format(self.username)
 
 
 class Project(db.Model):
@@ -45,7 +45,6 @@ class Project(db.Model):
     name = db.Column(db.String(32))
     description = db.Column(db.String(128), nullable=True)
     vcs_url = db.Column(db.String(128), nullable=True)
-    vcs_type = db.Column(db.SmallInteger, nullable=True)
 
     def __init__(self, *args, **kwargs):
         super(Project, self).__init__(*args, **kwargs)
@@ -55,6 +54,7 @@ class Stage(db.Model):
     __tablename__ = "stages"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32))
+    code = db.Column(db.Text(), nullable=True)
     branch = db.Column(db.String(32), nullable=True)
 
     def __init__(self, *args, **kwargs):

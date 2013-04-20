@@ -3,30 +3,39 @@
 {% block title %}Log in{% endblock %}
 
 {% block body %}
-    <div id='logo'>
-        <!-- Photo address: http://www.flickr.com/photos/lit_foto/329884074/in/set-72157610911446183/ -->
-        <a href="{{ url_for('main.index') }}"><img src="{{ url_for('static', filename='images/logo.jpg') }}" /></a>
+    <div class='container'>
+      <div class='row'>
+        <div class='offset3 span6'>
+
+          <div id='logo'>
+            <!-- Photo address: http://www.flickr.com/photos/lit_foto/329884074/in/set-72157610911446183/ -->
+            <a href="{{ url_for('main.index') }}"><img src="{{ url_for('static', filename='images/logo.jpg') }}" /></a>
+          </div>
+
+          <hr/>
+
+          <div id="login-block">
+            <h1 class='center'>Please, log in:</h1>
+            <form class='center' action="" method="post" name="login" >
+              {{ form.hidden_tag() }}
+              <p>{{ form.username.label }}</p>
+              <p>{{ form.username }}</p>
+
+              <p>{{ form.password.label }}</p>
+              <p>{{ form.password }}</p>
+
+              <p>{{ form.remember_me.label }}</p>
+              <p>{{ form.remember_me }}</p>
+
+              <p><input type="submit" value="Sign In"></p>
+            </form>
+          </div>
+
+      </div>
     </div>
-
-    <hr/>
-
-    <div id="login-block">
-        <h1 class='center'>Please, log in:</h1>
-        <form class='center' action="" method="post" name="login" >
-            {{ form.hidden_tag() }}
-            <p><label for="username">Username:</label></p>
-            <p>{{ form.username }}</p>
-
-            <p><label for="password">Password:</label></p>
-            <p>{{ form.password }}</p>
-
-            <p><label for="remember_me">Remember Me</label> {{ form.remember_me }}</p>
-            <p><input type="submit" value="Sign In"></p>
-        </form>
-    </div>
+  </div>
 {% endblock %}
 
-{% block footer %}
-    <a href="http://github.com/ak3n/aurora"><img style="position: fixed; top: 0; right: 0; border: 0;"
-    src="http://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+{% block js %}
+  <script src="{{ url_for('static', filename='js/bootstrap-alert.js') }}"></script>
 {% endblock %}

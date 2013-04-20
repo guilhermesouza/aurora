@@ -3,5 +3,35 @@
 {% block title %}Welcome{% endblock %}
 
 {% block body %}
-
+  <div class='container-fluid'>
+    <div class="span4 sidebar center">
+        <ul class='unstyled'>
+            <li><a href="{{ url_for('main.index') }}" class='black'><h2>Aurora</h2></a></li>
+            <hr />
+            <li>Welcome, <strong>{{ g.user.username }}</strong>.</li>
+            <li><a href="{{ url_for('main.logout') }}">Logout.</a></li>
+        </ul>
+        <hr />
+        {% if projects %}
+            <h3>Projects:</h3>
+            <ul class='unstyled'>
+                {% for project in projects %}
+                    <li>{{ project.name }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <h3>No projects</h3>
+        {% endif %}
+    </div>
+    <div class="span10">
+        {% block content %}
+            {% if not projects %}
+                <h4 class='alert'>
+                    No available projects. <a href='{{ url_for('projects.create') }}'>Try to create.</a>
+                </h4>
+            {% else %}
+            {% endif %}
+        {% endblock %}
+    </div>
+  </div>
 {% endblock %}
