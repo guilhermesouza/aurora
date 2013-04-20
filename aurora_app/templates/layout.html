@@ -1,37 +1,48 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <title>{% block title %}{% endblock %} | Aurora</title>
-        
-        <meta charset="utf-8">
+  <head>
+    <title>{% block title %}{% endblock %} | Aurora</title>
+    
+    <meta charset="utf-8">
 
-        <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='css/style.css') }}" />
-        <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='css/style.css') }}" />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png') }}">
 
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    </head>
-
-    <body>
-        {% block flashes %}
-            <div id='flashes'>
-                {% with messages = get_flashed_messages() %}
-                  {% if messages %}
-                    <ul class='flashes'>
-                    {% for message in messages %}
-                      <li>{{ message }}</li>
-                    {% endfor %}
-                    </ul>
-                  {% endif %}
-                {% endwith %}
-            </div>
-        {% endblock %}
-        
-        <div id='content'>
-            {% block body %}
-            {% endblock %}
-        </div>
-    </body>
-
-    {% block footer %}
+    {% block css %}
     {% endblock %}
+<!-- 
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+ -->
+  </head>
+
+  <body>
+    {% block flashes %}
+      <div id='flashes'>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+          <ul class='unstyled'>
+          {% for message in messages %}
+            <li>
+            <div class='alert'>
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+              {{ message }}
+            </div>
+          </li>
+          {% endfor %}
+          </ul>
+          {% endif %}
+        {% endwith %}
+      </div>
+    {% endblock %}
+
+    {% block body %}
+    {% endblock %}
+  </body>
+
+  {% block js %}
+  {% endblock %}
+
+  {% block footer %}
+  {% endblock %}
 </html>

@@ -37,4 +37,10 @@ def dated_url_for(endpoint, **values):
 
 
 from aurora_app.views import main
+from aurora_app.views import projects
+
 app.register_blueprint(main.mod)
+app.register_blueprint(projects.mod)
+
+# Enable context processors
+from aurora_app.context_processors import projects

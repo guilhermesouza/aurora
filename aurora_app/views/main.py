@@ -3,7 +3,7 @@ from flask.ext.login import login_user, logout_user
 
 from aurora_app import login_manager
 from aurora_app.models import User
-from aurora_app.utils import requires_login
+from aurora_app.decorators import requires_login
 from aurora_app.forms import LoginForm
 
 mod = Blueprint('main', __name__)
