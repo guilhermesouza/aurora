@@ -8,7 +8,7 @@ class LoginForm(Form):
     remember_me = BooleanField('Remember me', default=False)
 
 
-class CreateProjectForm(Form):
+class ProjectForm(Form):
     name = TextField('Name', validators=[Required()])
     description = TextAreaField('Description')
     repo_path = TextField("Git repo's path")
