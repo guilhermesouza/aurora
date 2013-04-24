@@ -1,11 +1,11 @@
 {% extends 'main/index.html' %}
 
-{% block title %}Create a new project{% endblock %}
+{% block title %}Edit | {{ project.name }} : Projects{% endblock %}
 
 {% block content %}
-  <h1>Create a new project</h1>
+  <h1>Editing: {{ project.name }}</h1>
   <hr />
-  <form method="post" action="" name="create_project">
+  <form method="post" action="" name="edit_project">
     {{ form.hidden_tag() }}
 
     <ul class='unstyled'>

@@ -3,11 +3,41 @@
 {% block title %}{{ project.name }} : Projects{% endblock %}
 
 {% block content %}
-  <h1>Project: {{ project.name }}</h1>
+  <ul class='unstyled inline project-title'>
+    <li><h1>{{ project.name }}</h1></li>
+    <li><h4>#</h4></li>
+    <li><a href="{{ url_for('projects.edit', project_id=project.id) }}">Edit</a></li>
+    <li>|</li>
+    <li><a id="delete">Delete</a></li>
+  </ul>
   <hr />
   {% if project.description %}
-    <h3>Description:</h3>
+    <h4>Description:</h4>
     <p>{{ project.description }}</p>
     <hr />
   {% endif %}
+
+  {% if project.repo_path %}
+    <h4>Git repo's path</h4>
+    <p>
+      {{ project.repo_path }}
+    </p>
+    <hr />
+  {% endif %}
+{% endblock %}
+
+{% block js %}
+  <script src="{{ url_for('static', filename='js/bootbox.min.js') }}"></script>
+
+  <script>
+    $(document).ready(function() {
+      $("#delete").click(function() {
+        bootbox.confirm("Are you sure?<br />All stages will be removed.", function(result) {
+          if (result) {
+            document.location.href = "{{ url_for('projects.delete', project_id=project.id) }}";
+          }
+        }); 
+      });
+    });
+  </script>
 {% endblock %}
