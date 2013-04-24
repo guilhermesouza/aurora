@@ -11,4 +11,4 @@ class LoginForm(Form):
 class CreateProjectForm(Form):
     name = TextField('Name', validators=[Required()])
     description = TextAreaField('Description')
-    repo_path = TextField('Repo path')
+    repo_path = TextField("Git repo's path")

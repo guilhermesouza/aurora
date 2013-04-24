@@ -12,4 +12,8 @@ def init():
 
     admin = User(username='admin', password='admin', role=ROLES['ADMIN'])
     db.session.add(admin)
+
+    user = User(username='user', password='user')
+    db.session.add(user)
+
     db.session.commit()

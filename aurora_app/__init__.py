@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, url_for, g
+from flask import Flask, render_template, url_for, g, request, redirect
 from flask.ext.login import LoginManager, current_user
 
 app = Flask(__name__)
@@ -17,8 +17,13 @@ def not_found(error):
 
 
 @app.before_request
-def before_request():
+def check_login():
     g.user = current_user if current_user.is_authenticated() else None
+
+    if (request.endpoint and request.endpoint != 'static' and
+       (not getattr(app.view_functions[request.endpoint], 'is_public', False)
+       and g.user is None)):
+        return redirect(url_for('main.login', next=request.path))
 
 
 # To exclude caching of static
