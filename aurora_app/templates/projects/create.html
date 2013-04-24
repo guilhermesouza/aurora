@@ -1,49 +1,23 @@
 {% extends 'main/index.html' %}
 
-{% block title %}Create project{% endblock %}
+{% block title %}Create a new project{% endblock %}
 
 {% block content %}
+  <h3>Create a new project</h3>
   <form method="post" action="" name="create_project">
     {{ form.hidden_tag() }}
-    <div id="wizard">
-      <ol>
-        <li>Project info</li>
-        <li>Project info</li>
-        <li>Unordered List</li>
-      </ol>
-      <div>
-        <ul class='unstyled'>
-          <li>{{ form.name.label }}</li>
-          <li>{{ form.name }}</li>
 
-          <li>{{ form.description.label }}</li>
-          <li>{{ form.description }}</li>
+    <ul class='unstyled'>
+      <li>{{ form.name.label }}</li>
+      <li>{{ form.name(required='') }}</li>
 
-          <li>{{ form.repo_path.label }}</li>
-          <li>{{ form.repo_path }}</li>
-        </ul>
-      </div>
-      <div>
-        <p>sdasd</p>
-      </div>
-      <div>
-        <ul>
-           <li>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</li>
-           <li>Aliquam tincidunt mauris eu risus.</li>
-           <li>Vestibulum auctor dapibus neque.</li>
-        </ul>
-      </div>
-    </div>
+      <li>{{ form.description.label }}</li>
+      <li>{{ form.description }}</li>
+
+      <li>{{ form.repo_path.label }}</li>
+      <li>{{ form.repo_path }}</li>
+
+      <li><button class='btn btn-primary'>Submit</button></li>
+    </ul>
   </form>
-{% endblock %}
-
-{% block css %}
-  <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='css/bwizard.min.css') }}" />
-{% endblock %}
-
-{% block js %}
-  <script src="{{ url_for('static', filename='js/bwizard.min.js') }}"></script>
-  <script type="text/javascript">
-     $("#wizard").bwizard();
-  </script>
 {% endblock %}

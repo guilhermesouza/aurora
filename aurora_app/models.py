@@ -35,6 +35,9 @@ class User(db.Model):
     def get_id(self):
         return unicode(self.id)
 
+    def is_an_admin(self):
+        return self.role == ROLES['ADMIN']
+
     def __repr__(self):
         return u'<User {}>'.format(self.username)
 
@@ -44,7 +47,7 @@ class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32))
     description = db.Column(db.String(128), nullable=True)
-    vcs_url = db.Column(db.String(128), nullable=True)
+    repo_path = db.Column(db.String(128), nullable=True)
 
     def __init__(self, *args, **kwargs):
         super(Project, self).__init__(*args, **kwargs)

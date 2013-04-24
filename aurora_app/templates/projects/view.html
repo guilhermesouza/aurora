@@ -1,0 +1,13 @@
+{% extends 'main/index.html' %}
+
+{% block title %}{{ project.name }} : Projects{% endblock %}
+
+{% block content %}
+  <h1>Project: {{ project.name }}</h1>
+  <hr />
+  {% if project.description %}
+    <h3>Description:</h3>
+    <p>{{ project.description }}</p>
+    <hr />
+  {% endif %}
+{% endblock %}
