@@ -1,5 +1,9 @@
 from flask.ext.wtf import (Form, Required, TextField, BooleanField,
-                           PasswordField, TextAreaField)
+                           PasswordField)
+
+from wtforms.ext.sqlalchemy.orm import model_form
+from aurora_app.models import Stage, Project
+from aurora_app.database import db
 
 
 class LoginForm(Form):
@@ -7,8 +11,6 @@ class LoginForm(Form):
     password = PasswordField('Password', validators=[Required()])
     remember_me = BooleanField('Remember me', default=False)
 
+ProjectForm = model_form(Project, db.session, Form)
 
-class ProjectForm(Form):
-    name = TextField('Name', validators=[Required()])
-    description = TextAreaField('Description')
-    repo_path = TextField("Git repo's path")
+StageForm = model_form(Stage, db.session, Form)

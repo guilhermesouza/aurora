@@ -1,0 +1,45 @@
+{% extends 'main/index.html' %}
+
+{% block title %}{{ stage.name }} : {{ stage.project.name }}{% endblock %}
+
+{% block content %}
+  <ul class='unstyled inline view-title'>
+    <li>
+      <h1>
+        <a href="{{ url_for('projects.view', project_id=stage.project.id) }}">
+          {{ stage.project.name }}
+        </a> / {{ stage.name }}
+      </h1>
+    </li>
+    {% if g.user.can('edit_stage') %}
+      <li><a href="{{ url_for('stages.edit', stage_id=stage.id) }}">Edit</a></li>
+    {% endif %}
+    {% if g.user.can('delete_stage') %}
+      <li><a id="delete">Delete</a></li>
+    {% endif %}
+  </ul>
+
+  <hr />
+
+  <div class='alert alert-info'>
+    <p><strong>Code:</strong></p>
+    <code>{{ stage.code }}</code>
+  </div>
+
+{% endblock %}
+
+{% block js %}
+  <script src="{{ url_for('static', filename='js/bootbox.min.js') }}"></script>
+
+  <script>
+    $(document).ready(function() {
+      $("#delete").click(function() {
+        bootbox.confirm("Are you sure?", function(result) {
+          if (result) {
+            document.location.href = "{{ url_for('stages.delete', stage_id=stage.id) }}";
+          }
+        }); 
+      });
+    });
+  </script>
+{% endblock %}

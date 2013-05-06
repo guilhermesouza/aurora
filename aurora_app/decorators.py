@@ -7,11 +7,11 @@ def public(function):
     return function
 
 
-def need_to_be(role):
+def must_be_able_to(action):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            if g.user.role != role:
+            if not g.user.can(action):
                 flash(u"You can't do that. You don't have permission.")
                 return redirect(request.referrer)
             return f(*args, **kwargs)

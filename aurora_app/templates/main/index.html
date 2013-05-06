@@ -2,21 +2,49 @@
 
 {% block title %}Welcome{% endblock %}
 
+{% block nav %}
+  <div class="navbar">
+    <div class="navbar-inner">
+      <a class="brand" href="{{ url_for('main.index') }}">Aurora</a>
+
+      <ul class="nav">
+        {% if g.user.can('create_project') %}
+          <li><a href="{{ url_for('projects.create') }}">New project</a></li>
+        {% endif %}
+        {% if g.user.can('create_stage') %}
+          <li><a href="{{ url_for('stages.create') }}">New stage</a></li>
+        {% endif %}
+      </ul>
+
+      <ul class="nav pull-right">
+        <li><a><i class="icon-user"></i> <strong>{{ g.user.username }}</strong></a></li>
+        <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+{% endblock %}
+
 {% block body %}
   <div class='container-fluid'>
-    <div class="span4 sidebar center">
-      <ul class='unstyled'>
-        <li><a href="{{ url_for('main.index') }}" class='black'><h1>Aurora</h1></a></li>
-        <hr />
-        <li>Welcome, <strong>{{ g.user.username }}</strong>.</li>
-        <li><a href="{{ url_for('main.logout') }}">Logout.</a></li>
-      </ul>
-      <hr />
+    <div class="span3 sidebar center">
       {% if projects %}
         <h3>Projects:</h3>
-        <ul class='unstyled'>
+        <ul class='nav nav-list well'>
           {% for project in projects %}
-            <li><a href="{{ url_for('projects.view', project_id=project.id) }}">{{ project.name }}</a></li>
+            <li>
+              <a href="{{ url_for('projects.view', project_id=project.id) }}"><strong>{{ project.name }}</strong></a>
+              {% if project.stages %}
+                <ul>
+                  {% for stage in project.stages %}
+                    <li><a href="{{ url_for('stages.view', stage_id=stage.id) }}">{{ stage.name }}</a></li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </li>
+
+            {% if not loop.last %}
+              <li class="divider"></li>
+            {% endif %}
           {% endfor %}
         </ul>
       {% else %}
@@ -28,9 +56,6 @@
         {% if not projects %}
           <h4 class='alert'>
             No available projects.
-            {% if g.user.is_an_admin() %}
-              <a href='{{ url_for('projects.create') }}'>Try to create.</a>
-            {% endif %}
           </h4>
         {% else %}
         {% endif %}
