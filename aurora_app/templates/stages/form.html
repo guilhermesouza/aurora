@@ -1,0 +1,16 @@
+<form method="post" action="">
+  {{ form.hidden_tag() }}
+
+  <ul class='unstyled'>
+    <li>{{ form.name.label }}</li>
+    <li>{{ form.name(required='') }}</li>
+
+    <li>{{ form.code.label }}</li>
+    <li>{{ form.code }}</li>
+
+    <li>{{ form.project.label }}</li>
+    <li>{{ form.project }}</li>
+
+    <li><button class='btn btn-primary'>Submit</button></li>
+  </ul>
+</form>

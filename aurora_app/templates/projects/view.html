@@ -1,28 +1,44 @@
 {% extends 'main/index.html' %}
 
-{% block title %}{{ project.name }} : Projects{% endblock %}
+{% block title %}{{ project.name }}{% endblock %}
 
 {% block content %}
-  <ul class='unstyled inline project-title'>
+  <ul class='unstyled inline view-title'>
     <li><h1>{{ project.name }}</h1></li>
-    <li><h4>#</h4></li>
-    <li><a href="{{ url_for('projects.edit', project_id=project.id) }}">Edit</a></li>
-    <li>|</li>
-    <li><a id="delete">Delete</a></li>
+    {% if g.user.can('edit_project') %}
+      <li><a href="{{ url_for('projects.edit', project_id=project.id) }}">Edit</a></li>
+    {% endif %}
+    {% if g.user.can('delete_project') %}
+      <li><a id="delete">Delete</a></li>
+    {% endif %}
   </ul>
-  <hr />
-  {% if project.description %}
-    <h4>Description:</h4>
-    <p>{{ project.description }}</p>
-    <hr />
-  {% endif %}
 
-  {% if project.repo_path %}
-    <h4>Git repo's path</h4>
-    <p>
-      {{ project.repo_path }}
+  <hr />
+
+  <div class='alert alert-info'>
+    <p><strong>Description:</strong> {{ project.description }}</p>
+    <p><strong>Git repo's path:</strong> {{ project.repo_path }}</p>
+  </div>
+
+  <ul class='unstyled inline'>
+    <li><h4>Stages</h4></li>
+    <li>
+      {% if g.user.can('create_stage') %}
+        <a href="{{ url_for('stages.create', project_id=project.id) }}">Create</a>
+      {% endif %}
+    </li>
+  </ul>
+
+  {% if project.stages %}
+    <ul>
+      {% for stage in project.stages %}
+        <li><a href="{{ url_for('stages.view', stage_id=stage.id) }}">{{ stage.name }}</a></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class='alert'>
+      No available stages.
     </p>
-    <hr />
   {% endif %}
 {% endblock %}
 

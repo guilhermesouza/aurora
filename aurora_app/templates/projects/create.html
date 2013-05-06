@@ -5,20 +5,5 @@
 {% block content %}
   <h1>Create a new project</h1>
   <hr />
-  <form method="post" action="" name="create_project">
-    {{ form.hidden_tag() }}
-
-    <ul class='unstyled'>
-      <li>{{ form.name.label }}</li>
-      <li>{{ form.name(required='') }}</li>
-
-      <li>{{ form.description.label }}</li>
-      <li>{{ form.description }}</li>
-
-      <li>{{ form.repo_path.label }}</li>
-      <li>{{ form.repo_path }}</li>
-
-      <li><button class='btn btn-primary'>Submit</button></li>
-    </ul>
-  </form>
+  {% include 'projects/form.html' %}
 {% endblock %}

@@ -1,4 +1,4 @@
-from aurora_app.constants import ROLES
+from aurora_app.constants import ROLES, PERMISSIONS
 from aurora_app.database import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -35,8 +35,8 @@ class User(db.Model):
     def get_id(self):
         return unicode(self.id)
 
-    def is_an_admin(self):
-        return self.role == ROLES['ADMIN']
+    def can(self, action):
+        return action in PERMISSIONS[self.role]
 
     def __repr__(self):
         return u'<User {}>'.format(self.username)
@@ -48,9 +48,14 @@ class Project(db.Model):
     name = db.Column(db.String(32))
     description = db.Column(db.String(128), nullable=True)
     repo_path = db.Column(db.String(128), nullable=True)
+    # Relations
+    stages = db.relationship("Stage", backref="project")
 
     def __init__(self, *args, **kwargs):
         super(Project, self).__init__(*args, **kwargs)
+
+    def __repr__(self):
+        return self.name
 
 
 class Stage(db.Model):
@@ -58,13 +63,24 @@ class Stage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32))
     code = db.Column(db.Text(), nullable=True)
-    branch = db.Column(db.String(32), nullable=True)
+    # Relations
+    project_id = db.Column(db.Integer(), db.ForeignKey('projects.id'))
 
     def __init__(self, *args, **kwargs):
         super(Stage, self).__init__(*args, **kwargs)
 
+    def __repr__(self):
+        return self.name
 
-class Host(db.Model):
-    __tablename__ = "hosts"
+
+class Task(db.Model):
+    __tablename__ = "tasks"
     id = db.Column(db.Integer, primary_key=True)
-    address = db.Column
+    name = db.Column(db.String(32))
+    code = db.Column(db.Text())
+
+    def __init__(self, *args, **kwargs):
+        super(Task, self).__init__(*args, **kwargs)
+
+    def __repr__(self):
+        return self.name

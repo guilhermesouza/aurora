@@ -5,8 +5,15 @@ Flask-SQLAlchemy==0.16
 Flask-WTF==0.8.3
 Jinja2==2.6
 SQLAlchemy==0.8.0
+SQLAlchemy-Utils==0.10.0
 WTForms==1.0.3
+WTForms-Components==0.5.4
 Werkzeug==0.8.3
 argparse==1.2.1
+colour==0.0.2
 distribute==0.6.24
+paramiko==1.10.1
+phonenumbers==5.4b1
+psycopg2==2.5
+pycrypto==2.6
 wsgiref==0.1.2

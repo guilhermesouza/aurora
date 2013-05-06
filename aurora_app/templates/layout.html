@@ -7,7 +7,7 @@
 
     <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
     <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='css/style.css') }}" />
-    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.png') }}">
 
     {% block css %}
     {% endblock %}
@@ -17,6 +17,9 @@
   </head>
 
   <body>
+    {% block nav %}
+    {% endblock %}
+
     {% block flashes %}
       <div id='flashes'>
         {% with messages = get_flashed_messages() %}

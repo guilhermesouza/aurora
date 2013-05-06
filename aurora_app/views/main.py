@@ -1,5 +1,4 @@
-from flask import (Blueprint, render_template, redirect, g, url_for, flash,
-                   request)
+from flask import Blueprint, render_template, redirect, g, url_for, request
 from flask.ext.login import login_user, logout_user
 
 from aurora_app import login_manager
@@ -34,8 +33,6 @@ def login():
             next = request.args.get('next', False)
             return (redirect(next) if next else
                     redirect(url_for('main.index')))
-        else:
-            flash(u'Invalid username or password!')
 
     return render_template('main/login.html', form=form)
 
