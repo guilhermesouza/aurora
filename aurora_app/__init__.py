@@ -2,6 +2,7 @@ import os
 
 from flask import Flask, render_template, url_for, g, request, redirect
 from flask.ext.login import LoginManager, current_user
+from flask_debugtoolbar import DebugToolbarExtension
 
 app = Flask(__name__)
 app.config.from_object('settings')
@@ -10,10 +11,20 @@ app.config.from_object('settings')
 login_manager = LoginManager()
 login_manager.setup_app(app)
 
+# Enable debug toolbar
+toolbar = DebugToolbarExtension(app)
+
 
 @app.errorhandler(404)
 def not_found(error):
     return render_template('404.html'), 404
+
+
+@app.errorhandler(500)
+def internal_error(error):
+    from aurora_app.database import db
+    db.session.rollback()
+    return render_template('500.html'), 500
 
 
 @app.before_request

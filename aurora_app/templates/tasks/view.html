@@ -27,7 +27,7 @@
   {% if task.stages %}
     <ul>
       {% for stage in task.stages %}
-        <li><a href="{{ url_for('stages.view', id=stage.id) }}">{{ stage.name }}</a></li>
+        <li><a href="{{ url_for('stages.view', id=stage.id) }}">{{ stage }}</a></li>
       {% endfor %}
     </ul>
   {% else %}

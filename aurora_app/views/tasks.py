@@ -61,3 +61,9 @@ def delete(id):
     db.session.commit()
 
     return redirect(url_for('main.index'))
+
+
+@mod.route('/table')
+def table():
+    tasks = Task.query.all()
+    return render_template('tasks/table.html', tasks=tasks)
