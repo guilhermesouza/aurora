@@ -22,6 +22,8 @@
             {% endif %}
           </ul>
         </li>
+
+        <li><a href="{{ url_for('tasks.table') }}">Tasks</a></li>
       </ul>
 
       <ul class="nav pull-right">
@@ -35,6 +37,25 @@
 {% block body %}
   <div class='container-fluid'>
     <div class="span3 sidebar center">
+      {% block flashes %}
+        <div id='flashes'>
+          {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul class='unstyled'>
+            {% for message in messages %}
+              <li>
+              <div class='alert'>
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ message }}
+              </div>
+            </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+          {% endwith %}
+        </div>
+      {% endblock %}
+
       {% if projects %}
         <h3>Projects:</h3>
         <ul class='nav nav-list well'>

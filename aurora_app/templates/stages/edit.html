@@ -3,7 +3,8 @@
 {% block title %}Edit | {{ stage.name }} : {{ stage.project.name }}{% endblock %}
 
 {% block content %}
-  <h1>Editing: {{ stage.name }}</h1>
+  <h1>Editing stage: 
+    <a href="{{ url_for('projects.view', id=stage.project.id) }}">{{ stage.project.name }}</a> / {{ stage.name }}</h1>
   <hr />
   {% include 'stages/form.html' %}
 {% endblock %}
