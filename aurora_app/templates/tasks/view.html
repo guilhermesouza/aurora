@@ -1,14 +1,14 @@
 {% extends 'main/index.html' %}
 
-{% block title %}{{ project.name }}{% endblock %}
+{% block title %}{{ task.name }}{% endblock %}
 
 {% block content %}
   <ul class='unstyled inline view-title'>
-    <li><h1>{{ project.name }}</h1></li>
-    {% if g.user.can('edit_project') %}
-      <li><a href="{{ url_for('projects.edit', id=project.id) }}">Edit</a></li>
+    <li><h1>{{ task.name }}</h1></li>
+    {% if g.user.can('edit_task') %}
+      <li><a href="{{ url_for('tasks.edit', id=task.id) }}">Edit</a></li>
     {% endif %}
-    {% if g.user.can('delete_project') %}
+    {% if g.user.can('delete_task') %}
       <li><a id="delete">Delete</a></li>
     {% endif %}
   </ul>
@@ -16,22 +16,17 @@
   <hr />
 
   <div class='alert alert-info'>
-    <p><strong>Description:</strong> {{ project.description }}</p>
-    <p><strong>Git repo's path:</strong> {{ project.repo_path }}</p>
+    <p><strong>Code:</strong></p>
+    <pre><code lang="python">{{ task.code }}</code></pre>
   </div>
 
   <ul class='unstyled inline'>
     <li><h4>Stages</h4></li>
-    <li>
-      {% if g.user.can('create_stage') %}
-        <a href="{{ url_for('stages.create', project_id=project.id) }}">Create</a>
-      {% endif %}
-    </li>
   </ul>
 
-  {% if project.stages %}
+  {% if task.stages %}
     <ul>
-      {% for stage in project.stages %}
+      {% for stage in task.stages %}
         <li><a href="{{ url_for('stages.view', id=stage.id) }}">{{ stage.name }}</a></li>
       {% endfor %}
     </ul>
@@ -48,9 +43,9 @@
   <script>
     $(document).ready(function() {
       $("#delete").click(function() {
-        bootbox.confirm("Are you sure?<br />All stages will be removed.", function(result) {
+        bootbox.confirm("Are you sure?", function(result) {
           if (result) {
-            document.location.href = "{{ url_for('projects.delete', id=project.id) }}";
+            document.location.href = "{{ url_for('tasks.delete', id=task.id) }}";
           }
         }); 
       });

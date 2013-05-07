@@ -8,12 +8,20 @@
       <a class="brand" href="{{ url_for('main.index') }}">Aurora</a>
 
       <ul class="nav">
-        {% if g.user.can('create_project') %}
-          <li><a href="{{ url_for('projects.create') }}">New project</a></li>
-        {% endif %}
-        {% if g.user.can('create_stage') %}
-          <li><a href="{{ url_for('stages.create') }}">New stage</a></li>
-        {% endif %}
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Create <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            {% if g.user.can('create_project') %}
+              <li><a href="{{ url_for('projects.create') }}">Project</a></li>
+            {% endif %}
+            {% if g.user.can('create_stage') %}
+              <li><a href="{{ url_for('stages.create') }}">Stage</a></li>
+            {% endif %}
+            {% if g.user.can('create_task') %}
+              <li><a href="{{ url_for('tasks.create') }}">Task</a></li>
+            {% endif %}
+          </ul>
+        </li>
       </ul>
 
       <ul class="nav pull-right">
@@ -32,11 +40,11 @@
         <ul class='nav nav-list well'>
           {% for project in projects %}
             <li>
-              <a href="{{ url_for('projects.view', project_id=project.id) }}"><strong>{{ project.name }}</strong></a>
+              <a href="{{ url_for('projects.view', id=project.id) }}"><strong>{{ project.name }}</strong></a>
               {% if project.stages %}
                 <ul>
                   {% for stage in project.stages %}
-                    <li><a href="{{ url_for('stages.view', stage_id=stage.id) }}">{{ stage.name }}</a></li>
+                    <li><a href="{{ url_for('stages.view', id=stage.id) }}">{{ stage.name }}</a></li>
                   {% endfor %}
                 </ul>
               {% endif %}
