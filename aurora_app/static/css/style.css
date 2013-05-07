@@ -2,6 +2,10 @@
 .center { text-align: center; }
 .black { color: #000; }
 .view-title { height: 50px; }
+div.CodeMirror {
+    border: 1px #000 solid;
+    margin-bottom: 10px;
+}
 
 /* Loading buttons */
 .btn.loading {

@@ -6,13 +6,13 @@
   <ul class='unstyled inline view-title'>
     <li>
       <h1>
-        <a href="{{ url_for('projects.view', project_id=stage.project.id) }}">
+        <a href="{{ url_for('projects.view', id=stage.project.id) }}">
           {{ stage.project.name }}
         </a> / {{ stage.name }}
       </h1>
     </li>
     {% if g.user.can('edit_stage') %}
-      <li><a href="{{ url_for('stages.edit', stage_id=stage.id) }}">Edit</a></li>
+      <li><a href="{{ url_for('stages.edit', id=stage.id) }}">Edit</a></li>
     {% endif %}
     {% if g.user.can('delete_stage') %}
       <li><a id="delete">Delete</a></li>
@@ -23,8 +23,29 @@
 
   <div class='alert alert-info'>
     <p><strong>Code:</strong></p>
-    <code>{{ stage.code }}</code>
+    <pre><code lang="python">{{ stage.code }}</code></pre>
   </div>
+
+  <ul class='unstyled inline'>
+    <li><h4>Tasks</h4></li>
+    <li>
+      {% if g.user.can('create_task') %}
+        <a href="{{ url_for('tasks.create', stage_id=stage.id) }}">Create</a>
+      {% endif %}
+    </li>
+  </ul>
+
+  {% if stage.tasks %}
+    <ul>
+      {% for task in stage.tasks %}
+        <li><a href="{{ url_for('tasks.view', id=task.id) }}">{{ task.name }}</a></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class='alert'>
+      No available tasks.
+    </p>
+  {% endif %}
 
 {% endblock %}
 
@@ -36,7 +57,7 @@
       $("#delete").click(function() {
         bootbox.confirm("Are you sure?", function(result) {
           if (result) {
-            document.location.href = "{{ url_for('stages.delete', stage_id=stage.id) }}";
+            document.location.href = "{{ url_for('stages.delete', id=stage.id) }}";
           }
         }); 
       });

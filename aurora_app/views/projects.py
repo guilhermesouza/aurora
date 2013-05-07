@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, url_for, redirect, flash, request
 from aurora_app.decorators import must_be_able_to
 from aurora_app.forms import ProjectForm
 from aurora_app.models import Project
-from aurora_app.database import db
+from aurora_app.database import db, get_or_404
 
 mod = Blueprint('projects', __name__, url_prefix='/projects')
 
@@ -14,28 +14,27 @@ def create():
     form = ProjectForm()
 
     if form.validate_on_submit():
-        project = Project(name=form.name.data,
-                          description=form.description.data,
-                          repo_path=form.repo_path.data)
+        project = Project()
+        form.populate_obj(project)
         db.session.add(project)
         db.session.commit()
 
         flash(u'Project "{}" has been created.'.format(project.name))
-        return redirect(url_for('projects.view', project_id=project.id))
+        return redirect(url_for('projects.view', id=project.id))
 
     return render_template('projects/create.html', form=form)
 
 
-@mod.route('/view/<int:project_id>')
-def view(project_id):
-    project = Project.query.filter_by(id=project_id).first()
+@mod.route('/view/<int:id>')
+def view(id):
+    project = get_or_404(Project, id=id)
     return render_template('projects/view.html', project=project)
 
 
-@mod.route('/edit/<int:project_id>', methods=['GET', 'POST'])
+@mod.route('/edit/<int:id>', methods=['GET', 'POST'])
 @must_be_able_to('edit_project')
-def edit(project_id):
-    project = Project.query.filter_by(id=project_id).first()
+def edit(id):
+    project = get_or_404(Project, id=id)
     form = ProjectForm(request.form, project)
 
     if form.validate_on_submit():
@@ -44,15 +43,15 @@ def edit(project_id):
         db.session.commit()
 
         flash(u'Project "{}" has been updated.'.format(project.name))
-        return redirect(url_for('projects.view', project_id=project_id))
+        return redirect(url_for('projects.view', id=id))
 
     return render_template('projects/edit.html', project=project, form=form)
 
 
-@mod.route('/delete/<int:project_id>')
+@mod.route('/delete/<int:id>')
 @must_be_able_to('delete_project')
-def delete(project_id):
-    project = Project.query.filter_by(id=project_id).first()
+def delete(id):
+    project = get_or_404(Project, id=id)
 
     flash(u'Project "{}" has been deleted.'.format(project.name))
 
