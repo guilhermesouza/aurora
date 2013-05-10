@@ -62,3 +62,9 @@ def delete(id):
     db.session.commit()
 
     return redirect(url_for('projects.view', id=project_id))
+
+
+@mod.route('/table')
+def table():
+    stages = Stage.query.all()
+    return render_template('stages/table.html', stages=stages)
