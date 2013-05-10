@@ -1,0 +1,36 @@
+{% extends 'main/index.html' %}
+
+{% block title %}Stages{% endblock %}
+
+{% block content %}
+  <ul class='unstyled inline view-title'>
+    <li><h1>Stages</h1></li>
+  </ul>
+
+  <hr />
+
+  <table class="table table-striped table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Project</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for stage in stages %}
+        <tr>
+          <td><a href="{{ url_for('stages.view', id=stage.id) }}">{{ stage.name }}</a></td>
+          <td>
+            {% if stage.project %}
+              <ul class="unstyled">
+                <li><a href="{{ url_for('projects.view', id=stage.project.id) }}">{{ stage.project }}</a></li>
+              </ul>
+            {% else %}
+              No available project.
+            {% endif %}
+          </td>
+        </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
