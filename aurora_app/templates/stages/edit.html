@@ -4,7 +4,10 @@
 
 {% block content %}
   <h1>Editing stage: 
-    <a href="{{ url_for('projects.view', id=stage.project.id) }}">{{ stage.project.name }}</a> / {{ stage.name }}</h1>
+    {% if stage.project %}
+      <a href="{{ url_for('projects.view', id=stage.project.id) }}">{{ stage.project.name }}</a> /
+    {% endif %} {{ stage.name }}
+  </h1>
   <hr />
   {% include 'stages/form.html' %}
 {% endblock %}

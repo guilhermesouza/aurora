@@ -81,7 +81,7 @@ class Stage(db.Model):
 
     def __repr__(self):
         return u"{0} / {1}".format(self.project.name, self.name) if \
-            self.project.name else self.name
+            self.project else self.name
 
 
 class Task(db.Model):
