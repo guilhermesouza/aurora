@@ -1,4 +1,5 @@
-from aurora_app.constants import ROLES, PERMISSIONS
+from datetime import datetime
+from aurora_app.constants import ROLES, PERMISSIONS, STATUSES
 from aurora_app.database import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -6,9 +7,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), unique=True)
-    password_hash = db.Column(db.String(160))
-    email = db.Column(db.String(120), unique=True)
+    username = db.Column(db.String(64), unique=True, nullable=False)
+    password_hash = db.Column(db.String(160), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
     role = db.Column(db.SmallInteger, default=ROLES['USER'])
 
     def __init__(self, username, password, email=None, role=None):
@@ -45,9 +46,10 @@ class User(db.Model):
 class Project(db.Model):
     __tablename__ = "projects"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(32))
-    description = db.Column(db.String(128), nullable=True)
-    repo_path = db.Column(db.String(128), nullable=True)
+    name = db.Column(db.String(32), nullable=False)
+    description = db.Column(db.String(128))
+    repo_path = db.Column(db.String(128))
+    code = db.Column(db.Text())
     # Relations
     stages = db.relationship("Stage", backref="project")
 
@@ -68,10 +70,11 @@ stages_tasks_table = db.Table('stages_tasks', db.Model.metadata,
 class Stage(db.Model):
     __tablename__ = "stages"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(32))
-    code = db.Column(db.Text(), nullable=True)
+    name = db.Column(db.String(32), nullable=False)
+    code = db.Column(db.Text())
     # Relations
     project_id = db.Column(db.Integer(), db.ForeignKey('projects.id'))
+    deployments = db.relationship("Deployment", backref="stage")
     tasks = db.relationship("Task",
                             secondary=stages_tasks_table,
                             backref="stages")
@@ -87,11 +90,37 @@ class Stage(db.Model):
 class Task(db.Model):
     __tablename__ = "tasks"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(32))
-    code = db.Column(db.Text())
+    name = db.Column(db.String(32), nullable=False)
+    code = db.Column(db.Text(), nullable=False)
 
     def __init__(self, *args, **kwargs):
         super(Task, self).__init__(*args, **kwargs)
 
     def __repr__(self):
         return self.name
+
+
+deployments_tasks_table = db.Table('deployments_tasks', db.Model.metadata,
+                                   db.Column('deployment_id', db.Integer,
+                                             db.ForeignKey('deployments.id')),
+                                   db.Column('task_id', db.Integer,
+                                             db.ForeignKey('tasks.id')))
+
+
+class Deployment(db.Model):
+    __tablename__ = "deployments"
+    id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.SmallInteger, default=STATUSES['READY'])    
+    revision = db.Column(db.String(32))
+    started_at = db.Column(db.DateTime(), default=datetime.now)
+    finished_at = db.Column(db.DateTime())
+    code = db.Column(db.Text())
+    log = db.Column(db.Text(), default="")
+    # Relations
+    stage_id = db.Column(db.Integer(), db.ForeignKey('stages.id'), nullable=False)
+    tasks = db.relationship("Task",
+                            secondary=deployments_tasks_table,
+                            backref="deployments")
+
+    def __init__(self, *args, **kwargs):
+        super(Deployment, self).__init__(*args, **kwargs)

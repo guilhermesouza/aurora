@@ -1,0 +1,7 @@
+{% macro show(element) -%}
+  {% if element.errors %}
+    {% for error in element.errors %}
+      <li class='alert alert-error'>{{ error }}</li>
+    {% endfor %}
+  {% endif %}
+{%- endmacro %}

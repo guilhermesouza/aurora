@@ -40,17 +40,17 @@
     <div class="span3 sidebar center">
       {% block flashes %}
         <div id='flashes'>
-          {% with messages = get_flashed_messages() %}
+          {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-            <ul class='unstyled'>
-            {% for message in messages %}
-              <li>
-              <div class='alert'>
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                {{ message }}
-              </div>
-            </li>
-            {% endfor %}
+              <ul class='unstyled'>
+              {% for category, message in messages %}
+                <li>
+                  <div class='alert alert-{{ category }}'>
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ message }}
+                  </div>
+                </li>
+              {% endfor %}
             </ul>
             {% endif %}
           {% endwith %}

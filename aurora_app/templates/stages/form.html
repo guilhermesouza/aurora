@@ -1,18 +1,28 @@
+{% import 'helpers/errors.html' as errors %}
+
 <form method="post" action="">
   {{ form.hidden_tag() }}
 
   <ul class='unstyled'>
     <li>{{ form.name.label }}</li>
-    <li>{{ form.name(required='') }}</li>
+    <li>{{ form.name }}</li>
+
+    {{ errors.show(form.name) }}
 
     <li>{{ form.code.label }}</li>
     <li>{{ form.code }}</li>
 
+    {{ errors.show(form.code) }}
+
     <li>{{ form.project.label }}</li>
     <li>{{ form.project }}</li>
 
+    {{ errors.show(form.project) }}
+
     <li>{{ form.tasks.label }}</li>
     <li>{{ form.tasks }}</li>
+
+    {{ errors.show(form.tasks) }}
 
     <li><button class='btn btn-primary'>Submit</button></li>
   </ul>

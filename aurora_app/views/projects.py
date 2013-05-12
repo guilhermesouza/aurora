@@ -19,7 +19,7 @@ def create():
         db.session.add(project)
         db.session.commit()
 
-        flash(u'Project "{}" has been created.'.format(project.name))
+        flash(u'Project "{}" has been created.'.format(project.name), 'success')
         return redirect(url_for('projects.view', id=project.id))
 
     return render_template('projects/create.html', form=form)
@@ -42,7 +42,7 @@ def edit(id):
         db.session.add(project)
         db.session.commit()
 
-        flash(u'Project "{}" has been updated.'.format(project.name))
+        flash(u'Project "{}" has been updated.'.format(project.name), 'success')
         return redirect(url_for('projects.view', id=id))
 
     return render_template('projects/edit.html', project=project, form=form)
@@ -53,7 +53,7 @@ def edit(id):
 def delete(id):
     project = get_or_404(Project, id=id)
 
-    flash(u'Project "{}" has been deleted.'.format(project.name))
+    flash(u'Project "{}" has been deleted.'.format(project.name), 'success')
 
     # Delete stages
     for stage in project.stages:

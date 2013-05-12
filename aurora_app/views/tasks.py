@@ -21,7 +21,7 @@ def create():
         db.session.add(task)
         db.session.commit()
 
-        flash(u'Task "{}" has been created.'.format(task.name))
+        flash(u'Task "{}" has been created.'.format(task.name), 'success')
         return redirect(url_for('tasks.view', id=task.id))
 
     return render_template('tasks/create.html', form=form, stage_id=stage_id)
@@ -44,7 +44,7 @@ def edit(id):
         db.session.add(task)
         db.session.commit()
 
-        flash(u'Task "{}" has been updated.'.format(task.name))
+        flash(u'Task "{}" has been updated.'.format(task.name), 'success')
         return redirect(url_for('tasks.view', id=task.id))
 
     return render_template('tasks/edit.html', task=task, form=form)
@@ -55,7 +55,7 @@ def edit(id):
 def delete(id):
     task = get_or_404(Task, id=id)
 
-    flash(u'Task "{}" has been deleted.'.format(task.name))
+    flash(u'Task "{}" has been deleted.'.format(task.name), 'success')
 
     db.session.delete(task)
     db.session.commit()
