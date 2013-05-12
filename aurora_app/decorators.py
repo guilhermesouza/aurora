@@ -12,7 +12,7 @@ def must_be_able_to(action):
         @wraps(f)
         def decorated_function(*args, **kwargs):
             if not g.user.can(action):
-                flash(u"You can't do that. You don't have permission.")
+                flash(u"You can't do that. You don't have permission.", 'error')
                 return redirect(request.referrer)
             return f(*args, **kwargs)
         return decorated_function
