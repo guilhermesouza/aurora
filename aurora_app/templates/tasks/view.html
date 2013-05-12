@@ -41,7 +41,7 @@
   <script src="{{ url_for('static', filename='js/bootbox.min.js') }}"></script>
 
   <script>
-    $(document).ready(function() {
+    $(function() {
       $("#delete").click(function() {
         bootbox.confirm("Are you sure?", function(result) {
           if (result) {
