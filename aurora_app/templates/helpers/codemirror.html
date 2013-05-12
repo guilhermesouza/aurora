@@ -4,7 +4,6 @@
 
 {% block js %}
   <script src="{{ url_for('static', filename='js/codemirror.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/python.js') }}"></script>
   <script>
     var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
       mode: {name: "python",
