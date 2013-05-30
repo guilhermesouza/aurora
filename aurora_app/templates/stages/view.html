@@ -1,6 +1,6 @@
 {% extends 'main/index.html' %}
 
-{% block title %}{{ stage.name }} : {{ stage.project.name }}{% endblock %}
+{% block title %}{{ stage }}{% endblock %}
 
 {% block content %}
   <ul class='unstyled inline view-title'>
@@ -11,6 +11,9 @@
         {% endif %} {{ stage.name }}
       </h1>
     </li>
+    {% if g.user.can('deploy_stage') %}
+      <li><a href="{{ url_for('stages.deploy', id=stage.id) }}">Deploy</a></li>
+    {% endif %}
     {% if g.user.can('edit_stage') %}
       <li><a href="{{ url_for('stages.edit', id=stage.id) }}">Edit</a></li>
     {% endif %}

@@ -6,7 +6,9 @@ div.CodeMirror {
     border: 1px #000 solid;
     margin-bottom: 10px;
 }
-
+.pointer {cursor: pointer;}
+.bigger {font-size: 26px;}
+.arrows {padding: 15px;}
 /* Loading buttons */
 .btn.loading {
     background-image: -webkit-gradient(linear, 0 0, 100% 100%,
