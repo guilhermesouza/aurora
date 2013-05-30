@@ -6,9 +6,14 @@ ROLES = {
 
 # Permissons
 PERMISSIONS = {
-    ROLES["ADMIN"]: ["create_project", "edit_project", "delete_project",
-                     "create_stage", "edit_stage", "delete_stage",
-                     "create_task", "edit_task", "delete_task"],
+    ROLES["ADMIN"]: [
+        # Projects
+        "create_project", "edit_project", "delete_project",
+        # Stages
+        "create_stage", "edit_stage", "delete_stage", "deploy_stage",
+        # Tasks
+        "create_task", "edit_task", "delete_task"
+    ],
     ROLES["USER"]: []
 }
 

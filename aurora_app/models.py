@@ -9,7 +9,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
     password_hash = db.Column(db.String(160), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=True)
     role = db.Column(db.SmallInteger, default=ROLES['USER'])
 
     def __init__(self, username, password, email=None, role=None):
@@ -110,14 +110,15 @@ deployments_tasks_table = db.Table('deployments_tasks', db.Model.metadata,
 class Deployment(db.Model):
     __tablename__ = "deployments"
     id = db.Column(db.Integer, primary_key=True)
-    status = db.Column(db.SmallInteger, default=STATUSES['READY'])    
+    status = db.Column(db.SmallInteger, default=STATUSES['READY'])
     revision = db.Column(db.String(32))
     started_at = db.Column(db.DateTime(), default=datetime.now)
     finished_at = db.Column(db.DateTime())
     code = db.Column(db.Text())
     log = db.Column(db.Text(), default="")
     # Relations
-    stage_id = db.Column(db.Integer(), db.ForeignKey('stages.id'), nullable=False)
+    stage_id = db.Column(db.Integer(),
+                         db.ForeignKey('stages.id'), nullable=False)
     tasks = db.relationship("Task",
                             secondary=deployments_tasks_table,
                             backref="deployments")
