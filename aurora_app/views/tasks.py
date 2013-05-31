@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for
 
 from aurora_app.decorators import must_be_able_to
 from aurora_app.forms import TaskForm
 from aurora_app.models import Stage, Task
 from aurora_app.database import db, get_or_404
+from aurora_app.helpers import notify
 
 mod = Blueprint('tasks', __name__, url_prefix='/tasks')
 
@@ -21,7 +22,8 @@ def create():
         db.session.add(task)
         db.session.commit()
 
-        flash(u'Task "{}" has been created.'.format(task.name), 'success')
+        notify(u'Task "{}" has been created.'.format(task.name),
+               category='success', action='create_task')
         return redirect(url_for('tasks.view', id=task.id))
 
     return render_template('tasks/create.html', form=form, stage_id=stage_id)
@@ -44,7 +46,8 @@ def edit(id):
         db.session.add(task)
         db.session.commit()
 
-        flash(u'Task "{}" has been updated.'.format(task.name), 'success')
+        notify(u'Task "{}" has been updated.'.format(task.name),
+               category='success', action='edit_task')
         return redirect(url_for('tasks.view', id=task.id))
 
     return render_template('tasks/edit.html', task=task, form=form)
@@ -55,7 +58,8 @@ def edit(id):
 def delete(id):
     task = get_or_404(Task, id=id)
 
-    flash(u'Task "{}" has been deleted.'.format(task.name), 'success')
+    notify(u'Task "{}" has been deleted.'.format(task.name),
+           category='success', action='delete_task')
 
     db.session.delete(task)
     db.session.commit()

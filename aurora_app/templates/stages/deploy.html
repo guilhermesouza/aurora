@@ -10,7 +10,7 @@
   </h1>
   <hr />
 
-  <form>
+  <form method='post' action=''>
     <div class="row">
       <div class='span4 center'>
         <h4>Available tasks:</h4>
@@ -46,15 +46,23 @@
 
     <hr />
 
-    <input type='submit' class='btn btn-primary' value="Deploy!" />
+    <input type='submit' id="deploy" class='btn btn-primary' value="Deploy!" />
 
   </form>
 {% endblock %}
 
 {% block js %}
+  {{ super() }}
+
   <script>
-    // From: http://www.designchemical.com/blog/index.php/jquery/change-order-multiple-select-lists-using-jquery/
     $(function() {
+      // Form hook
+      $("#deploy").click(function() {
+        $("#selected option").each(function() {
+          $(this).attr("selected", "selected"); 
+        });
+      });
+      // From: http://www.designchemical.com/blog/index.php/jquery/change-order-multiple-select-lists-using-jquery/
       // Add button hook
       $("#add").click(function() {
         $('#available option:selected').each(function() {
@@ -70,7 +78,7 @@
         });
       });
       // Up button hook
-      $('#up').bind('click', function() {
+      $('#up').click(function() {
         $('#selected option:selected').each( function() {
           var newPos = $('#selected option').index(this) - 1;
           if (newPos > -1) {
@@ -80,7 +88,7 @@
         });
       });
       // Down button hook
-      $('#down').bind('click', function() {
+      $('#down').click(function() {
         var countOptions = $('#selected option').size();
         $('#selected option:selected').each(function() {
           var newPos = $('#selected option').index(this) + 1;

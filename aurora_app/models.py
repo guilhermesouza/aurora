@@ -9,8 +9,11 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
     password_hash = db.Column(db.String(160), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=True)
+    email = db.Column(db.String(120), unique=True)
     role = db.Column(db.SmallInteger, default=ROLES['USER'])
+    # Relations
+    deployments = db.relationship("Deployment", backref="user")
+    notifications = db.relationship("Notification", backref="user")
 
     def __init__(self, username, password, email=None, role=None):
         self.username = username
@@ -47,14 +50,17 @@ class Project(db.Model):
     __tablename__ = "projects"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), nullable=False)
-    description = db.Column(db.String(128))
-    repo_path = db.Column(db.String(128))
-    code = db.Column(db.Text())
+    description = db.Column(db.String(128), default='')
+    repo_path = db.Column(db.String(128), default='')
+    code = db.Column(db.Text(), default='')
     # Relations
     stages = db.relationship("Stage", backref="project")
 
     def __init__(self, *args, **kwargs):
         super(Project, self).__init__(*args, **kwargs)
+
+    def get_path_name(self):
+        return self.name.lower()
 
     def __repr__(self):
         return self.name
@@ -71,7 +77,7 @@ class Stage(db.Model):
     __tablename__ = "stages"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), nullable=False)
-    code = db.Column(db.Text())
+    code = db.Column(db.Text(), default='')
     # Relations
     project_id = db.Column(db.Integer(), db.ForeignKey('projects.id'))
     deployments = db.relationship("Deployment", backref="stage")
@@ -91,7 +97,7 @@ class Task(db.Model):
     __tablename__ = "tasks"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), nullable=False)
-    code = db.Column(db.Text(), nullable=False)
+    code = db.Column(db.Text(), default='')
 
     def __init__(self, *args, **kwargs):
         super(Task, self).__init__(*args, **kwargs)
@@ -111,17 +117,37 @@ class Deployment(db.Model):
     __tablename__ = "deployments"
     id = db.Column(db.Integer, primary_key=True)
     status = db.Column(db.SmallInteger, default=STATUSES['READY'])
-    revision = db.Column(db.String(32))
+    revision = db.Column(db.String(32), default='')
     started_at = db.Column(db.DateTime(), default=datetime.now)
     finished_at = db.Column(db.DateTime())
-    code = db.Column(db.Text())
-    log = db.Column(db.Text(), default="")
+    code = db.Column(db.Text(), default='')
+    log = db.Column(db.Text(), default='')
     # Relations
     stage_id = db.Column(db.Integer(),
                          db.ForeignKey('stages.id'), nullable=False)
+    user_id = db.Column(db.Integer(),
+                        db.ForeignKey('users.id'), nullable=False)
     tasks = db.relationship("Task",
                             secondary=deployments_tasks_table,
                             backref="deployments")
 
     def __init__(self, *args, **kwargs):
         super(Deployment, self).__init__(*args, **kwargs)
+
+
+class Notification(db.Model):
+    __tablename__ = "notifications"
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime(), default=datetime.now)
+    message = db.Column(db.String(255), nullable=False)
+    category = db.Column(db.String(32))
+    action = db.Column(db.String(32))
+    # Relations
+    user_id = db.Column(db.Integer(),
+                        db.ForeignKey('users.id'))
+
+    def __init__(self, *args, **kwargs):
+        super(Notification, self).__init__(*args, **kwargs)
+
+    def __repr__(self):
+        return u"<Notification #{}>".format(self.id)
