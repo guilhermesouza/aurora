@@ -10,12 +10,12 @@
     {{ errors.show(form.name) }}
 
     <li>{{ form.description.label }}</li>
-    <li>{{ form.description }}</li>
+    <li>{{ form.description(class='input-xlarge') }}</li>
 
     {{ errors.show(form.description) }}
 
     <li>{{ form.repo_path.label }}</li>
-    <li>{{ form.repo_path }}</li>
+    <li>{{ form.repo_path(class='input-xlarge') }}</li>
 
     {{ errors.show(form.repo_path) }}
 

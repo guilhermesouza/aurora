@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, url_for, redirect, flash, request
+from flask import Blueprint, render_template, url_for, redirect, request
 
 from aurora_app.decorators import must_be_able_to
 from aurora_app.forms import ProjectForm
 from aurora_app.models import Project
 from aurora_app.database import db, get_or_404
+from aurora_app.helpers import notify
 
 mod = Blueprint('projects', __name__, url_prefix='/projects')
 
@@ -19,7 +20,8 @@ def create():
         db.session.add(project)
         db.session.commit()
 
-        flash(u'Project "{}" has been created.'.format(project.name), 'success')
+        notify(u'Project "{}" has been created.'.format(project.name),
+               category='success', action='create_project')
         return redirect(url_for('projects.view', id=project.id))
 
     return render_template('projects/create.html', form=form)
@@ -42,7 +44,8 @@ def edit(id):
         db.session.add(project)
         db.session.commit()
 
-        flash(u'Project "{}" has been updated.'.format(project.name), 'success')
+        notify(u'Project "{}" has been updated.'.format(project.name),
+               category='success', action='edit_project')
         return redirect(url_for('projects.view', id=id))
 
     return render_template('projects/edit.html', project=project, form=form)
@@ -53,7 +56,8 @@ def edit(id):
 def delete(id):
     project = get_or_404(Project, id=id)
 
-    flash(u'Project "{}" has been deleted.'.format(project.name), 'success')
+    notify(u'Project "{}" has been deleted.'.format(project.name),
+           category='success', action='delete_project')
 
     # Delete stages
     for stage in project.stages:

@@ -1,0 +1,38 @@
+{% extends 'main/index.html' %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+  <ul class='unstyled inline view-title'>
+    <li><h1>Notifications</h1></li>
+  </ul>
+
+  <hr />
+
+  <table class="table table-striped table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>Created at</th>
+      <th>Category</th>
+      <th>Action</th>
+      <th>Message</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for notification in notifications %}
+        <tr>
+          <td>{{ notification.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+          <td>{{ notification.category }}</td>
+          <td>
+            {% if notification.action %}
+              {{ notification.action }}
+            {% else %}
+              &mdash;
+            {% endif %}
+          </td>
+          <td>{{ notification.message }}</td>
+        </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
