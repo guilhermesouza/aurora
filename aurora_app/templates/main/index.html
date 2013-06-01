@@ -66,20 +66,18 @@
     <div class="span10">
       {% block notifications %}
         <div id='notifications'>
-          {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-              <ul class='unstyled'>
-              {% for category, message in messages %}
-                <li>
-                  <div class='alert alert-{{ category }}'>
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    {{ message }}
-                  </div>
-                </li>
-              {% endfor %}
-            </ul>
-            {% endif %}
-          {% endwith %}
+          {% if notifications %}
+            <ul class='unstyled'>
+            {% for notification in notifications %}
+              <li>
+                <div class='alert alert-{{ notification.category }}'>
+                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+                  {{ notification.message }}
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
         </div>
       {% endblock %}
 
@@ -98,7 +96,9 @@
 {% block js %}
   <script>
     $(function() {
-      window.setTimeout(function() { $("#notifications .alert").alert('close'); }, 2000);
+      window.setTimeout(function() {
+        $("#notifications").hide();
+      }, 4000);
     });
   </script>
 {% endblock %}

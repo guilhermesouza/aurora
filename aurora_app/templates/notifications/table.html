@@ -19,7 +19,7 @@
     </tr>
   </thead>
   <tbody>
-    {% for notification in notifications %}
+    {% for notification in notifications_items %}
         <tr>
           <td>{{ notification.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
           <td>{{ notification.category }}</td>

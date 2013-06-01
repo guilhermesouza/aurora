@@ -1,10 +1,11 @@
-from flask import Blueprint, render_template, url_for, redirect, request
+from flask import Blueprint, render_template, url_for, redirect, request, g
 
 from aurora_app.decorators import must_be_able_to
 from aurora_app.forms import ProjectForm
 from aurora_app.models import Project
 from aurora_app.database import db, get_or_404
 from aurora_app.helpers import notify
+from aurora_app.tasks import clone_git_project
 
 mod = Blueprint('projects', __name__, url_prefix='/projects')
 

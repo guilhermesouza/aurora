@@ -142,6 +142,7 @@ class Notification(db.Model):
     message = db.Column(db.String(255), nullable=False)
     category = db.Column(db.String(32))
     action = db.Column(db.String(32))
+    seen = db.Column(db.Boolean(), default=False)
     # Relations
     user_id = db.Column(db.Integer(),
                         db.ForeignKey('users.id'))
