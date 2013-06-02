@@ -22,10 +22,11 @@ class TaskWithNotification(Task):
 @celery.task(base=TaskWithNotification, ignore_result=True)
 def clone_git_project(project, user_id=None):
     """Clones project's git repository to Aurora folder."""
+    action = 'clone_git_project'
     if project.repo_path == '':
         notify("""Can't clone "{}" git repository without path.""".
                format(project.name),
-               category='error', action='clone_git_project', user_id=user_id)
+               category='error', action=action, user_id=user_id)
         return
 
     full_repo_path = os.path.join(app.config['AURORA_PATH'],
@@ -33,10 +34,10 @@ def clone_git_project(project, user_id=None):
     if os.path.exists(full_repo_path):
         notify("""Can't clone "{}" git repository. "{}" is exists.""".
                format(project.name, full_repo_path),
-               category='error', action='clone_git_project', user_id=user_id)
+               category='error', action=action, user_id=user_id)
         return
 
     local('git clone {} {}'.format(project.repo_path, full_repo_path))
     notify("""Cloning "{}" git repository has finished successfully.""".
            format(project.name, full_repo_path),
-           category='success', action='clone_git_project', user_id=user_id)
+           category='success', action=action, user_id=user_id)

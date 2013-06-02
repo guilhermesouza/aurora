@@ -13,15 +13,23 @@
   <thead>
     <tr>
       <th>Created at</th>
+      <th>User</th>
       <th>Category</th>
       <th>Action</th>
       <th>Message</th>
     </tr>
   </thead>
   <tbody>
-    {% for notification in notifications_items %}
+    {% for notification in notifications %}
         <tr>
           <td>{{ notification.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+          <td>
+            {% if notification.user %}
+              {{ notification.user.username }}
+            {% else %}
+              &mdash;
+            {% endif %}
+          </td>
           <td>{{ notification.category }}</td>
           <td>
             {% if notification.action %}

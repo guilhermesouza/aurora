@@ -75,4 +75,4 @@ app.register_blueprint(tasks.mod)
 app.register_blueprint(notifications.mod)
 
 # Enable context processors
-from aurora_app.context_processors import projects, notifications
+from aurora_app.context_processors import projects
