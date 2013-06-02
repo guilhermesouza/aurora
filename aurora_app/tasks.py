@@ -5,7 +5,7 @@ from celery import Task
 
 from fabric.api import local
 
-from aurora_app import app, celery
+from aurora_app import celery
 from aurora_app.helpers import notify
 
 
@@ -20,24 +20,40 @@ class TaskWithNotification(Task):
 
 
 @celery.task(base=TaskWithNotification, ignore_result=True)
-def clone_git_project(project, user_id=None):
-    """Clones project's git repository to Aurora folder."""
-    action = 'clone_git_project'
-    if project.repo_path == '':
-        notify("""Can't clone "{}" git repository without path.""".
+def clone_repository(project, user_id=None):
+    """Clones project's repository to Aurora folder."""
+    action = 'clone_repository'
+    if project.repository_path == '':
+        notify("""Can't clone "{}" repository without path.""".
                format(project.name),
                category='error', action=action, user_id=user_id)
         return
 
-    full_repo_path = os.path.join(app.config['AURORA_PATH'],
-                                  project.get_path_name())
-    if os.path.exists(full_repo_path):
-        notify("""Can't clone "{}" git repository. "{}" is exists.""".
-               format(project.name, full_repo_path),
+    project_path = project.get_path()
+    if os.path.exists(project_path):
+        notify("""Can't clone "{}" repository. "{}" is exists.""".
+               format(project.name, project_path),
                category='error', action=action, user_id=user_id)
         return
 
-    local('git clone {} {}'.format(project.repo_path, full_repo_path))
-    notify("""Cloning "{}" git repository has finished successfully.""".
-           format(project.name, full_repo_path),
+    local('git clone {} {}'.format(project.repository_path, project_path))
+    notify("""Cloning "{}" repository has finished successfully.""".
+           format(project.name, project_path),
+           category='success', action=action, user_id=user_id)
+
+
+@celery.task(base=TaskWithNotification, ignore_result=True)
+def remove_repository(project, user_id=None):
+    """Removes project's repository in Aurora folder."""
+    action = 'remove_repository'
+    project_path = project.get_path()
+    if not os.path.exists(project_path):
+        notify("""Can't remove "{}" repository. It's not exists.""".
+               format(project.name),
+               category='error', action=action, user_id=user_id)
+        return
+
+    local('rm -rf {}'.format(project_path))
+    notify(""""{}" repository has removed successfully.""".
+           format(project.name, project_path),
            category='success', action=action, user_id=user_id)

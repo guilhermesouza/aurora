@@ -17,7 +17,11 @@
 
   <div class='alert alert-info'>
     <p><strong>Description:</strong> {{ project.description }}</p>
-    <p><strong>Git repo's path:</strong> {{ project.repo_path }}</p>
+    <p><strong>Repository path:</strong> {{ project.repository_path }}</p>
+    <p id="actions"><strong>Actions:</strong>      
+      <a data-action="clone_repository" data-toggle='tooltip' data-placement='top' data-original-title="Clone repository"><i class='icon-download-alt'></i></a>
+      <a data-action="remove_repository" data-toggle='tooltip' data-placement='top' data-original-title="Remove repository"><i class='icon-remove'></i></a>
+    </p>
     <p><strong>Code:</strong></p>
     <pre><code lang="python">{{ project.code }}</code></pre>
   </div>
@@ -46,6 +50,44 @@
 
   <script>
     $(function() {
+      // Enable actions tooltips
+      $('#actions').tooltip({
+        selector: "a[data-toggle=tooltip]"
+      });
+      // Show available actions
+      {% if project.repository_folder_exists() %}
+        $("#actions a[data-action='remove_repository']").show();
+      {% else %}
+        {% if project.repository_path %}
+          $("#actions a[data-action='clone_repository']").show();
+        {% endif %}
+      {% endif %}
+      // Actions hook
+      $("#actions a[data-action]").click(function() {
+        var _this = $(this);
+        var action = $(this).data('action');
+        $.ajax({
+          url:'{{ url_for('projects.execute', id=project.id) }}',
+          data: {'action': action},
+          type:'post',
+          success: function(data) {
+            var result = $.parseJSON(data);
+            if (!result.error) {
+              $(_this).hide();
+              // Actions after result
+              if (action == 'clone_repository') {
+                // Show 'remove_repository' button.
+                $("#actions a[data-action='remove_repository']").show();
+              }
+              if (action == 'remove_repository') {
+                // Show 'clone_repository' button.
+                $("#actions a[data-action='clone_repository']").show();
+              }
+            }
+          }
+        });
+      });
+      // Delete button hook
       $("#delete").click(function() {
         bootbox.confirm("Are you sure?<br />All stages will be removed.", function(result) {
           if (result) {

@@ -1,4 +1,6 @@
 from datetime import datetime
+import os
+
 from aurora_app.constants import ROLES, PERMISSIONS, STATUSES
 from aurora_app.database import db
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -51,7 +53,7 @@ class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), nullable=False)
     description = db.Column(db.String(128), default='')
-    repo_path = db.Column(db.String(128), default='')
+    repository_path = db.Column(db.String(128), default='')
     code = db.Column(db.Text(), default='')
     # Relations
     stages = db.relationship("Stage", backref="project")
@@ -59,8 +61,13 @@ class Project(db.Model):
     def __init__(self, *args, **kwargs):
         super(Project, self).__init__(*args, **kwargs)
 
-    def get_path_name(self):
-        return self.name.lower()
+    def get_path(self):
+        """Returns path of project's git repository on local machine."""
+        from aurora_app import app
+        return os.path.join(app.config['AURORA_PATH'], self.name.lower())
+
+    def repository_folder_exists(self):
+        return os.path.exists(self.get_path())
 
     def __repr__(self):
         return self.name
