@@ -1,11 +1,12 @@
-from flask import Blueprint, render_template, url_for, redirect, request, g
+from flask import (Blueprint, render_template, url_for, redirect, request, g,
+                   json)
 
 from aurora_app.decorators import must_be_able_to
 from aurora_app.forms import ProjectForm
 from aurora_app.models import Project
 from aurora_app.database import db, get_or_404
 from aurora_app.helpers import notify
-from aurora_app.tasks import clone_git_project
+from aurora_app.tasks import clone_repository, remove_repository
 
 mod = Blueprint('projects', __name__, url_prefix='/projects')
 
@@ -31,6 +32,7 @@ def create():
 @mod.route('/view/<int:id>')
 def view(id):
     project = get_or_404(Project, id=id)
+    # clone_git_project.delay(project, g.user.id)
     return render_template('projects/view.html', project=project)
 
 
@@ -67,3 +69,22 @@ def delete(id):
     db.session.commit()
 
     return redirect(url_for('main.index'))
+
+
+TASKS = {
+    'clone_repository': clone_repository,
+    'remove_repository': remove_repository
+}
+
+
+@mod.route('/execute/<int:id>', methods=['POST'])
+def execute(id):
+    project = get_or_404(Project, id=id)
+    action = request.form.get('action')
+    if g.user.can(action):
+        TASKS[action](project)
+        return json.dumps({'error': False})
+
+    notify(u"""Can't execute "{}.{}".""".format(project.name, action),
+           category='error', action=action, user_id=g.user.id)
+    return json.dumps({'error': True})

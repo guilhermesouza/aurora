@@ -9,6 +9,8 @@ PERMISSIONS = {
     ROLES["ADMIN"]: [
         # Projects
         "create_project", "edit_project", "delete_project",
+        # Repositories
+        "clone_repository", "remove_repository",
         # Stages
         "create_stage", "edit_stage", "delete_stage", "deploy_stage",
         # Tasks

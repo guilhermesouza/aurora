@@ -27,7 +27,8 @@ def init_develop_db():
     user = User(username='user', password='user')
     db.session.add(user)
 
-    project = Project(name='Aurora')
+    project = Project(name='Aurora',
+                      repository_path='https://github.com/ak3n/aurora.git')
     db.session.add(project)
 
     stage = Stage(name='Development', project=project)
