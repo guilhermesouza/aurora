@@ -66,18 +66,8 @@
     <div class="span10">
       {% block notifications %}
         <div id='notifications'>
-          {% if notifications %}
-            <ul class='unstyled'>
-            {% for notification in notifications %}
-              <li>
-                <div class='alert alert-{{ notification.category }}'>
-                  <button type="button" class="close" data-dismiss="alert">&times;</button>
-                  {{ notification.message }}
-                </div>
-              </li>
-            {% endfor %}
+          <ul class='unstyled'>
           </ul>
-          {% endif %}
         </div>
       {% endblock %}
 
@@ -94,11 +84,29 @@
 {% endblock %}
 
 {% block js %}
+  <script src="{{ url_for('static', filename='js/mustache.min.js') }}"></script>
   <script>
     $(function() {
-      window.setTimeout(function() {
-        $("#notifications").hide();
-      }, 4000);
+      var notification_template = '<li>\
+        <div class="alert alert-{{ '{{category}}' }}">\
+          <button type="button" class="close" data-dismiss="alert">&times;</button>\
+          {{ '{{message}}' }}\
+        </div>\
+      </li>';
+      setInterval(function() {
+        $.ajax({
+          url:'{{ url_for('notifications.unseen') }}',
+          type:'get',
+          success: function(data){
+            var notifications = $.parseJSON(data);
+            for (var i = 0; i < notifications.length; i++) {
+              var html = Mustache.to_html(notification_template, notifications[i]);
+              var hiding_html = $(html).show(0).delay(4000).hide(0);
+              $("#notifications").children('ul').append(hiding_html);
+            }
+          }
+        });
+      }, 5000);
     });
   </script>
 {% endblock %}
