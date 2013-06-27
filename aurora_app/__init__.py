@@ -8,8 +8,6 @@ from flask.ext.debugtoolbar import DebugToolbarExtension
 
 app = Flask(__name__)
 app.config.from_object('settings')
-app.threaded = True
-app.processes = 5
 
 # Celery
 celery = Celery(app)
