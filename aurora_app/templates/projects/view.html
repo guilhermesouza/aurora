@@ -65,12 +65,19 @@
       // Actions hook
       $("#actions a[data-action]").click(function() {
         var _this = $(this);
+        var icon = $(this).find('i').attr('class');
         var action = $(this).data('action');
+
+        // Show refresh icon
+        $(this).find('i').attr('class', 'icon-refresh');
         $.ajax({
           url:'{{ url_for('projects.execute', id=project.id) }}',
           data: {'action': action},
           type:'post',
           success: function(data) {
+            // Return old icon
+            $(_this).find('i').attr('class', icon);
+
             var result = $.parseJSON(data);
             if (!result.error) {
               $(_this).hide();

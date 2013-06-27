@@ -37,6 +37,13 @@ def clone_repository(project, user_id=None):
         return
 
     local('git clone {} {}'.format(project.repository_path, project_path))
+
+    if not os.path.exists(project_path):
+        notify("""Can't clone "{}" repository. Something gone wrong.""".
+               format(project.name),
+               category='error', action=action, user_id=user_id)
+        return
+
     notify("""Cloning "{}" repository has finished successfully.""".
            format(project.name, project_path),
            category='success', action=action, user_id=user_id)
@@ -54,6 +61,13 @@ def remove_repository(project, user_id=None):
         return
 
     local('rm -rf {}'.format(project_path))
+
+    if os.path.exists(project_path):
+        notify("""Can't remove "{}" repository. Something gone wrong.""".
+               format(project.name),
+               category='error', action=action, user_id=user_id)
+        return
+
     notify(""""{}" repository has removed successfully.""".
            format(project.name, project_path),
            category='success', action=action, user_id=user_id)
