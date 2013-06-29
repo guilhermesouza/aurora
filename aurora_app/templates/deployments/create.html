@@ -60,12 +60,8 @@
         </div>
 
         <div class='span6 center'>
-          <h4>Commits:</h4>
-          <select name="commit" id="commits" size="10" class='wider'>
-            {% for commit in commits %}
-              <option value="{{ commit.hexsha }}" {% if loop.first %}selected{% endif %}>{{ commit.hexsha[:10] }} - {{ commit.message }}</option>
-            {% endfor %}
-          </select>
+          <h4>Commit:</h4>
+          <input type='hidden' id="commits" class='wider' />
         </div>
       </div>
     {% endif %}
@@ -77,11 +73,47 @@
   </form>
 {% endblock %}
 
+
+{% block css %}
+  {{ super() }}
+  <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='css/select2.css') }}" />
+{% endblock %}
+
 {% block js %}
   {{ super() }}
+  <script src="{{ url_for('static', filename='js/select2.min.js') }}"></script>
 
   <script>
     $(function() {
+      // Init commits select
+      $("#commits").select2({
+        placeholder: "Select a commit",
+        ajax: {
+          url: "{{ url_for('deployments.commits', id=stage.project.id) }}",
+          dataType: 'json',
+          quietMillis: 100,
+          data: function (term, page) { // page is the one-based page number tracked by Select2
+              return {
+                  query: term, //search term
+                  page_limit: 10, // page size
+                  page: page, // page number
+                  branch: $('#branches :selected').text() // selected branch
+              };
+          },
+          results: function (data, page) {
+              var more = (page * 10) < data.total; // whether or not there are more results available
+
+              // notice we return the value of more so Select2 knows if more results can be loaded
+              return {results: data.commits, more: more};
+          }
+        },
+        formatResult: function(commit) {
+          return commit.title;
+        },
+        formatSelection: function(commit) {
+          return commit.title;
+        }
+      });
       // Form hook
       $("#deploy").click(function() {
         $("#selected option").each(function() {

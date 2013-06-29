@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from aurora_app.constants import ROLES, PERMISSIONS, STATUSES
 from aurora_app.database import db
 
-COMMITS_PER_PAGE = 20
+COMMITS_PER_PAGE = 10
 
 
 class User(db.Model):
@@ -90,6 +90,13 @@ class Project(db.Model):
             return self.get_repo().iter_commits(branch,
                                                 max_count=max_count,
                                                 skip=skip)
+        return None
+
+    def get_commits_count(self, branch):
+        repo = self.get_repo()
+        if repo:
+            return reduce(lambda x, y: x + 1, repo.iter_commits(branch), 0)
+
         return None
 
     def __repr__(self):
