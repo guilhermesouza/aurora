@@ -17,10 +17,11 @@
 
   <div class='alert alert-info'>
     <p><strong>Description:</strong> {{ project.description }}</p>
-    <p><strong>Repository path:</strong> {{ project.repository_path }}</p>
-    <p id="actions"><strong>Actions:</strong>      
-      <a data-action="clone_repository" data-toggle='tooltip' data-placement='top' data-original-title="Clone repository"><i class='icon-download-alt'></i></a>
-      <a data-action="remove_repository" data-toggle='tooltip' data-placement='top' data-original-title="Remove repository"><i class='icon-remove'></i></a>
+    <p><strong>Repository path:</strong> {{ project.repository_path }}
+      <span id="actions">
+        <a data-action="clone_repository" data-toggle='tooltip' data-placement='top' data-original-title="Clone repository"><i class='icon-download-alt'></i></a>
+        <a data-action="remove_repository" data-toggle='tooltip' data-placement='top' data-original-title="Remove repository"><i class='icon-remove'></i></a>
+      </span>
     </p>
     <p><strong>Code:</strong></p>
     <pre><code lang="python">{{ project.code }}</code></pre>
@@ -70,6 +71,7 @@
 
         // Show refresh icon
         $(this).find('i').attr('class', 'icon-refresh');
+
         $.ajax({
           url:'{{ url_for('projects.execute', id=project.id) }}',
           data: {'action': action},

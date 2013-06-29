@@ -12,7 +12,7 @@
       </h1>
     </li>
     {% if g.user.can('deploy_stage') %}
-      <li><a href="{{ url_for('stages.deploy', id=stage.id) }}">Deploy</a></li>
+      <li><a href="{{ url_for('deployments.create', id=stage.id) }}">Deploy</a></li>
     {% endif %}
     {% if g.user.can('edit_stage') %}
       <li><a href="{{ url_for('stages.edit', id=stage.id) }}">Edit</a></li>
