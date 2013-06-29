@@ -1,9 +1,13 @@
-from datetime import datetime
 import os
+
+from datetime import datetime
+from git import Repo
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from aurora_app.constants import ROLES, PERMISSIONS, STATUSES
 from aurora_app.database import db
-from werkzeug.security import generate_password_hash, check_password_hash
+
+COMMITS_PER_PAGE = 20
 
 
 class User(db.Model):
@@ -69,6 +73,25 @@ class Project(db.Model):
     def repository_folder_exists(self):
         return os.path.exists(self.get_path())
 
+    def get_repo(self):
+        if self.repository_folder_exists():
+            return Repo.init(self.get_path())
+        return None
+
+    def get_branches(self):
+        repo = self.get_repo()
+        if repo:
+            return repo.heads
+        return None
+
+    def get_commits(self, branch, max_count=COMMITS_PER_PAGE, skip=0):
+        repo = self.get_repo()
+        if repo:
+            return self.get_repo().iter_commits(branch,
+                                                max_count=max_count,
+                                                skip=skip)
+        return None
+
     def __repr__(self):
         return self.name
 
@@ -124,7 +147,8 @@ class Deployment(db.Model):
     __tablename__ = "deployments"
     id = db.Column(db.Integer, primary_key=True)
     status = db.Column(db.SmallInteger, default=STATUSES['READY'])
-    revision = db.Column(db.String(32), default='')
+    branch = db.Column(db.String(32), default='master')
+    revision = db.Column(db.String(32), default='HEAD')
     started_at = db.Column(db.DateTime(), default=datetime.now)
     finished_at = db.Column(db.DateTime())
     code = db.Column(db.Text(), default='')

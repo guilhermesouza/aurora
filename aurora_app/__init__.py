@@ -64,13 +64,16 @@ def dated_url_for(endpoint, **values):
     return url_for(endpoint, **values)
 
 
-from aurora_app.views import main, projects, stages, tasks, notifications
+from aurora_app.views import (main, projects, stages, tasks, notifications,
+                              deployments)
 
 app.register_blueprint(main.mod)
 app.register_blueprint(projects.mod)
 app.register_blueprint(stages.mod)
 app.register_blueprint(tasks.mod)
 app.register_blueprint(notifications.mod)
+app.register_blueprint(deployments.mod)
+
 
 # Enable context processors
 from aurora_app.context_processors import projects

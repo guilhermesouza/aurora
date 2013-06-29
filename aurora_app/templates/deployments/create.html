@@ -1,0 +1,129 @@
+{% extends 'main/index.html' %}
+
+{% block title %}Deploy | {{ stage }}{% endblock %}
+
+{% block content %}
+  <h1>Deploying stage: 
+    {% if stage.project %}
+      <a href="{{ url_for('projects.view', id=stage.project.id) }}">{{ stage.project.name }}</a> /
+    {% endif %} {{ stage.name }}
+  </h1>
+  <hr />
+
+  <form method='post' action=''>
+    <div class='row'>
+      <div class='span4 center'>
+        <h4>Available tasks:</h4>
+        <select name="available" id="available" multiple="multiple" size="10">
+          {% for task in stage.tasks %}
+            <option value="{{ task.id }}">{{ task.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class='span1 center bigger'>
+        <ul class='unstyled arrows' style='padding-top: 50px;'>
+          <li class='pointer'><a id="add">&raquo;</a></li>
+          <li>&nbsp;</li>
+          <li class='pointer'><a id="remove">&laquo;</a></li>
+        </ul>
+      </div>
+
+      <div class='span4 center'>
+        <h4>Selected tasks:</h4>
+        <select name="selected" id="selected" multiple="multiple" size="10">
+        </select>
+      </div>
+
+      <div class='span0 center bigger'>
+        <ul class='unstyled arrows' style='padding-top: 50px;'>
+          <li class='pointer'><a id="up">&uarr;</a></li>
+          <li>&nbsp;</li>
+          <li class='pointer'><a id="down">&darr;</a></li>
+        </ul>
+      </div>
+    </div>
+
+    {% if branch %}
+      <div class='row'>
+        <div class='span4 center'>
+          <h4>Branch:</h4>
+          <select name="branch" id="branches">
+            {% for branch_item in stage.project.get_branches() %}
+              <option value="{{ branch.name }}"
+              {% if branch == branch_item %}
+                selected
+              {% endif %}
+              >{{ branch.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class='span6 center'>
+          <h4>Commits:</h4>
+          <select name="commit" id="commits" size="10" class='wider'>
+            {% for commit in commits %}
+              <option value="{{ commit.hexsha }}" {% if loop.first %}selected{% endif %}>{{ commit.hexsha[:10] }} - {{ commit.message }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    {% endif %}
+
+    <hr />
+
+    <input type='submit' id="deploy" class='btn btn-primary' value="Deploy!" />
+
+  </form>
+{% endblock %}
+
+{% block js %}
+  {{ super() }}
+
+  <script>
+    $(function() {
+      // Form hook
+      $("#deploy").click(function() {
+        $("#selected option").each(function() {
+          $(this).attr("selected", "selected"); 
+        });
+      });
+      // From: http://www.designchemical.com/blog/index.php/jquery/change-order-multiple-select-lists-using-jquery/
+      // Add button hook
+      $("#add").click(function() {
+        $('#available option:selected').each(function() {
+          $('#selected').append("<option value='" + $(this).val() + "'>" + $(this).text() + "</option>");
+          $(this).remove();
+        });
+      });
+      // Remove button hook
+      $("#remove").click(function() {
+        $('#selected option:selected').each(function() {
+          $('#available').append("<option value='" + $(this).val() + "'>" + $(this).text() + "</option>");
+          $(this).remove();
+        });
+      });
+      // Up button hook
+      $('#up').click(function() {
+        $('#selected option:selected').each( function() {
+          var newPos = $('#selected option').index(this) - 1;
+          if (newPos > -1) {
+            $('#selected option').eq(newPos).before("<option value='"+$(this).val()+"' selected='selected'>"+$(this).text()+"</option>");
+            $(this).remove();
+          }
+        });
+      });
+      // Down button hook
+      $('#down').click(function() {
+        var countOptions = $('#selected option').size();
+        $('#selected option:selected').each(function() {
+          var newPos = $('#selected option').index(this) + 1;
+          if (newPos < countOptions) {
+            $('#selected option').eq(newPos).after("<option value='"+$(this).val()+"' selected='selected'>"+$(this).text()+"</option>");
+            $(this).remove();
+          }
+        });
+      });
+    });
+  </script>
+{% endblock %}
