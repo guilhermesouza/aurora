@@ -1,4 +1,5 @@
 import os
+import re
 
 from datetime import datetime
 from git import Repo
@@ -7,6 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from aurora_app.constants import ROLES, PERMISSIONS, STATUSES
 from aurora_app.database import db
 
+FUNCTION_NAME_REGEXP = '^def (\w+)\(.*\):'
 COMMITS_PER_PAGE = 10
 
 
@@ -96,7 +98,6 @@ class Project(db.Model):
         repo = self.get_repo()
         if repo:
             return reduce(lambda x, y: x + 1, repo.iter_commits(branch), 0)
-
         return None
 
     def __repr__(self):
@@ -139,6 +140,10 @@ class Task(db.Model):
     def __init__(self, *args, **kwargs):
         super(Task, self).__init__(*args, **kwargs)
 
+    def get_function_name(self):
+        functions_search = re.search(FUNCTION_NAME_REGEXP, self.code)
+        return functions_search.group(1)
+
     def __repr__(self):
         return self.name
 
@@ -155,7 +160,7 @@ class Deployment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     status = db.Column(db.SmallInteger, default=STATUSES['READY'])
     branch = db.Column(db.String(32), default='master')
-    revision = db.Column(db.String(32), default='HEAD')
+    commit = db.Column(db.String(32))
     started_at = db.Column(db.DateTime(), default=datetime.now)
     finished_at = db.Column(db.DateTime())
     code = db.Column(db.Text(), default='')
