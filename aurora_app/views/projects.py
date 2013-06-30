@@ -32,7 +32,6 @@ def create():
 @mod.route('/view/<int:id>')
 def view(id):
     project = get_or_404(Project, id=id)
-    # clone_git_project.delay(project, g.user.id)
     return render_template('projects/view.html', project=project)
 
 
