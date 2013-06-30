@@ -71,3 +71,10 @@ def remove_repository(project, user_id=None):
     notify(""""{}" repository has removed successfully.""".
            format(project.name, project_path),
            category='success', action=action, user_id=user_id)
+
+
+@celery.task(base=TaskWithNotification, ignore_result=True)
+def deploy_stage(stage, fabfile, user_id=None):
+    """Run's given fabfile."""
+    action = 'deploy_stage'
+    fabfile.run()

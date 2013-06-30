@@ -97,7 +97,7 @@ class Project(db.Model):
     def get_commits_count(self, branch):
         repo = self.get_repo()
         if repo:
-            return reduce(lambda x, y: x + 1, repo.iter_commits(branch), 0)
+            return reduce(lambda x, _: x + 1, repo.iter_commits(branch), 0)
         return None
 
     def __repr__(self):

@@ -1,10 +1,12 @@
 import json
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, g
 
 from aurora_app.database import get_or_404
 from aurora_app.models import Project, Stage, Task
 from aurora_app.decorators import must_be_able_to
+from aurora_app.fab import Fabfile
+from aurora_app.tasks import deploy_stage
 
 mod = Blueprint('deployments', __name__, url_prefix='/deployments')
 
@@ -17,6 +19,7 @@ def create(id):
     if request.method == 'POST':
         tasks_ids = request.form.getlist('selected')
         tasks = [get_or_404(Task, id=int(task_id)) for task_id in tasks_ids]
+        deploy_stage(stage, Fabfile(stage, tasks), g.user.id)
 
     # Prepare repo vars
     branches = stage.project.get_branches()
@@ -33,6 +36,8 @@ def commits(id):
     query = request.args.get('query')
     page_limit = int(request.args.get('page_limit'))
     page = int(request.args.get('page'))
+
+    # TODO: edit searching by query
     commits = project.get_commits(branch, max_count=page_limit,
                                   skip=page_limit * page)
     result = []

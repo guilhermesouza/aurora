@@ -1,21 +1,27 @@
+import imp
+
+
 class Fabfile:
-    """Fabfile class for generation fabfile"""
-
+    """Class for building fabfile"""
     def __init__(self, stage, tasks):
-        self.__fabfile = self.__build(stage, tasks)
+        self.module = imp.new_module("aurora_sandbox")
+        self.__build(stage)
+        self.__tasks_to_run = tasks
 
-    def __build(self, stage, tasks):
+    def __build(self, stage):
         """Builds fabfile"""
-        lines = []
-
-        lines.extend(stage.project.code.split('\n'))
-        lines.extend(stage.code.split('\n'))
+        content = stage.project.code + "\n" + stage.code + "\n"
 
         for task in stage.tasks:
-            lines.extend(task.code.split('\n'))
+            content += task.code + "\n"
 
-        return lines
+        exec content in self.module.__dict__
 
-    def get(self):
-        """Returns fabfile as string"""
-        return '\n'.join(self.__fabfile)
+    def run(self):
+        for task in self.__tasks_to_run:
+            name = task.get_function_name()
+            try:
+                eval('self.module.' + name)()
+            except Exception as e:
+                # handle
+                pass
