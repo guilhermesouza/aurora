@@ -1,14 +1,15 @@
 import json
 
-from flask import Blueprint, render_template, request, g
+from flask import Blueprint, render_template, request, g, redirect, url_for
 
-from aurora_app.database import get_or_404
-from aurora_app.models import Project, Stage, Task
+from aurora_app.database import get_or_404, db
+from aurora_app.models import Project, Stage, Task, Deployment
 from aurora_app.decorators import must_be_able_to
-from aurora_app.fab import Fabfile
-from aurora_app.tasks import deploy_stage
+from aurora_app.tasks import deploy
 
 mod = Blueprint('deployments', __name__, url_prefix='/deployments')
+
+TIMEOUT = 300
 
 
 @mod.route('/create/stage/<int:id>', methods=['POST', 'GET'])
@@ -19,7 +20,16 @@ def create(id):
     if request.method == 'POST':
         tasks_ids = request.form.getlist('selected')
         tasks = [get_or_404(Task, id=int(task_id)) for task_id in tasks_ids]
-        deploy_stage(stage, Fabfile(stage, tasks), g.user.id)
+        branch = request.form.get('branch')
+        commit = request.form.get('commit')
+
+        deployment = Deployment(stage=stage, tasks=tasks,
+                                branch=branch, user=g.user, commit=commit)
+        db.session.add(deployment)
+        db.session.commit()
+
+        deploy.delay(deployment.id)
+        return redirect(url_for('deployments.view', id=deployment.id))
 
     # Prepare repo vars
     branches = stage.project.get_branches()
@@ -50,3 +60,9 @@ def commits(id):
                                                      commit.message)})
     return json.dumps({'total': project.get_commits_count(branch),
                        'commits': result})
+
+
+@mod.route('/view/<int:id>')
+def view(id):
+    deployment = get_or_404(Deployment, id=id)
+    return render_template('deployments/view.html', deployment=deployment)

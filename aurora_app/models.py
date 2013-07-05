@@ -5,6 +5,7 @@ from datetime import datetime
 from git import Repo
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from aurora_app import app
 from aurora_app.constants import ROLES, PERMISSIONS, STATUSES
 from aurora_app.database import db
 
@@ -163,8 +164,8 @@ class Deployment(db.Model):
     commit = db.Column(db.String(32))
     started_at = db.Column(db.DateTime(), default=datetime.now)
     finished_at = db.Column(db.DateTime())
-    code = db.Column(db.Text(), default='')
-    log = db.Column(db.Text(), default='')
+    code = db.Column(db.Text())
+    log = db.Column(db.Text())
     # Relations
     stage_id = db.Column(db.Integer(),
                          db.ForeignKey('stages.id'), nullable=False)
@@ -174,8 +175,21 @@ class Deployment(db.Model):
                             secondary=deployments_tasks_table,
                             backref="deployments")
 
+    def show_log(self):
+        log_path = os.path.join(app.config['AURORA_PATH'],
+                                '{}.log'.format(self.id))
+        if os.path.exists(log_path):
+            return '\n'.join(open(log_path).readlines())
+
+        return self.log
+
     def __init__(self, *args, **kwargs):
         super(Deployment, self).__init__(*args, **kwargs)
+
+        self.code = [self.stage.project.code, self.stage.code]
+        for task in self.stage.tasks:
+            self.code.append(task.code)
+        self.code = '\n'.join(self.code)
 
 
 class Notification(db.Model):
