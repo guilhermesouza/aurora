@@ -1,25 +1,20 @@
 from __future__ import absolute_import
+
 import os
+import imp
+import sys
+from datetime import datetime
 
-from celery import Task
+from fabric.api import local, execute
 
-from fabric.api import local
-
-from aurora_app import celery
+from aurora_app import celery, app
+from aurora_app.database import db
+from aurora_app.models import Deployment
 from aurora_app.helpers import notify
+from aurora_app.constants import STATUSES
 
 
-class TaskWithNotification(Task):
-    abstract = True
-
-    def on_failure(self, *args, **kwargs):
-        exc = kwargs.get('exc')
-        message = exc.message if exc is not None else 'No message.'
-        notify("Task {} failed: {}".format(self.request, message),
-               category='error')
-
-
-@celery.task(base=TaskWithNotification, ignore_result=True)
+@celery.task(ignore_result=True)
 def clone_repository(project, user_id=None):
     """Clones project's repository to Aurora folder."""
     action = 'clone_repository'
@@ -49,7 +44,7 @@ def clone_repository(project, user_id=None):
            category='success', action=action, user_id=user_id)
 
 
-@celery.task(base=TaskWithNotification, ignore_result=True)
+@celery.task(ignore_result=True)
 def remove_repository(project, user_id=None):
     """Removes project's repository in Aurora folder."""
     action = 'remove_repository'
@@ -73,8 +68,50 @@ def remove_repository(project, user_id=None):
            category='success', action=action, user_id=user_id)
 
 
-@celery.task(base=TaskWithNotification, ignore_result=True)
-def deploy_stage(stage, fabfile, user_id=None):
-    """Run's given fabfile."""
+@celery.task(ignore_result=True)
+def deploy(deployment_id):
+    """Run's given deployment."""
     action = 'deploy_stage'
-    fabfile.run()
+    deployment = Deployment.query.filter_by(id=deployment_id).first()
+    module = imp.new_module("deployment_{}".format(deployment.id))
+    exec deployment.code in module.__dict__
+    deployment.status = STATUSES['RUNNING']
+    # Replace stdout
+    log_path = os.path.join(app.config['AURORA_PATH'],
+                            '{}.log'.format(deployment.id))
+    old_stdout = sys.stdout
+    sys.stdout = open(log_path, 'w', 0)
+
+    try:
+        print 'Deployment has started.'
+        for task in deployment.tasks:
+            # Execute task
+            execute(eval('module.' + task.get_function_name()))
+        print 'Deployment has finished.'
+    except Exception as e:
+        deployment.status = STATUSES['FAILED']
+        print 'Deployment has failed.'
+        print 'Error: {}'.format(e.message)
+
+        notify(""""{}" deployement has failed."""
+               .format(deployment.stage),
+               category='error', action=action, user_id=deployment.user_id)
+
+    finally:
+        # Return stdout
+        sys.stdout.close()
+        sys.stdout = old_stdout
+        log_file = open(log_path)
+
+        # If status has not changed
+        if deployment.status == STATUSES['RUNNING']:
+            deployment.status = STATUSES['COMPLETED']
+
+    deployment.log = '\n'.join(log_file.readlines())
+    deployment.finished_at = datetime.now()
+    db.session.add(deployment)
+    db.session.commit()
+
+    notify(""""{}" has been deployed successfully."""
+           .format(deployment.stage),
+           category='success', action=action, user_id=deployment.user_id)

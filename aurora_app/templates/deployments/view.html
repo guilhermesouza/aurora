@@ -1,0 +1,23 @@
+{% extends 'main/index.html' %}
+
+{% block title %}#{{ deployment.id }} - {{ deployment.stage }} {% endblock %}
+
+{% block content %}
+  <ul class='unstyled inline view-title'>
+    <li><h1>#{{ deployment.id }} - {{ deployment.stage }}</h1></li>
+  </ul>
+
+  <hr />
+
+  <div class='alert alert-info'>
+    <p><strong>Code:</strong></p>
+    <pre><code lang="python">{{ deployment.code }}</code></pre>
+
+    <p><strong>Log:</strong></p>
+    <pre>{% if deployment.show_log() %}{{ deployment.show_log() }}{% endif %}</pre>
+  </div>
+{% endblock %}
+
+{% block js %}
+  {{ super() }}
+{% endblock %}
