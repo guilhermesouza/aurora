@@ -4,18 +4,56 @@
 
 {% block content %}
   <ul class='unstyled inline view-title'>
-    <li><h1>#{{ deployment.id }} - {{ deployment.stage }}</h1></li>
+    <li>
+      <h1>#{{ deployment.id }} -
+          {% if deployment.stage.project %}
+            <a href="{{ url_for('projects.view', id=deployment.stage.project.id) }}">{{ deployment.stage.project.name }}</a> /
+          {% endif %} <a href="{{ url_for('stages.view', id=deployment.stage.id) }}">{{ deployment.stage.name }}</a>
+          - {{ deployment.show_status() }}
+      </h1>
+    </li>
   </ul>
 
   <hr />
 
   <div class='alert alert-info'>
-    <p><strong>Code:</strong></p>
-    <pre><code lang="python">{{ deployment.code }}</code></pre>
-
-    <p><strong>Log:</strong></p>
-    <pre>{% if deployment.show_log() %}{{ deployment.show_log() }}{% endif %}</pre>
+    <div class='row'>
+      <div class="span2">
+        <ul class='unstyled'>
+          <li>
+            <strong>Code:</strong> <a href="{{ url_for('deployments.raw_code', id=deployment.id) }}">Raw</a>
+          </li>
+          <li><strong>Branch:</strong> {{ deployment.branch }}</li>
+          <li>
+            <strong>Commit:</strong> {% if deployment.commit %}{{ deployment.commit }}{% else %}HEAD{% endif %}
+          </li>
+        </ul>
+      </div>
+      <div class='span4'>
+        <ul class='unstyled'>
+          <li><strong>Time:</strong>
+            {% if deployment.finished_at %}
+              {{ deployment.show_time() }}
+            {% endif %}
+          </li>
+          <li><strong>Started at:</strong> {{ deployment.started_at.strftime('%Y-%m-%d %H:%M:%S') }}</li>
+          <li><strong>Finished at:</strong>
+            {% if deployment.finished_at %}
+              {{ deployment.finished_at.strftime('%Y-%m-%d %H:%M:%S') }}
+            {% endif %}
+          </li>
+        </ul>
+      </div>
+      <div class='span3'>
+        <ul class='unstyled'>
+          <li><strong>Tasks:</strong> {{ deployment.show_tasks_list()|safe }}</li>
+        </ul>
+      </div>
+    </div>
   </div>
+
+  <p><strong>Log:</strong></p>
+  <pre>{% if deployment.show_log() %}{{ deployment.show_log() }}{% endif %}</pre>
 {% endblock %}
 
 {% block js %}
