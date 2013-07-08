@@ -47,18 +47,29 @@ def commits(id):
     page_limit = int(request.args.get('page_limit'))
     page = int(request.args.get('page'))
 
-    # TODO: edit searching by query
-    commits = project.get_commits(branch, max_count=page_limit,
-                                  skip=page_limit * page)
-    result = []
+    if query:
+        commits = project.get_all_commits(branch,
+                                          skip=page_limit * page)
+    else:
+        commits = project.get_commits(branch, max_count=page_limit,
+                                      skip=page_limit * page)
 
+    result = []
     for commit in commits:
-        if query in commit.hexsha or query in commit.message:
+        if query and not (query in commit.hexsha or query in commit.message):
+            continue
+        else:
             result.append({'id': commit.hexsha,
                            'message': commit.message,
                            'title': "{} - {}".format(commit.hexsha[:10],
                                                      commit.message)})
-    return json.dumps({'total': project.get_commits_count(branch),
+
+    total = project.get_commits_count(branch)
+    if query:
+        total = len(result)
+        result = result[:page_limit]
+
+    return json.dumps({'total': total,
                        'commits': result})
 
 

@@ -71,11 +71,54 @@
       {% endblock %}
 
       {% block content %}
-        {% if not projects %}
+        {% if not deployments %}
           <h4 class='alert'>
-            No available projects.
+            No available deployments.
           </h4>
         {% else %}
+          <ul class='unstyled inline view-title'>
+            <li><h1>Last deployments:</h1></li>
+          </ul>
+
+          <hr />
+
+          <ul class='unstyled'>
+            {% for deployment in deployments %}
+              <li>
+                <div class="alert alert-info">
+                  <h4>{{ deployment.stage }}</h4>
+                  <div class="span2">
+                    <strong>Tasks:</strong>
+                    <ul class='unstyled inline'>
+                      {% for task in deployment.tasks %}
+                        <li>{{ task.name }}</li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                  <div class="span2">
+                    <ul class='unstyled'>
+                      <li>
+                        <strong>Branch:</strong> {{ deployment.branch }}
+                      </li>
+                      <li>
+                        <strong>Commit:</strong> {{ deployment.commit }}
+                      </li>
+                    </ul>
+                  </div>
+                  <div>
+                    <ul class='unstyled'>
+                      <li>
+                        <strong>Started at:</strong> {{ deployment.started_at }}
+                      </li>
+                      <li>
+                        <strong>Finished at:</strong> {{ deployment.finished_at }}
+                      </li>
+                    </ul>
+                  </div>                        
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
         {% endif %}
       {% endblock %}
     </div>
