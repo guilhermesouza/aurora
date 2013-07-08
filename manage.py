@@ -13,6 +13,20 @@ def celeryd():
 
 
 @manager.command
+def init_db():
+    """Creates aurora database."""
+    from aurora_app.database import db
+    from aurora_app.constants import ROLES
+    from aurora_app.models import User
+
+    db.create_all()
+
+    admin = User(username='admin', password='admin', role=ROLES['ADMIN'])
+    db.session.add(admin)
+    db.session.commit()
+
+
+@manager.command
 def init_develop_db():
     """Creates aurora development database."""
     from aurora_app.database import db

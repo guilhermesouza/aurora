@@ -10,7 +10,6 @@ from aurora_app.constants import ROLES, PERMISSIONS, STATUSES
 from aurora_app.database import db
 
 FUNCTION_NAME_REGEXP = '^def (\w+)\(.*\):'
-COMMITS_PER_PAGE = 10
 
 
 class User(db.Model):
@@ -70,7 +69,6 @@ class Project(db.Model):
 
     def get_path(self):
         """Returns path of project's git repository on local machine."""
-        from aurora_app import app
         return os.path.join(app.config['AURORA_PATH'], self.name.lower())
 
     def repository_folder_exists(self):
@@ -87,12 +85,17 @@ class Project(db.Model):
             return repo.heads
         return None
 
-    def get_commits(self, branch, max_count=COMMITS_PER_PAGE, skip=0):
+    def get_commits(self, branch, max_count, skip):
         repo = self.get_repo()
         if repo:
-            return self.get_repo().iter_commits(branch,
-                                                max_count=max_count,
-                                                skip=skip)
+            return repo.iter_commits(branch, max_count=max_count,
+                                     skip=skip)
+        return None
+
+    def get_all_commits(self, branch, skip):
+        repo = self.get_repo()
+        if repo:
+            return repo.iter_commits(branch, skip=skip)
         return None
 
     def get_commits_count(self, branch):
@@ -176,12 +179,17 @@ class Deployment(db.Model):
                             backref="deployments")
 
     def show_log(self):
-        log_path = os.path.join(app.config['AURORA_PATH'],
+        log_path = os.path.join(app.config['AURORA_LOGS_PATH'],
                                 '{}.log'.format(self.id))
         if os.path.exists(log_path):
             return '\n'.join(open(log_path).readlines())
 
         return self.log
+
+    def show_status(self):
+        for status, number in STATUSES.iteritems():
+            if number == self.status:
+                return status
 
     def __init__(self, *args, **kwargs):
         super(Deployment, self).__init__(*args, **kwargs)

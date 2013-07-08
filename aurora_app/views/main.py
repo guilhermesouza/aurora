@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, g, url_for, request
 from flask.ext.login import login_user, logout_user
 
 from aurora_app import login_manager
-from aurora_app.models import User
+from aurora_app.models import User, Deployment
 from aurora_app.decorators import public
 from aurora_app.forms import LoginForm
 
@@ -16,7 +16,8 @@ def load_user(id):
 
 @mod.route('/')
 def index():
-    return render_template('main/index.html')
+    deployments = Deployment.query.order_by('started_at desc').limit(10)
+    return render_template('main/index.html', deployments=deployments)
 
 
 @mod.route('/login', methods=['GET', 'POST'])

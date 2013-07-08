@@ -23,8 +23,9 @@ login_manager.setup_app(app)
 toolbar = DebugToolbarExtension(app)
 
 # Make Aurora folder if not exists
-from aurora_app.helpers import create_aurora_folder
-create_aurora_folder(app.config['AURORA_PATH'])
+from aurora_app.helpers import create_folder
+create_folder(app.config['AURORA_PATH'])
+create_folder(app.config['AURORA_LOGS_PATH'])
 
 
 @app.errorhandler(404)

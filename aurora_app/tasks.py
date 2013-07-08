@@ -77,7 +77,7 @@ def deploy(deployment_id):
     exec deployment.code in module.__dict__
     deployment.status = STATUSES['RUNNING']
     # Replace stdout
-    log_path = os.path.join(app.config['AURORA_PATH'],
+    log_path = os.path.join(app.config['AURORA_LOGS_PATH'],
                             '{}.log'.format(deployment.id))
     old_stdout = sys.stdout
     sys.stdout = open(log_path, 'w', 0)
