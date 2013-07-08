@@ -16,7 +16,7 @@ def load_user(id):
 
 @mod.route('/')
 def index():
-    deployments = Deployment.query.order_by('started_at desc').limit(10)
+    deployments = Deployment.query.order_by('started_at desc').limit(10).all()
     return render_template('main/index.html', deployments=deployments)
 
 
