@@ -85,36 +85,45 @@
           <ul class='unstyled'>
             {% for deployment in deployments %}
               <li>
-                <div class="alert alert-info">
-                  <h4>{{ deployment.stage }}</h4>
-                  <div class="span2">
-                    <strong>Tasks:</strong>
-                    <ul class='unstyled inline'>
-                      {% for task in deployment.tasks %}
-                        <li>{{ task.name }}</li>
-                      {% endfor %}
-                    </ul>
+                <div class="alert alert-{{ deployment.bootstrap_status() }}">
+                  <div class='row'>
+                    <div class='span4'>
+                      <h4><a href="{{ url_for('stages.view', id=deployment.stage.id) }}">{{ deployment.stage }}</a></h4>
+                    </div>
                   </div>
-                  <div class="span2">
-                    <ul class='unstyled'>
-                      <li>
-                        <strong>Branch:</strong> {{ deployment.branch }}
-                      </li>
-                      <li>
-                        <strong>Commit:</strong> {{ deployment.commit }}
-                      </li>
-                    </ul>
+                  <div class='row'>
+                    <div class="span4">
+                      <ul class='unstyled'>
+                        <li>
+                          <strong>Time:</strong> {{ deployment.show_time() }}
+                        </li>
+                        <li>
+                          <strong>Started at:</strong> {{ deployment.started_at.strftime('%Y-%m-%d %H:%M:%S') }}
+                        </li>
+                        <li>
+                          <strong>Finished at:</strong> {{ deployment.finished_at.strftime('%Y-%m-%d %H:%M:%S') }}
+                        </li>
+                      </ul>
+                    </div>    
+                    <div class="span2">
+                      <ul class='unstyled'>
+                        <li>
+                          <strong>Branch:</strong> {{ deployment.branch }}
+                        </li>
+                        <li>
+                          <strong>Commit:</strong> {% if deployment.commit %}{{ deployment.commit }}{% else %}HEAD{% endif %}
+                        </li>
+                      </ul>
+                    </div>
+                    <div class='span3'>
+                      <ul class='unstyled'>
+                        <li><strong>Tasks:</strong></li>
+                        {% for task in deployment.tasks %}
+                          <li><a href="{{ url_for('tasks.view', id=task.id) }}">{{ task.name }}</a></li>
+                        {% endfor %}
+                      </ul>
+                    </div>
                   </div>
-                  <div>
-                    <ul class='unstyled'>
-                      <li>
-                        <strong>Started at:</strong> {{ deployment.started_at }}
-                      </li>
-                      <li>
-                        <strong>Finished at:</strong> {{ deployment.finished_at }}
-                      </li>
-                    </ul>
-                  </div>                        
                 </div>
               </li>
             {% endfor %}

@@ -1,12 +1,13 @@
 import os
 import re
+import time
 
 from datetime import datetime
 from git import Repo
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from aurora_app import app
-from aurora_app.constants import ROLES, PERMISSIONS, STATUSES
+from aurora_app.constants import ROLES, PERMISSIONS, STATUSES, BOOTSTRAP_ALERTS
 from aurora_app.database import db
 
 FUNCTION_NAME_REGEXP = '^def (\w+)\(.*\):'
@@ -186,10 +187,17 @@ class Deployment(db.Model):
 
         return self.log
 
+    def bootstrap_status(self):
+        return BOOTSTRAP_ALERTS[self.status]
+
     def show_status(self):
         for status, number in STATUSES.iteritems():
             if number == self.status:
                 return status
+
+    def show_time(self):
+        delta = self.finished_at - self.started_at
+        return time.strftime("%H:%M:%S", time.gmtime(delta.seconds))
 
     def __init__(self, *args, **kwargs):
         super(Deployment, self).__init__(*args, **kwargs)
