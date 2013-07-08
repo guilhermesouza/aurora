@@ -5,6 +5,7 @@ import time
 from datetime import datetime
 from git import Repo
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask import url_for
 
 from aurora_app import app
 from aurora_app.constants import ROLES, PERMISSIONS, STATUSES, BOOTSTRAP_ALERTS
@@ -194,6 +195,11 @@ class Deployment(db.Model):
         for status, number in STATUSES.iteritems():
             if number == self.status:
                 return status
+
+    def show_tasks_list(self):
+        template = '<a href="{}">{}</a>'
+        return ', '.join([template.format(url_for('tasks.view', id=task.id),
+                                          task.name) for task in self.tasks])
 
     def show_time(self):
         delta = self.finished_at - self.started_at

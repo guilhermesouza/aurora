@@ -77,3 +77,9 @@ def commits(id):
 def view(id):
     deployment = get_or_404(Deployment, id=id)
     return render_template('deployments/view.html', deployment=deployment)
+
+
+@mod.route('/code/<int:id>/fabfile.py')
+def raw_code(id):
+    deployment = get_or_404(Deployment, id=id)
+    return deployment.code, 200, {'Content-Type': 'text/plain'}
