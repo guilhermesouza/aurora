@@ -75,12 +75,16 @@ def deploy(deployment_id):
     deployment = Deployment.query.filter_by(id=deployment_id).first()
     module = imp.new_module("deployment_{}".format(deployment.id))
     exec deployment.code in module.__dict__
-    deployment.status = STATUSES['RUNNING']
     # Replace stdout
     log_path = os.path.join(app.config['AURORA_LOGS_PATH'],
                             '{}.log'.format(deployment.id))
     old_stdout = sys.stdout
     sys.stdout = open(log_path, 'w', 0)
+
+    # Update status
+    deployment.status = STATUSES['RUNNING']
+    db.session.add(deployment)
+    db.session.commit()
 
     try:
         print 'Deployment has started.'

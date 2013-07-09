@@ -9,9 +9,9 @@
           {% if deployment.stage.project %}
             <a href="{{ url_for('projects.view', id=deployment.stage.project.id) }}">{{ deployment.stage.project.name }}</a> /
           {% endif %} <a href="{{ url_for('stages.view', id=deployment.stage.id) }}">{{ deployment.stage.name }}</a>
-          - {{ deployment.show_status() }}
       </h1>
     </li>
+    <li><h3>- {{ deployment.show_status() }}</h3></li>
   </ul>
 
   <hr />
@@ -52,10 +52,52 @@
     </div>
   </div>
 
-  <p><strong>Log:</strong></p>
-  <pre>{% if deployment.show_log() %}{{ deployment.show_log() }}{% endif %}</pre>
+  <p><strong>Log:</strong>
+    {% if not deployment.log %}
+      <button id='follow' class='btn btn-mini'>Follow</button>
+    {% endif %}
+  </p>
+  <div id="log" class='well' style='height: 300px; overflow: auto'>
+    {% if deployment.log %}
+      <ul class='unstyled'>
+        {% for line in deployment.log.split('\n') %}
+          <li>{{ line }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
 {% endblock %}
 
 {% block js %}
   {{ super() }}
+
+  <script>
+    {% if not deployment.log %}
+      var follow = false;
+      $("#follow").click(function() {
+        if (follow) {
+          $("#follow").text('Follow');
+          follow = false;
+        } else {
+          $("#follow").text('Unfollow');
+          follow = true;
+        }
+      });
+
+      function update_log() {
+        $.ajax({
+          url: "{{ url_for('deployments.log', id=deployment.id) }}",
+          success: function (response) {
+            $("#log").html(response);
+
+            if (follow) {
+              $("#log").scrollTop($("#log")[0].scrollHeight);
+            }
+          }
+        });
+      }
+
+      setInterval(function(){update_log()}, 1000);
+    {% endif %}
+  </script>
 {% endblock %}

@@ -1,6 +1,7 @@
 import json
 
-from flask import Blueprint, render_template, request, g, redirect, url_for
+from flask import (Blueprint, Response, render_template, request, g, redirect,
+                   url_for)
 
 from aurora_app.database import get_or_404, db
 from aurora_app.models import Project, Stage, Task, Deployment
@@ -82,4 +83,13 @@ def view(id):
 @mod.route('/code/<int:id>/fabfile.py')
 def raw_code(id):
     deployment = get_or_404(Deployment, id=id)
-    return deployment.code, 200, {'Content-Type': 'text/plain'}
+    return Response(deployment.code, mimetype='text/plain')
+
+logs = {}
+
+
+@mod.route('/log/<int:id>')
+def log(id):
+    deployment = get_or_404(Deployment, id=id)
+    lines = deployment.get_log_lines()
+    return render_template('deployments/log.html', lines=lines)

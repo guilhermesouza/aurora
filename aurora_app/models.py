@@ -180,14 +180,6 @@ class Deployment(db.Model):
                             secondary=deployments_tasks_table,
                             backref="deployments")
 
-    def show_log(self):
-        log_path = os.path.join(app.config['AURORA_LOGS_PATH'],
-                                '{}.log'.format(self.id))
-        if os.path.exists(log_path):
-            return '\n'.join(open(log_path).readlines())
-
-        return self.log
-
     def bootstrap_status(self):
         return BOOTSTRAP_ALERTS[self.status]
 
@@ -200,6 +192,16 @@ class Deployment(db.Model):
         template = '<a href="{}">{}</a>'
         return ', '.join([template.format(url_for('tasks.view', id=task.id),
                                           task.name) for task in self.tasks])
+
+    def get_log_lines(self):
+        path = os.path.join(app.config['AURORA_LOGS_PATH'],
+                            '{}.log'.format(self.id))
+        if os.path.exists(path):
+            return open(path).readlines()
+
+        if self.log:
+            return self.log.split('\n')
+        return []
 
     def show_time(self):
         delta = self.finished_at - self.started_at
