@@ -1,5 +1,6 @@
-from flask import (Blueprint, render_template, url_for, redirect, request, g,
-                   json)
+import json
+
+from flask import Blueprint, render_template, url_for, redirect, request, g
 
 from aurora_app.decorators import must_be_able_to
 from aurora_app.forms import ProjectForm
@@ -87,3 +88,50 @@ def execute(id):
     notify(u"""Can't execute "{}.{}".""".format(project.name, action),
            category='error', action=action, user_id=g.user.id)
     return json.dumps({'error': True})
+
+
+@mod.route('/commits/<int:id>')
+def commits(id):
+    project = get_or_404(Project, id=id)
+    branch = request.args.get('branch')
+    query = request.args.get('query')
+    page_limit = int(request.args.get('page_limit'))
+    page = int(request.args.get('page'))
+
+    if query:
+        commits = project.get_all_commits(branch,
+                                          skip=page_limit * page)
+    else:
+        commits = project.get_commits(branch, max_count=page_limit,
+                                      skip=page_limit * (page - 1))
+
+    result = []
+    for commit in commits:
+        if query and not (query in commit.hexsha or query in commit.message):
+            continue
+        else:
+            result.append({'id': commit.hexsha,
+                           'message': commit.message,
+                           'title': "{} - {}".format(commit.hexsha[:10],
+                                                     commit.message)})
+
+    total = project.get_commits_count(branch)
+    if query:
+        total = len(result)
+        result = result[:page_limit]
+
+    return json.dumps({'total': total,
+                       'commits': result})
+
+
+@mod.route('/commits/one/<int:id>/<string:branch>/<string:commit>')
+def get_one_commit(id, branch, commit):
+    project = get_or_404(Project, id=id)
+    commits = project.get_all_commits(branch)
+    for item in commits:
+        if commit == item.hexsha:
+            return json.dumps({'id': item.hexsha,
+                               'message': item.message,
+                               'title': "{} - {}".format(item.hexsha[:10],
+                                                         item.message)})
+    return 'error', 500

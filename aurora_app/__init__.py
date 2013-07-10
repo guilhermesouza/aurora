@@ -25,6 +25,7 @@ toolbar = DebugToolbarExtension(app)
 # Make Aurora folder if not exists
 from aurora_app.helpers import create_folder
 create_folder(app.config['AURORA_PATH'])
+create_folder(app.config['AURORA_PROJECTS_PATH'])
 create_folder(app.config['AURORA_LOGS_PATH'])
 
 

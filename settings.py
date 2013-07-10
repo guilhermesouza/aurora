@@ -8,6 +8,7 @@ CSRF_ENABLED = True
 SECRET_KEY = 'aurora-app'
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(_basedir, 'aurora.db')
 AURORA_PATH = '/home/{}/.aurora/'.format(getpass.getuser())
+AURORA_PROJECTS_PATH = os.path.join(AURORA_PATH, 'projects')
 AURORA_LOGS_PATH = os.path.join(AURORA_PATH, 'logs')
 
 # Debug toolbar settings

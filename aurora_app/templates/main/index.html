@@ -91,6 +91,7 @@
                       <a href="{{ url_for('deployments.view', id=deployment.id) }}">
                         <strong>#{{ deployment.id }} - {{ deployment.show_status() }}</strong>
                       </a>
+                      <a href='{{ url_for('deployments.create', id=deployment.stage.id, parent=deployment.id) }}' title='Repeat'><i class='icon-repeat'></i></a>
                     </div>
                   </div>
                   <div class='row'>
@@ -101,7 +102,7 @@
                         </li>
                         <li><strong>Branch:</strong> {{ deployment.branch }}</li>
                         <li>
-                          <strong>Commit:</strong> {% if deployment.commit %}{{ deployment.commit }}{% else %}HEAD{% endif %}
+                          <strong>Commit:</strong> {{ deployment.show_commit() }}
                         </li>
                       </ul>
                     </div>

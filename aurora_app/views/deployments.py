@@ -1,10 +1,8 @@
-import json
-
 from flask import (Blueprint, Response, render_template, request, g, redirect,
                    url_for)
 
 from aurora_app.database import get_or_404, db
-from aurora_app.models import Project, Stage, Task, Deployment
+from aurora_app.models import Stage, Task, Deployment
 from aurora_app.decorators import must_be_able_to
 from aurora_app.tasks import deploy
 
@@ -17,12 +15,16 @@ TIMEOUT = 300
 @must_be_able_to('deploy_stage')
 def create(id):
     stage = get_or_404(Stage, id=id)
+    parent_id = request.args.get('parent')
 
     if request.method == 'POST':
         tasks_ids = request.form.getlist('selected')
         tasks = [get_or_404(Task, id=int(task_id)) for task_id in tasks_ids]
         branch = request.form.get('branch')
         commit = request.form.get('commit')
+
+        if not commit:
+            commit = stage.project.get_last_commit(branch).hexsha
 
         deployment = Deployment(stage=stage, tasks=tasks,
                                 branch=branch, user=g.user, commit=commit)
@@ -32,46 +34,24 @@ def create(id):
         deploy.delay(deployment.id)
         return redirect(url_for('deployments.view', id=deployment.id))
 
-    # Prepare repo vars
     branches = stage.project.get_branches()
-
+    parent_deployment = None
     branch = branches[0] if branches else None
-    return render_template('deployments/create.html',
-                           stage=stage, branch=branch)
 
+    if parent_id:
+        parent_deployment = get_or_404(Deployment, id=parent_id)
 
-@mod.route('/commits/<int:id>')
-def commits(id):
-    project = get_or_404(Project, id=id)
-    branch = request.args.get('branch')
-    query = request.args.get('query')
-    page_limit = int(request.args.get('page_limit'))
-    page = int(request.args.get('page'))
+        if parent_deployment.stage.id != stage.id:
+            return "Parent deployment should have the same stage."
 
-    if query:
-        commits = project.get_all_commits(branch,
-                                          skip=page_limit * page)
-    else:
-        commits = project.get_commits(branch, max_count=page_limit,
-                                      skip=page_limit * page)
+        branches = stage.project.get_branches()
+        # Select parent deployment's branch
+        for branch_item in branches:
+            if branch_item.name == parent_deployment.branch:
+                branch = branch_item
 
-    result = []
-    for commit in commits:
-        if query and not (query in commit.hexsha or query in commit.message):
-            continue
-        else:
-            result.append({'id': commit.hexsha,
-                           'message': commit.message,
-                           'title': "{} - {}".format(commit.hexsha[:10],
-                                                     commit.message)})
-
-    total = project.get_commits_count(branch)
-    if query:
-        total = len(result)
-        result = result[:page_limit]
-
-    return json.dumps({'total': total,
-                       'commits': result})
+    return render_template('deployments/create.html', stage=stage,
+                           branch=branch, parent_deployment=parent_deployment)
 
 
 @mod.route('/view/<int:id>')
@@ -84,8 +64,6 @@ def view(id):
 def raw_code(id):
     deployment = get_or_404(Deployment, id=id)
     return Response(deployment.code, mimetype='text/plain')
-
-logs = {}
 
 
 @mod.route('/log/<int:id>')
