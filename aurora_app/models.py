@@ -71,7 +71,8 @@ class Project(db.Model):
 
     def get_path(self):
         """Returns path of project's git repository on local machine."""
-        return os.path.join(app.config['AURORA_PATH'], self.name.lower())
+        return os.path.join(app.config['AURORA_PROJECTS_PATH'],
+                            self.name.lower())
 
     def repository_folder_exists(self):
         return os.path.exists(self.get_path())
@@ -94,10 +95,16 @@ class Project(db.Model):
                                      skip=skip)
         return None
 
-    def get_all_commits(self, branch, skip):
+    def get_all_commits(self, branch, skip=None):
         repo = self.get_repo()
         if repo:
             return repo.iter_commits(branch, skip=skip)
+        return None
+
+    def get_last_commit(self, branch):
+        repo = self.get_repo()
+        if repo:
+            return repo.iter_commits(branch).next()
         return None
 
     def get_commits_count(self, branch):
@@ -105,6 +112,12 @@ class Project(db.Model):
         if repo:
             return reduce(lambda x, _: x + 1, repo.iter_commits(branch), 0)
         return None
+
+    def checkout(self, branch):
+        repo = self.get_repo()
+        if repo:
+            return repo.git.checkout(branch)
+        raise Exception("Can't checkout the repo.")
 
     def __repr__(self):
         return self.name
@@ -206,6 +219,9 @@ class Deployment(db.Model):
     def show_time(self):
         delta = self.finished_at - self.started_at
         return time.strftime("%H:%M:%S", time.gmtime(delta.seconds))
+
+    def show_commit(self):
+        return "{}".format(self.commit[:10])
 
     def __init__(self, *args, **kwargs):
         super(Deployment, self).__init__(*args, **kwargs)

@@ -73,6 +73,11 @@ def deploy(deployment_id):
     """Run's given deployment."""
     action = 'deploy_stage'
     deployment = Deployment.query.filter_by(id=deployment_id).first()
+
+    # Checkout to commit
+    deployment.stage.project.checkout(deployment.commit)
+
+    # Create module
     module = imp.new_module("deployment_{}".format(deployment.id))
     exec deployment.code in module.__dict__
     # Replace stdout
@@ -115,6 +120,9 @@ def deploy(deployment_id):
     deployment.finished_at = datetime.now()
     db.session.add(deployment)
     db.session.commit()
+
+    # Checkout to master
+    deployment.stage.project.checkout('master')
 
     notify(""""{}" has been deployed successfully."""
            .format(deployment.stage),

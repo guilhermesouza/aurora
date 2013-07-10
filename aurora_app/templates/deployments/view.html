@@ -18,6 +18,13 @@
 
   <div class='alert alert-info'>
     <div class='row'>
+      <div class='span2'>
+        <ul class='unstyled'>
+          <li><strong>Actions:</strong> <a href='{{ url_for('deployments.create', id=deployment.stage.id, parent=deployment.id) }}' title='Repeat'><i class='icon-repeat'></i></a></li>
+        </ul>
+      </div>
+    </div>
+    <div class='row'>
       <div class="span2">
         <ul class='unstyled'>
           <li>
@@ -25,7 +32,7 @@
           </li>
           <li><strong>Branch:</strong> {{ deployment.branch }}</li>
           <li>
-            <strong>Commit:</strong> {% if deployment.commit %}{{ deployment.commit }}{% else %}HEAD{% endif %}
+            <strong>Commit:</strong> {{ deployment.show_commit() }}
           </li>
         </ul>
       </div>

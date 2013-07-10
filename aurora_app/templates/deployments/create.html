@@ -16,7 +16,9 @@
         <h4>Available tasks:</h4>
         <select name="available" id="available" multiple="multiple" size="10">
           {% for task in stage.tasks %}
-            <option value="{{ task.id }}">{{ task.name }}</option>
+            {% if (not parent_deployment) or task not in parent_deployment.tasks %}
+              <option value="{{ task.id }}">{{ task.name }}</option>
+            {% endif %}
           {% endfor %}
         </select>
       </div>
@@ -32,6 +34,11 @@
       <div class='span4 center'>
         <h4>Selected tasks:</h4>
         <select name="selected" id="selected" multiple="multiple" size="10">
+          {% if parent_deployment %}
+            {% for task in parent_deployment.tasks %}
+              <option value="{{ task.id }}">{{ task.name }}</option>
+            {% endfor %}
+          {% endif %}
         </select>
       </div>
 
@@ -61,7 +68,7 @@
 
         <div class='span6 center'>
           <h4>Commit:</h4>
-          <input type='hidden' id="commits" class='wider' />
+          <input type='hidden' id="commits" class='wider' name='commit' {% if parent_deployment %}value='{{ parent_deployment.commit }}'{% endif %} />
         </div>
       </div>
     {% endif %}
@@ -89,7 +96,7 @@
       $("#commits").select2({
         placeholder: "Select a commit",
         ajax: {
-          url: "{{ url_for('deployments.commits', id=stage.project.id) }}",
+          url: "{{ url_for('projects.commits', id=stage.project.id) }}",
           dataType: 'json',
           quietMillis: 100,
           data: function (term, page) { // page is the one-based page number tracked by Select2
@@ -107,6 +114,14 @@
               return {results: data.commits, more: more};
           }
         },
+        {% if parent_deployment and parent_deployment.commit %}
+          initSelection: function(element, callback) {
+            var id = $(element).val();
+            if (id !== "") {
+                $.ajax("{{ url_for('projects.get_one_commit', id=stage.project.id, branch=branch.name, commit=parent_deployment.commit) }}").done(function(data) { callback(JSON.parse(data)); });
+            }
+          },
+        {% endif %}
         formatResult: function(commit) {
           return commit.title;
         },
