@@ -78,21 +78,24 @@ def deploy(deployment_id):
     # Copy project to tmp
     deployment_tmp_path = os.path.join(
         app.config['AURORA_TMP_DEPLOYMENTS_PATH'], '{}'.format(deployment.id))
+    os.makedirs(deployment_tmp_path)
+    deployment_project_tmp_path = os.path.join(
+        deployment_tmp_path, deployment.stage.project.name.lower())
     os.system('cp -rf {} {}'.format(deployment.stage.project.get_path(),
-                                    deployment_tmp_path))
+                                    deployment_project_tmp_path))
 
     # Change dir
-    os.chdir(deployment_tmp_path)
+    os.chdir(deployment_project_tmp_path)
 
     # Checkout to commit
-    deployment_repo = Repo.init(deployment_tmp_path)
+    deployment_repo = Repo.init(deployment_project_tmp_path)
     deployment_repo.git.checkout(deployment.commit)
 
     # Create module
     module = imp.new_module("deployment_{}".format(deployment.id))
     exec deployment.code in module.__dict__
     # Replace stdout
-    log_path = os.path.join(deployment_tmp_path, 'deployment.log')
+    log_path = os.path.join(deployment_tmp_path, 'log')
     old_stdout = sys.stdout
     sys.stdout = open(log_path, 'w', 0)
 

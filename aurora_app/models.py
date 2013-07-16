@@ -214,7 +214,7 @@ class Deployment(db.Model):
 
     def get_log_lines(self):
         path = os.path.join(app.config['AURORA_TMP_DEPLOYMENTS_PATH'],
-                            '{}'.format(self.id), 'deployment.log')
+                            '{}'.format(self.id), 'log')
         if os.path.exists(path):
             return open(path).readlines()
 
