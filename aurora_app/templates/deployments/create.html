@@ -57,11 +57,11 @@
           <h4>Branch:</h4>
           <select name="branch" id="branches">
             {% for branch_item in stage.project.get_branches() %}
-              <option value="{{ branch.name }}"
+              <option value="{{ branch_item.name }}"
               {% if branch == branch_item %}
                 selected
               {% endif %}
-              >{{ branch.name }}</option>
+              >{{ branch_item.name }}</option>
             {% endfor %}
           </select>
         </div>

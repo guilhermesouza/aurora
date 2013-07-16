@@ -85,7 +85,7 @@ class Project(db.Model):
     def get_branches(self):
         repo = self.get_repo()
         if repo:
-            return repo.heads
+            return [ref for ref in repo.refs if ref.name != 'origin/HEAD']
         return None
 
     def get_commits(self, branch, max_count, skip):
@@ -118,6 +118,12 @@ class Project(db.Model):
         if repo:
             return repo.git.checkout(branch)
         raise Exception("Can't checkout the repo.")
+
+    def fetch(self):
+        repo = self.get_repo()
+        if repo:
+            return repo.git.fetch()
+        raise Exception("Can't fetch the repo.")
 
     def __repr__(self):
         return self.name
@@ -207,8 +213,8 @@ class Deployment(db.Model):
                                           task.name) for task in self.tasks])
 
     def get_log_lines(self):
-        path = os.path.join(app.config['AURORA_LOGS_PATH'],
-                            '{}.log'.format(self.id))
+        path = os.path.join(app.config['AURORA_TMP_DEPLOYMENTS_PATH'],
+                            '{}'.format(self.id), 'deployment.log')
         if os.path.exists(path):
             return open(path).readlines()
 
