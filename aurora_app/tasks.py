@@ -5,6 +5,7 @@ import imp
 import sys
 from datetime import datetime
 
+from git import Repo
 from fabric.api import local, execute
 
 from aurora_app import celery, app
@@ -74,15 +75,24 @@ def deploy(deployment_id):
     action = 'deploy_stage'
     deployment = Deployment.query.filter_by(id=deployment_id).first()
 
+    # Copy project to tmp
+    deployment_tmp_path = os.path.join(
+        app.config['AURORA_TMP_DEPLOYMENTS_PATH'], '{}'.format(deployment.id))
+    os.system('cp -rf {} {}'.format(deployment.stage.project.get_path(),
+                                    deployment_tmp_path))
+
+    # Change dir
+    os.chdir(deployment_tmp_path)
+
     # Checkout to commit
-    deployment.stage.project.checkout(deployment.commit)
+    deployment_repo = Repo.init(deployment_tmp_path)
+    deployment_repo.git.checkout(deployment.commit)
 
     # Create module
     module = imp.new_module("deployment_{}".format(deployment.id))
     exec deployment.code in module.__dict__
     # Replace stdout
-    log_path = os.path.join(app.config['AURORA_LOGS_PATH'],
-                            '{}.log'.format(deployment.id))
+    log_path = os.path.join(deployment_tmp_path, 'deployment.log')
     old_stdout = sys.stdout
     sys.stdout = open(log_path, 'w', 0)
 
@@ -120,9 +130,6 @@ def deploy(deployment_id):
     deployment.finished_at = datetime.now()
     db.session.add(deployment)
     db.session.commit()
-
-    # Checkout to master
-    deployment.stage.project.checkout('master')
 
     notify(""""{}" has been deployed successfully."""
            .format(deployment.stage),

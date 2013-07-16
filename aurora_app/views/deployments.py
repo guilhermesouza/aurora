@@ -17,6 +17,10 @@ def create(id):
     stage = get_or_404(Stage, id=id)
     parent_id = request.args.get('parent')
 
+    # Fetch
+
+    stage.project.fetch()
+
     if request.method == 'POST':
         tasks_ids = request.form.getlist('selected')
         tasks = [get_or_404(Task, id=int(task_id)) for task_id in tasks_ids]
@@ -35,20 +39,20 @@ def create(id):
         return redirect(url_for('deployments.view', id=deployment.id))
 
     branches = stage.project.get_branches()
-    parent_deployment = None
-    branch = branches[0] if branches else None
-
     if parent_id:
         parent_deployment = get_or_404(Deployment, id=parent_id)
 
         if parent_deployment.stage.id != stage.id:
             return "Parent deployment should have the same stage."
 
-        branches = stage.project.get_branches()
         # Select parent deployment's branch
+        branch = None
         for branch_item in branches:
             if branch_item.name == parent_deployment.branch:
                 branch = branch_item
+    else:
+        parent_deployment = None
+        branch = branches[0] if branches else None
 
     return render_template('deployments/create.html', stage=stage,
                            branch=branch, parent_deployment=parent_deployment)
