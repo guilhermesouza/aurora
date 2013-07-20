@@ -1,15 +1,8 @@
-from fabric.api import local
 from flask.ext.script import Manager
 
 from aurora_app import app
 
 manager = Manager(app)
-
-
-@manager.command
-def celeryd():
-    """Starts celery."""
-    local('celery worker --app=aurora_app.celery -l debug')
 
 
 @manager.command
