@@ -8,8 +8,6 @@ from aurora_app.tasks import deploy_by_id
 
 mod = Blueprint('deployments', __name__, url_prefix='/deployments')
 
-TIMEOUT = 300
-
 
 @mod.route('/create/stage/<int:id>', methods=['POST', 'GET'])
 @must_be_able_to('deploy_stage')
@@ -18,7 +16,6 @@ def create(id):
     parent_id = request.args.get('parent')
 
     # Fetch
-
     stage.project.fetch()
 
     if request.method == 'POST':
