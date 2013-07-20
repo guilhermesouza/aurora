@@ -3,10 +3,15 @@ import getpass
 
 _basedir = os.path.abspath(os.path.dirname(__file__))
 
+# flask settings
 DEBUG = True
 CSRF_ENABLED = True
 SECRET_KEY = 'aurora-app'
+
+# sqlalchemy settings
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(_basedir, 'aurora.db')
+
+# aurora settings
 AURORA_PATH = '/home/{}/.aurora/'.format(getpass.getuser())
 AURORA_PROJECTS_PATH = os.path.join(AURORA_PATH, 'projects')
 AURORA_TMP_PATH = '/tmp/aurora'

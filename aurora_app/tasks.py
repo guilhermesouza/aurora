@@ -109,8 +109,10 @@ def deploy(deployment_id):
     # Create module
     module = imp.new_module("deployment_{}".format(deployment.id))
     exec deployment.code in module.__dict__
-    # Replace stdout
+
+    # Replace stdout and stderr
     log_path = os.path.join(deployment_tmp_path, 'log')
+
     old_stdout = sys.stdout
     old_stderr = sys.stderr
     sys.stdout = sys.stderr = open(log_path, 'w', 0)
@@ -136,10 +138,11 @@ def deploy(deployment_id):
                category='error', action=action, user_id=deployment.user_id)
 
     finally:
-        # Return stdout
+        # Return stdout and stderr
         sys.stdout.close()
         sys.stdout = old_stdout
         sys.stderr = old_stderr
+
         log_file = open(log_path)
 
         # If status has not changed
