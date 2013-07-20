@@ -1,17 +1,12 @@
 from __future__ import absolute_import
 import os
 
-from celery import Celery
 from flask import Flask, render_template, url_for, g, request, redirect
 from flask.ext.login import LoginManager, current_user
 from flask.ext.debugtoolbar import DebugToolbarExtension
 
 app = Flask(__name__)
 app.config.from_object('settings')
-
-# Celery
-celery = Celery(app)
-celery.add_defaults(app.config)
 
 from aurora_app.tasks import *
 
@@ -22,7 +17,7 @@ login_manager.setup_app(app)
 # Enable debug toolbar
 toolbar = DebugToolbarExtension(app)
 
-# Make Aurora folder if not exists
+# Make Aurora folders if not exists
 from aurora_app.helpers import create_folder
 create_folder(app.config['AURORA_PATH'])
 create_folder(app.config['AURORA_PROJECTS_PATH'])

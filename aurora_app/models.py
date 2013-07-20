@@ -199,6 +199,10 @@ class Deployment(db.Model):
                             secondary=deployments_tasks_table,
                             backref="deployments")
 
+    def get_tmp_path(self):
+        return os.path.join(app.config['AURORA_TMP_DEPLOYMENTS_PATH'],
+                            '{}'.format(self.id))
+
     def bootstrap_status(self):
         return BOOTSTRAP_ALERTS[self.status]
 
@@ -213,8 +217,7 @@ class Deployment(db.Model):
                                           task.name) for task in self.tasks])
 
     def get_log_lines(self):
-        path = os.path.join(app.config['AURORA_TMP_DEPLOYMENTS_PATH'],
-                            '{}'.format(self.id), 'log')
+        path = os.path.join(self.get_tmp_path(), 'log')
         if os.path.exists(path):
             return open(path).readlines()
 

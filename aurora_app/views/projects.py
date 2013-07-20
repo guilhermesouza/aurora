@@ -82,7 +82,7 @@ def execute(id):
     project = get_or_404(Project, id=id)
     action = request.form.get('action')
     if g.user.can(action):
-        TASKS[action].delay(project)
+        TASKS[action](project)
         return json.dumps({'error': False})
 
     notify(u"""Can't execute "{}.{}".""".format(project.name, action),

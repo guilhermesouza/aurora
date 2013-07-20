@@ -1,21 +1,39 @@
-from __future__ import absolute_import
-
 import os
 import imp
 import sys
 from datetime import datetime
+from multiprocessing import Process
 
 from git import Repo
 from fabric.api import local, execute
 
-from aurora_app import celery, app
 from aurora_app.database import db
 from aurora_app.models import Deployment
 from aurora_app.helpers import notify
 from aurora_app.constants import STATUSES
 
 
-@celery.task(ignore_result=True)
+def deploy_by_id(id):
+    process = Process(target=deploy, args=(id,))
+    process.start()
+    process.join()
+
+    # if process died or smth else mark deployment as failed
+    if process.exitcode != 0:
+        deployment = Deployment.query.filter_by(id=id).first()
+        deployment.status = STATUSES['FAILED']
+
+        # save log
+        deployment.log = deployment.get_log_lines()
+        deployment.log.extend(['Deployment has failed.',
+                              'Error: process has died.'])
+        deployment.log = '\n'.join(deployment.log)
+
+        deployment.finished_at = datetime.now()
+        db.session.add(deployment)
+        db.session.commit()
+
+
 def clone_repository(project, user_id=None):
     """Clones project's repository to Aurora folder."""
     action = 'clone_repository'
@@ -45,7 +63,6 @@ def clone_repository(project, user_id=None):
            category='success', action=action, user_id=user_id)
 
 
-@celery.task(ignore_result=True)
 def remove_repository(project, user_id=None):
     """Removes project's repository in Aurora folder."""
     action = 'remove_repository'
@@ -69,15 +86,13 @@ def remove_repository(project, user_id=None):
            category='success', action=action, user_id=user_id)
 
 
-@celery.task(ignore_result=True)
 def deploy(deployment_id):
     """Run's given deployment."""
     action = 'deploy_stage'
     deployment = Deployment.query.filter_by(id=deployment_id).first()
 
     # Copy project to tmp
-    deployment_tmp_path = os.path.join(
-        app.config['AURORA_TMP_DEPLOYMENTS_PATH'], '{}'.format(deployment.id))
+    deployment_tmp_path = deployment.get_tmp_path()
     os.makedirs(deployment_tmp_path)
     deployment_project_tmp_path = os.path.join(
         deployment_tmp_path, deployment.stage.project.name.lower())
@@ -97,7 +112,8 @@ def deploy(deployment_id):
     # Replace stdout
     log_path = os.path.join(deployment_tmp_path, 'log')
     old_stdout = sys.stdout
-    sys.stdout = open(log_path, 'w', 0)
+    old_stderr = sys.stderr
+    sys.stdout = sys.stderr = open(log_path, 'w', 0)
 
     # Update status
     deployment.status = STATUSES['RUNNING']
@@ -123,6 +139,7 @@ def deploy(deployment_id):
         # Return stdout
         sys.stdout.close()
         sys.stdout = old_stdout
+        sys.stderr = old_stderr
         log_file = open(log_path)
 
         # If status has not changed
