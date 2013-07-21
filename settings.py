@@ -4,7 +4,7 @@ import getpass
 _basedir = os.path.abspath(os.path.dirname(__file__))
 
 # flask settings
-DEBUG = True
+DEBUG = False
 CSRF_ENABLED = True
 SECRET_KEY = 'aurora-app'
 
