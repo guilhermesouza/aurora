@@ -23,4 +23,9 @@ DEBUG_TB_INTERCEPT_REDIRECTS = False
 # Celery settings
 BROKER_URL = 'sqla+' + SQLALCHEMY_DATABASE_URI
 
+try:
+    from local_settings import *
+except:
+    pass
+
 del os
