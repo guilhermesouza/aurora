@@ -113,17 +113,10 @@ class Project(db.Model):
             return reduce(lambda x, _: x + 1, repo.iter_commits(branch), 0)
         return None
 
-    def checkout(self, branch):
-        repo = self.get_repo()
-        if repo:
-            return repo.git.checkout(branch)
-        raise Exception("Can't checkout the repo.")
-
     def fetch(self):
         repo = self.get_repo()
         if repo:
             return repo.git.fetch()
-        raise Exception("Can't fetch the repo.")
 
     def __repr__(self):
         return self.name
@@ -230,7 +223,7 @@ class Deployment(db.Model):
         return time.strftime("%H:%M:%S", time.gmtime(delta.seconds))
 
     def show_commit(self):
-        return "{}".format(self.commit[:10])
+        return "{}".format(self.commit[:10]) if self.commit else ''
 
     def __init__(self, *args, **kwargs):
         super(Deployment, self).__init__(*args, **kwargs)

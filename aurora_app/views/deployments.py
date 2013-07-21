@@ -24,7 +24,7 @@ def create(id):
         branch = request.form.get('branch')
         commit = request.form.get('commit')
 
-        if not commit:
+        if not commit and stage.project.get_repo() is not None:
             commit = stage.project.get_last_commit(branch).hexsha
 
         deployment = Deployment(stage=stage, tasks=tasks,
@@ -44,9 +44,10 @@ def create(id):
 
         # Select parent deployment's branch
         branch = None
-        for branch_item in branches:
-            if branch_item.name == parent_deployment.branch:
-                branch = branch_item
+        if branches:
+            for branch_item in branches:
+                if branch_item.name == parent_deployment.branch:
+                    branch = branch_item
     else:
         parent_deployment = None
         branch = branches[0] if branches else None
