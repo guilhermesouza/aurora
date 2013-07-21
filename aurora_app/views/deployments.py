@@ -4,7 +4,7 @@ from flask import (Blueprint, Response, render_template, request, g, redirect,
 from aurora_app.database import get_or_404, db
 from aurora_app.models import Stage, Task, Deployment
 from aurora_app.decorators import must_be_able_to
-from aurora_app.tasks import deploy_by_id
+from aurora_app.tasks import start_task
 
 mod = Blueprint('deployments', __name__, url_prefix='/deployments')
 
@@ -32,7 +32,7 @@ def create(id):
         db.session.add(deployment)
         db.session.commit()
 
-        deploy_by_id(deployment.id)
+        start_task('deploy', deployment.id)
         return redirect(url_for('deployments.view', id=deployment.id))
 
     branches = stage.project.get_branches()
