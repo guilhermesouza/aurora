@@ -13,27 +13,6 @@ from aurora_app.helpers import notify
 from aurora_app.constants import STATUSES
 
 
-def deploy_by_id(id):
-    process = Process(target=deploy, args=(id,))
-    process.start()
-    process.join()
-
-    # if process died or smth else mark deployment as failed
-    if process.exitcode != 0:
-        deployment = Deployment.query.filter_by(id=id).first()
-        deployment.status = STATUSES['FAILED']
-
-        # save log
-        deployment.log = deployment.get_log_lines()
-        deployment.log.extend(['Deployment has failed.',
-                              'Error: process has died.'])
-        deployment.log = '\n'.join(deployment.log)
-
-        deployment.finished_at = datetime.now()
-        db.session.add(deployment)
-        db.session.commit()
-
-
 def clone_repository(project, user_id=None):
     """Clones project's repository to Aurora folder."""
     action = 'clone_repository'
@@ -108,7 +87,6 @@ def deploy(deployment_id):
 
     # Create module
     module = imp.new_module("deployment_{}".format(deployment.id))
-    exec deployment.code in module.__dict__
 
     # Replace stdout and stderr
     log_path = os.path.join(deployment_tmp_path, 'log')
@@ -124,9 +102,19 @@ def deploy(deployment_id):
 
     try:
         print 'Deployment has started.'
+
+        exec deployment.code in module.__dict__
+
         for task in deployment.tasks:
             # Execute task
-            execute(eval('module.' + task.get_function_name()))
+            process = Process(target=execute,
+                              args=(eval('module.' +
+                                    task.get_function_name()),))
+            process.start()
+            process.join()
+
+            if process.exitcode != 0:
+                raise Exception('Process has died')
         print 'Deployment has finished.'
     except Exception as e:
         deployment.status = STATUSES['FAILED']
@@ -157,3 +145,14 @@ def deploy(deployment_id):
     notify(""""{}" has been deployed successfully."""
            .format(deployment.stage),
            category='success', action=action, user_id=deployment.user_id)
+
+TASKS = {
+    'clone_repository': clone_repository,
+    'remove_repository': remove_repository,
+    'deploy': deploy
+}
+
+
+def start_task(task, *args, **kwargs):
+    process = Process(target=TASKS[task], args=args, kwargs=kwargs)
+    process.start()
