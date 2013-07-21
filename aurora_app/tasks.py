@@ -70,20 +70,27 @@ def deploy(deployment_id):
     action = 'deploy_stage'
     deployment = Deployment.query.filter_by(id=deployment_id).first()
 
-    # Copy project to tmp
+    # Create deployment dir
     deployment_tmp_path = deployment.get_tmp_path()
     os.makedirs(deployment_tmp_path)
+
     deployment_project_tmp_path = os.path.join(
         deployment_tmp_path, deployment.stage.project.name.lower())
-    os.system('cp -rf {} {}'.format(deployment.stage.project.get_path(),
-                                    deployment_project_tmp_path))
+
+    # Copy project's repo if exists, else create an empty folder
+    if deployment.stage.project.repository_folder_exists():
+        os.system('cp -rf {} {}'.format(deployment.stage.project.get_path(),
+                                        deployment_project_tmp_path))
+    else:
+        os.makedirs(deployment_project_tmp_path)
 
     # Change dir
     os.chdir(deployment_project_tmp_path)
 
-    # Checkout to commit
-    deployment_repo = Repo.init(deployment_project_tmp_path)
-    deployment_repo.git.checkout(deployment.commit)
+    # Checkout to commit if repo exists
+    if deployment.stage.project.repository_folder_exists():
+        deployment_repo = Repo.init(deployment_project_tmp_path)
+        deployment_repo.git.checkout(deployment.commit)
 
     # Create module
     module = imp.new_module("deployment_{}".format(deployment.id))
