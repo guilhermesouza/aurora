@@ -1,4 +1,6 @@
+from multiprocessing import Process
 from functools import wraps
+
 from flask import g, redirect, request
 
 from aurora_app.helpers import notify
@@ -22,3 +24,19 @@ def must_be_able_to(action):
             return f(*args, **kwargs)
         return decorated_function
     return decorator
+
+
+def notify_result(function):
+    """Notifies using result from decorated function."""
+    def decorated_function(*args, **kwargs):
+        result = function(*args, **kwargs)
+        notify(**result)
+    return decorated_function
+
+
+def task(function):
+    """Runs function using multiprocessing."""
+    def decorated_function(*args, **kwargs):
+        process = Process(target=function, args=args, kwargs=kwargs)
+        process.start()
+    return decorated_function

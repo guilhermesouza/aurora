@@ -65,6 +65,7 @@ class Project(db.Model):
     code = db.Column(db.Text(), default='')
     # Relations
     stages = db.relationship("Stage", backref="project")
+    # Other
 
     def __init__(self, *args, **kwargs):
         super(Project, self).__init__(*args, **kwargs)
@@ -72,7 +73,7 @@ class Project(db.Model):
     def get_path(self):
         """Returns path of project's git repository on local machine."""
         return os.path.join(app.config['AURORA_PROJECTS_PATH'],
-                            self.name.lower())
+                            self.name.lower().replace(' ', '_'))
 
     def repository_folder_exists(self):
         return os.path.exists(self.get_path())

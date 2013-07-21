@@ -7,7 +7,7 @@ from aurora_app.forms import ProjectForm
 from aurora_app.models import Project
 from aurora_app.database import db, get_or_404
 from aurora_app.helpers import notify
-from aurora_app.tasks import start_task
+from aurora_app.tasks import clone_repository, remove_repository
 
 mod = Blueprint('projects', __name__, url_prefix='/projects')
 
@@ -70,13 +70,18 @@ def delete(id):
 
     return redirect(url_for('main.index'))
 
+TASKS = {
+    'clone_repository': clone_repository,
+    'remove_repository': remove_repository
+}
+
 
 @mod.route('/execute/<int:id>', methods=['POST'])
 def execute(id):
     project = get_or_404(Project, id=id)
     action = request.form.get('action')
     if g.user.can(action):
-        start_task(action, project)
+        TASKS[action](project)
         return json.dumps({'error': False})
 
     notify(u"""Can't execute "{}.{}".""".format(project.name, action),
