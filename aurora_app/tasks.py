@@ -8,67 +8,85 @@ from git import Repo
 from fabric.api import local, execute
 
 from aurora_app.database import db
+from aurora_app.decorators import notify_result, task
 from aurora_app.models import Deployment
-from aurora_app.helpers import notify
 from aurora_app.constants import STATUSES
 
 
+@task
+@notify_result
 def clone_repository(project, user_id=None):
     """Clones project's repository to Aurora folder."""
-    action = 'clone_repository'
+    result = {
+        'action': 'clone_repository',
+        'user_id': user_id,
+        'category': 'error'
+    }
+
     if project.repository_path == '':
-        notify("""Can't clone "{}" repository without path.""".
-               format(project.name),
-               category='error', action=action, user_id=user_id)
-        return
+        result['message'] = """Can't clone "{}" repository without path.""" \
+            .format(project.name)
+        return result
 
     project_path = project.get_path()
     if os.path.exists(project_path):
-        notify("""Can't clone "{}" repository. "{}" is exists.""".
-               format(project.name, project_path),
-               category='error', action=action, user_id=user_id)
-        return
+        result['message'] = """Can't clone "{}" repository. "{}" is exists."""\
+            .format(project.name, project_path)
+        return result
 
     local('git clone {} {}'.format(project.repository_path, project_path))
 
     if not os.path.exists(project_path):
-        notify("""Can't clone "{}" repository. Something gone wrong.""".
-               format(project.name),
-               category='error', action=action, user_id=user_id)
-        return
+        result['message'] = """Can't clone "{}" repository.\n""" \
+            .format(project.name) + "Something gone wrong."
+        return result
 
-    notify("""Cloning "{}" repository has finished successfully.""".
-           format(project.name, project_path),
-           category='success', action=action, user_id=user_id)
+    result['category'] = 'success'
+    result['message'] = 'Cloning "{}" repository' \
+        .format(project.name) + " has finished successfully."
+
+    return result
 
 
+@task
+@notify_result
 def remove_repository(project, user_id=None):
     """Removes project's repository in Aurora folder."""
-    action = 'remove_repository'
+    result = {
+        'action': 'remove_repository',
+        'category': 'error',
+        'user_id': user_id
+    }
     project_path = project.get_path()
     if not os.path.exists(project_path):
-        notify("""Can't remove "{}" repository. It's not exists.""".
-               format(project.name),
-               category='error', action=action, user_id=user_id)
-        return
+        result['message'] = """Can't remove "{}" repository.""" \
+            .format(project.name) + " It's not exists."
+        return result
 
     local('rm -rf {}'.format(project_path))
 
     if os.path.exists(project_path):
-        notify("""Can't remove "{}" repository. Something gone wrong.""".
-               format(project.name),
-               category='error', action=action, user_id=user_id)
-        return
+        result['message'] = """Can't remove "{}" repository.""" \
+            .format(project.name) + " Something gone wrong."
+        return result
 
-    notify(""""{}" repository has removed successfully.""".
-           format(project.name, project_path),
-           category='success', action=action, user_id=user_id)
+    result['category'] = 'success'
+    result['message'] = """"{}" repository has removed successfully.""" \
+        .format(project.name, project_path)
+    return result
 
 
+@task
+@notify_result
 def deploy(deployment_id):
     """Run's given deployment."""
-    action = 'deploy_stage'
     deployment = Deployment.query.filter_by(id=deployment_id).first()
+
+    result = {
+        'action': 'deploy_stage',
+        'category': 'error',
+        'user_id': deployment.user_id
+    }
 
     # Create deployment dir
     deployment_tmp_path = deployment.get_tmp_path()
@@ -128,9 +146,8 @@ def deploy(deployment_id):
         print 'Deployment has failed.'
         print 'Error: {}'.format(e.message)
 
-        notify(""""{}" deployement has failed."""
-               .format(deployment.stage),
-               category='error', action=action, user_id=deployment.user_id)
+        result['message'] = """"{}" deployement has failed.""" \
+            .format(deployment.stage)
 
     finally:
         # Return stdout and stderr
@@ -149,17 +166,8 @@ def deploy(deployment_id):
     db.session.add(deployment)
     db.session.commit()
 
-    notify(""""{}" has been deployed successfully."""
-           .format(deployment.stage),
-           category='success', action=action, user_id=deployment.user_id)
+    result['category'] = 'success'
+    result['message'] = """"{}" has been deployed successfully.""" \
+        .format(deployment.stage)
 
-TASKS = {
-    'clone_repository': clone_repository,
-    'remove_repository': remove_repository,
-    'deploy': deploy
-}
-
-
-def start_task(task, *args, **kwargs):
-    process = Process(target=TASKS[task], args=args, kwargs=kwargs)
-    process.start()
+    return result
