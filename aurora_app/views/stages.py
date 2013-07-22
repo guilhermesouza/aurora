@@ -68,7 +68,7 @@ def delete(id):
     return redirect(url_for('projects.view', id=project_id))
 
 
-@mod.route('/table')
-def table():
+@mod.route('/')
+def all():
     stages = Stage.query.all()
-    return render_template('stages/table.html', stages=stages)
+    return render_template('stages/all.html', stages=stages)

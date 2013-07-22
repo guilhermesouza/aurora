@@ -5,6 +5,9 @@
 {% block content %}
   <ul class='unstyled inline view-title'>
     <li><h1>Stages</h1></li>
+    {% if g.user.can('create_stage') %}
+      <li><a href="{{ url_for('stages.create') }}">New</a></li>
+    {% endif %}
   </ul>
 
   <hr />
