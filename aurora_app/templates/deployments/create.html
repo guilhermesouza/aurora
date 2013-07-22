@@ -16,7 +16,7 @@
         <h4>Available tasks:</h4>
         <select name="available" id="available" multiple="multiple" size="10">
           {% for task in stage.tasks %}
-            {% if (not parent_deployment) or task not in parent_deployment.tasks %}
+            {% if (not clone_deployment) or task not in clone_deployment.tasks %}
               <option value="{{ task.id }}">{{ task.name }}</option>
             {% endif %}
           {% endfor %}
@@ -34,8 +34,8 @@
       <div class='span4 center'>
         <h4>Selected tasks:</h4>
         <select name="selected" id="selected" multiple="multiple" size="10">
-          {% if parent_deployment %}
-            {% for task in parent_deployment.tasks %}
+          {% if clone_deployment %}
+            {% for task in clone_deployment.tasks %}
               <option value="{{ task.id }}">{{ task.name }}</option>
             {% endfor %}
           {% endif %}
@@ -68,7 +68,7 @@
 
         <div class='span6 center'>
           <h4>Commit:</h4>
-          <input type='hidden' id="commits" class='wider' name='commit' {% if parent_deployment %}value='{{ parent_deployment.commit }}'{% endif %} />
+          <input type='hidden' id="commits" class='wider' name='commit' {% if clone_deployment %}value='{{ clone_deployment.commit }}'{% endif %} />
         </div>
       </div>
     {% endif %}
@@ -114,11 +114,11 @@
               return {results: data.commits, more: more};
           }
         },
-        {% if parent_deployment and parent_deployment.commit %}
+        {% if clone_deployment and clone_deployment.commit %}
           initSelection: function(element, callback) {
             var id = $(element).val();
             if (id !== "") {
-                $.ajax("{{ url_for('projects.get_one_commit', id=stage.project.id, branch=branch.name, commit=parent_deployment.commit) }}").done(function(data) { callback(JSON.parse(data)); });
+                $.ajax("{{ url_for('projects.get_one_commit', id=stage.project.id, branch=branch.name, commit=clone_deployment.commit) }}").done(function(data) { callback(JSON.parse(data)); });
             }
           },
         {% endif %}
