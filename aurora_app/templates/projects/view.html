@@ -29,6 +29,9 @@
 
   <ul class='unstyled inline'>
     <li><h4>Stages</h4></li>
+    {% if g.user.can('create_stage') %}
+      <li><a href="{{ url_for('stages.create', project_id=project.id) }}">New</a></li>
+    {% endif %}
   </ul>
 
   {% if project.stages %}
