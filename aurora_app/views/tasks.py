@@ -67,7 +67,7 @@ def delete(id):
     return redirect(url_for('main.index'))
 
 
-@mod.route('/table')
-def table():
+@mod.route('/')
+def all():
     tasks = Task.query.all()
-    return render_template('tasks/table.html', tasks=tasks)
+    return render_template('tasks/all.html', tasks=tasks)
