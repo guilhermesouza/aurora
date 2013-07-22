@@ -39,8 +39,8 @@
 {% block body %}
   <div class='container-fluid'>
     <div class="span3 sidebar center">
-      {% if projects %}
-        <ul class='nav nav-list well'>
+      <ul class='nav nav-list well'>
+        {% if projects %}
           {% for project in projects %}
             <li>
               <a href="{{ url_for('projects.view', id=project.id) }}"><strong>{{ project.name }}</strong></a>
@@ -50,6 +50,12 @@
                     <li><a href="{{ url_for('stages.view', id=stage.id) }}">{{ stage.name }}</a></li>
                   {% endfor %}
                 </ul>
+              {% else %}
+                <ul>
+                  {% if g.user.can('create_stage') %}
+                    <li><a href="{{ url_for('stages.create') }}">New stage</a></li>
+                  {% endif %}
+                </ul>
               {% endif %}
             </li>
 
@@ -57,10 +63,12 @@
               <li class="divider"></li>
             {% endif %}
           {% endfor %}
-        </ul>
-      {% else %}
-        <h3>No projects</h3>
-      {% endif %}
+        {% else %}
+          {% if g.user.can('create_project') %}
+            <li><a href="{{ url_for('projects.create') }}"><strong>New project</strong></a></li>
+          {% endif %}
+        {% endif %}
+      </ul>
     </div>
     <div class="span10">
       {% block notifications %}
