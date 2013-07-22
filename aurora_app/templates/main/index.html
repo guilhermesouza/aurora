@@ -91,7 +91,7 @@
                       <a href="{{ url_for('deployments.view', id=deployment.id) }}">
                         <strong>#{{ deployment.id }} - {{ deployment.show_status() }}</strong>
                       </a>
-                      <a href='{{ url_for('deployments.create', id=deployment.stage.id, parent=deployment.id) }}' title='Repeat'><i class='icon-repeat'></i></a>
+                      <a href='{{ url_for('deployments.create', id=deployment.stage.id, clone=deployment.id) }}' title='Repeat'><i class='icon-repeat'></i></a>
                     </div>
                   </div>
                   <div class='row'>

@@ -13,7 +13,7 @@ mod = Blueprint('deployments', __name__, url_prefix='/deployments')
 @must_be_able_to('deploy_stage')
 def create(id):
     stage = get_or_404(Stage, id=id)
-    parent_id = request.args.get('parent')
+    clone_id = request.args.get('clone')
 
     # Fetch
     stage.project.fetch()
@@ -36,24 +36,24 @@ def create(id):
         return redirect(url_for('deployments.view', id=deployment.id))
 
     branches = stage.project.get_branches()
-    if parent_id:
-        parent_deployment = get_or_404(Deployment, id=parent_id)
+    if clone_id:
+        clone_deployment = get_or_404(Deployment, id=clone_id)
 
-        if parent_deployment.stage.id != stage.id:
-            return "Parent deployment should have the same stage."
+        if clone_deployment.stage.id != stage.id:
+            return "Clone deployment should have the same stage."
 
-        # Select parent deployment's branch
+        # Select clone deployment's branch
         branch = None
         if branches:
             for branch_item in branches:
-                if branch_item.name == parent_deployment.branch:
+                if branch_item.name == clone_deployment.branch:
                     branch = branch_item
     else:
-        parent_deployment = None
+        clone_deployment = None
         branch = branches[0] if branches else None
 
     return render_template('deployments/create.html', stage=stage,
-                           branch=branch, parent_deployment=parent_deployment)
+                           branch=branch, clone_deployment=clone_deployment)
 
 
 @mod.route('/view/<int:id>')
