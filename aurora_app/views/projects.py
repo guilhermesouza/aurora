@@ -134,3 +134,9 @@ def get_one_commit(id, branch, commit):
                                'title': "{} - {}".format(item.hexsha[:10],
                                                          item.message)})
     return 'error', 500
+
+
+@mod.route('/')
+def all():
+    projects = Project.query.all()
+    return render_template('projects/all.html', projects=projects)

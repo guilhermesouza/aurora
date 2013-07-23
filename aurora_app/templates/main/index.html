@@ -8,21 +8,7 @@
       <a class="brand" href="{{ url_for('main.index') }}">Aurora</a>
 
       <ul class="nav">
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Create <b class="caret"></b></a>
-          <ul class="dropdown-menu">
-            {% if g.user.can('create_project') %}
-              <li><a href="{{ url_for('projects.create') }}">Project</a></li>
-            {% endif %}
-            {% if g.user.can('create_stage') %}
-              <li><a href="{{ url_for('stages.create') }}">Stage</a></li>
-            {% endif %}
-            {% if g.user.can('create_task') %}
-              <li><a href="{{ url_for('tasks.create') }}">Task</a></li>
-            {% endif %}
-          </ul>
-        </li>
-
+        <li><a href="{{ url_for('projects.all') }}">Projects</a></li>
         <li><a href="{{ url_for('stages.all') }}">Stages</a></li>
         <li><a href="{{ url_for('tasks.all') }}">Tasks</a></li>
       </ul>

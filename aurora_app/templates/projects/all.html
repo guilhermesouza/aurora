@@ -1,0 +1,31 @@
+{% extends 'main/index.html' %}
+
+{% block title %}Projects{% endblock %}
+
+{% block content %}
+  <ul class='unstyled inline view-title'>
+    <li><h1>Projects</h1></li>
+    {% if g.user.can('create_project') %}
+      <li><a href="{{ url_for('projects.create') }}">New</a></li>
+    {% endif %}  </ul>
+  <hr />
+
+  <table class="table table-striped table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for project in projects %}
+        <tr>
+          <td><a href="{{ url_for('projects.view', id=project.id) }}">{{ project.name }}</a></td>
+          <td>
+            {{ project.description }}
+          </td>
+        </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
