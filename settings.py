@@ -20,9 +20,6 @@ AURORA_TMP_DEPLOYMENTS_PATH = os.path.join(AURORA_TMP_PATH, 'deployments')
 # Debug toolbar settings
 DEBUG_TB_INTERCEPT_REDIRECTS = False
 
-# Celery settings
-BROKER_URL = 'sqla+' + SQLALCHEMY_DATABASE_URI
-
 try:
     from local_settings import *
 except:
