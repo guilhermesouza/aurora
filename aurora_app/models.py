@@ -179,7 +179,7 @@ class Deployment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     status = db.Column(db.SmallInteger, default=STATUSES['READY'])
     branch = db.Column(db.String(32), default='master')
-    commit = db.Column(db.String(32))
+    commit = db.Column(db.String(128))
     started_at = db.Column(db.DateTime(), default=datetime.now)
     finished_at = db.Column(db.DateTime())
     code = db.Column(db.Text())
