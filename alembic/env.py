@@ -22,7 +22,7 @@ with current_app.app_context():
     flask_app = __import__('%s' % (current_app.name), fromlist=[current_app.name])
 
 db_obj_name = config.get_main_option("flask_sqlalchemy")
-db_obj = getattr(flask_app, db_obj_name)
+db_obj = getattr(flask_app.database, db_obj_name)
 target_metadata = db_obj.metadata
 
 # other values from the config, defined by the needs of env.py,
