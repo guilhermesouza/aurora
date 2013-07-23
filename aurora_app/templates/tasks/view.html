@@ -1,3 +1,5 @@
+{% import 'helpers/recent_deployments.html' as recent_deployments %}
+
 {% extends 'main/index.html' %}
 
 {% block title %}{{ task.name }}{% endblock %}
@@ -35,6 +37,8 @@
       No available stages.
     </p>
   {% endif %}
+
+  {{ recent_deployments.show(get_recent_deployments(task)) }}
 {% endblock %}
 
 {% block js %}

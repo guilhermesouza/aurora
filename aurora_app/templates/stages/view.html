@@ -1,3 +1,5 @@
+{% import 'helpers/recent_deployments.html' as recent_deployments %}
+
 {% extends 'main/index.html' %}
 
 {% block title %}{{ stage }}{% endblock %}
@@ -48,6 +50,7 @@
     </p>
   {% endif %}
 
+  {{ recent_deployments.show(get_recent_deployments(stage)) }}
 {% endblock %}
 
 {% block js %}
