@@ -28,4 +28,4 @@ def create_folder(path):
         else:
             raise "Can't create folder because of existing file."
 
-    os.system('mkdir -p {}'.format(path))
+    os.system('mkdir -p {0}'.format(path))

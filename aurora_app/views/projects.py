@@ -23,7 +23,7 @@ def create():
         db.session.add(project)
         db.session.commit()
 
-        notify(u'Project "{}" has been created.'.format(project.name),
+        notify(u'Project "{0}" has been created.'.format(project.name),
                category='success', action='create_project')
         return redirect(url_for('projects.view', id=project.id))
 
@@ -47,7 +47,7 @@ def edit(id):
         db.session.add(project)
         db.session.commit()
 
-        notify(u'Project "{}" has been updated.'.format(project.name),
+        notify(u'Project "{0}" has been updated.'.format(project.name),
                category='success', action='edit_project')
         return redirect(url_for('projects.view', id=id))
 
@@ -59,7 +59,7 @@ def edit(id):
 def delete(id):
     project = get_or_404(Project, id=id)
 
-    notify(u'Project "{}" has been deleted.'.format(project.name),
+    notify(u'Project "{0}" has been deleted.'.format(project.name),
            category='success', action='delete_project')
 
     # Delete stages
@@ -84,7 +84,7 @@ def execute(id):
         TASKS[action](project)
         return json.dumps({'error': False})
 
-    notify(u"""Can't execute "{}.{}".""".format(project.name, action),
+    notify(u"""Can't execute "{0}.{1}".""".format(project.name, action),
            category='error', action=action, user_id=g.user.id)
     return json.dumps({'error': True})
 
@@ -111,8 +111,8 @@ def commits(id):
         else:
             result.append({'id': commit.hexsha,
                            'message': commit.message,
-                           'title': "{} - {}".format(commit.hexsha[:10],
-                                                     commit.message)})
+                           'title': "{0} - {1}".format(commit.hexsha[:10],
+                                                       commit.message)})
 
     total = project.get_commits_count(branch)
     if query:
@@ -131,8 +131,8 @@ def get_one_commit(id, branch, commit):
         if commit == item.hexsha:
             return json.dumps({'id': item.hexsha,
                                'message': item.message,
-                               'title': "{} - {}".format(item.hexsha[:10],
-                                                         item.message)})
+                               'title': "{0} - {1}".format(item.hexsha[:10],
+                                                           item.message)})
     return 'error', 500
 
 

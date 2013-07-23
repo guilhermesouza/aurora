@@ -53,7 +53,7 @@ class User(db.Model):
         return action in PERMISSIONS[self.role]
 
     def __repr__(self):
-        return u'<User {}>'.format(self.username)
+        return u'<User {0}>'.format(self.username)
 
 
 class Project(db.Model):
@@ -195,7 +195,7 @@ class Deployment(db.Model):
 
     def get_tmp_path(self):
         return os.path.join(app.config['AURORA_TMP_DEPLOYMENTS_PATH'],
-                            '{}'.format(self.id))
+                            '{0}'.format(self.id))
 
     def bootstrap_status(self):
         return BOOTSTRAP_ALERTS[self.status]
@@ -206,7 +206,7 @@ class Deployment(db.Model):
                 return status
 
     def show_tasks_list(self):
-        template = '<a href="{}">{}</a>'
+        template = '<a href="{0}">{1}</a>'
         return ', '.join([template.format(url_for('tasks.view', id=task.id),
                                           task.name) for task in self.tasks])
 
@@ -224,7 +224,7 @@ class Deployment(db.Model):
         return time.strftime("%H:%M:%S", time.gmtime(delta.seconds))
 
     def show_commit(self):
-        return "{}".format(self.commit[:10]) if self.commit else ''
+        return "{0}".format(self.commit[:10]) if self.commit else ''
 
     def __init__(self, *args, **kwargs):
         super(Deployment, self).__init__(*args, **kwargs)
@@ -251,4 +251,4 @@ class Notification(db.Model):
         super(Notification, self).__init__(*args, **kwargs)
 
     def __repr__(self):
-        return u"<Notification #{}>".format(self.id)
+        return u"<Notification #{0}>".format(self.id)
