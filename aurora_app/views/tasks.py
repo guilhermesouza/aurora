@@ -22,7 +22,7 @@ def create():
         db.session.add(task)
         db.session.commit()
 
-        notify(u'Task "{}" has been created.'.format(task.name),
+        notify(u'Task "{0}" has been created.'.format(task.name),
                category='success', action='create_task')
         return redirect(url_for('tasks.view', id=task.id))
 
@@ -46,7 +46,7 @@ def edit(id):
         db.session.add(task)
         db.session.commit()
 
-        notify(u'Task "{}" has been updated.'.format(task.name),
+        notify(u'Task "{0}" has been updated.'.format(task.name),
                category='success', action='edit_task')
         return redirect(url_for('tasks.view', id=task.id))
 
@@ -58,7 +58,7 @@ def edit(id):
 def delete(id):
     task = get_or_404(Task, id=id)
 
-    notify(u'Task "{}" has been deleted.'.format(task.name),
+    notify(u'Task "{0}" has been deleted.'.format(task.name),
            category='success', action='delete_task')
 
     db.session.delete(task)

@@ -22,7 +22,7 @@ def create():
         db.session.add(stage)
         db.session.commit()
 
-        notify(u'Stage "{}" has been created.'.format(stage),
+        notify(u'Stage "{0}" has been created.'.format(stage),
                category='success', action='create_stage')
         return redirect(url_for('stages.view', id=stage.id))
 
@@ -46,7 +46,7 @@ def edit(id):
         db.session.add(stage)
         db.session.commit()
 
-        notify(u'Stage "{}" has been updated.'.format(stage),
+        notify(u'Stage "{0}" has been updated.'.format(stage),
                category='success', action='edit_stage')
         return redirect(url_for('stages.view', id=stage.id))
 
@@ -59,7 +59,7 @@ def delete(id):
     stage = get_or_404(Stage, id=id)
 
     project_id = stage.project.id
-    notify(u'Stage "{}" has been deleted.'.format(stage),
+    notify(u'Stage "{0}" has been deleted.'.format(stage),
            category='success', action='delete_stage')
 
     db.session.delete(stage)

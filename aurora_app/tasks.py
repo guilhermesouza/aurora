@@ -24,25 +24,25 @@ def clone_repository(project, user_id=None):
     }
 
     if project.repository_path == '':
-        result['message'] = """Can't clone "{}" repository without path.""" \
+        result['message'] = """Can't clone "{0}" repository without path.""" \
             .format(project.name)
         return result
 
     project_path = project.get_path()
     if os.path.exists(project_path):
-        result['message'] = """Can't clone "{}" repository. "{}" is exists."""\
+        result['message'] = """Can't clone "{0}" repository. "{1}" is exists."""\
             .format(project.name, project_path)
         return result
 
-    local('git clone {} {}'.format(project.repository_path, project_path))
+    local('git clone {0} {1}'.format(project.repository_path, project_path))
 
     if not os.path.exists(project_path):
-        result['message'] = """Can't clone "{}" repository.\n""" \
+        result['message'] = """Can't clone "{0}" repository.\n""" \
             .format(project.name) + "Something gone wrong."
         return result
 
     result['category'] = 'success'
-    result['message'] = 'Cloning "{}" repository' \
+    result['message'] = 'Cloning "{0}" repository' \
         .format(project.name) + " has finished successfully."
 
     return result
@@ -59,19 +59,19 @@ def remove_repository(project, user_id=None):
     }
     project_path = project.get_path()
     if not os.path.exists(project_path):
-        result['message'] = """Can't remove "{}" repository.""" \
+        result['message'] = """Can't remove "{0}" repository.""" \
             .format(project.name) + " It's not exists."
         return result
 
-    local('rm -rf {}'.format(project_path))
+    local('rm -rf {0}'.format(project_path))
 
     if os.path.exists(project_path):
-        result['message'] = """Can't remove "{}" repository.""" \
+        result['message'] = """Can't remove "{0}" repository.""" \
             .format(project.name) + " Something gone wrong."
         return result
 
     result['category'] = 'success'
-    result['message'] = """"{}" repository has removed successfully.""" \
+    result['message'] = """"{0}" repository has removed successfully.""" \
         .format(project.name, project_path)
     return result
 
@@ -97,8 +97,8 @@ def deploy(deployment_id):
 
     # Copy project's repo if exists, else create an empty folder
     if deployment.stage.project.repository_folder_exists():
-        os.system('cp -rf {} {}'.format(deployment.stage.project.get_path(),
-                                        deployment_project_tmp_path))
+        os.system('cp -rf {0} {1}'.format(deployment.stage.project.get_path(),
+                                          deployment_project_tmp_path))
     else:
         os.makedirs(deployment_project_tmp_path)
 
@@ -111,7 +111,7 @@ def deploy(deployment_id):
         deployment_repo.git.checkout(deployment.commit)
 
     # Create module
-    module = imp.new_module("deployment_{}".format(deployment.id))
+    module = imp.new_module("deployment_{0}".format(deployment.id))
 
     # Replace stdout and stderr
     log_path = os.path.join(deployment_tmp_path, 'log')
@@ -144,9 +144,9 @@ def deploy(deployment_id):
     except Exception as e:
         deployment.status = STATUSES['FAILED']
         print 'Deployment has failed.'
-        print 'Error: {}'.format(e.message)
+        print 'Error: {0}'.format(e.message)
 
-        result['message'] = """"{}" deployement has failed.""" \
+        result['message'] = """"{0}" deployement has failed.""" \
             .format(deployment.stage)
 
     finally:
@@ -167,7 +167,7 @@ def deploy(deployment_id):
     db.session.commit()
 
     result['category'] = 'success'
-    result['message'] = """"{}" has been deployed successfully.""" \
+    result['message'] = """"{0}" has been deployed successfully.""" \
         .format(deployment.stage)
 
     return result
