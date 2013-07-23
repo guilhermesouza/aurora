@@ -1,5 +1,4 @@
 from __future__ import absolute_import
-import os
 
 from flask import Flask, render_template, url_for, g, request, redirect
 from flask.ext.login import LoginManager, current_user
@@ -7,8 +6,6 @@ from flask.ext.debugtoolbar import DebugToolbarExtension
 
 app = Flask(__name__)
 app.config.from_object('settings')
-
-from aurora_app.tasks import *
 
 # Enable login manager extension
 login_manager = LoginManager()
@@ -45,22 +42,6 @@ def check_login():
        and g.user is None)):
         return redirect(url_for('main.login', next=request.path))
 
-
-# To exclude caching of static
-@app.context_processor
-def override_url_for():
-    return dict(url_for=dated_url_for)
-
-
-def dated_url_for(endpoint, **values):
-    if endpoint == 'static':
-        filename = values.get('filename', None)
-        if filename:
-            file_path = os.path.join(app.root_path, endpoint, filename)
-            values['q'] = int(os.stat(file_path).st_mtime)
-    return url_for(endpoint, **values)
-
-
 from aurora_app.views import (main, projects, stages, tasks, notifications,
                               deployments)
 
@@ -71,6 +52,5 @@ app.register_blueprint(tasks.mod)
 app.register_blueprint(notifications.mod)
 app.register_blueprint(deployments.mod)
 
-
 # Enable context processors
-from aurora_app.context_processors import projects
+import aurora_app.context_processors
