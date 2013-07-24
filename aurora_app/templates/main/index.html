@@ -39,7 +39,7 @@
               {% else %}
                 <ul>
                   {% if g.user.can('create_stage') %}
-                    <li><a href="{{ url_for('stages.create') }}">New stage</a></li>
+                    <li><a href="{{ url_for('stages.create', project_id=project.id) }}">New stage</a></li>
                   {% endif %}
                 </ul>
               {% endif %}
