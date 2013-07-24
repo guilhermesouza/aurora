@@ -6,10 +6,10 @@ from aurora_app.models import Notification
 mod = Blueprint('notifications', __name__, url_prefix='/notifications')
 
 
-@mod.route('/table')
-def table():
+@mod.route('/')
+def all():
     notifications = Notification.query.order_by("created_at desc").all()
-    return render_template('notifications/table.html',
+    return render_template('notifications/all.html',
                            notifications=notifications)
 
 
