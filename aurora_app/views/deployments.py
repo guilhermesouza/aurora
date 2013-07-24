@@ -15,11 +15,12 @@ def create(id):
     stage = get_or_404(Stage, id=id)
     clone_id = request.args.get('clone')
 
-    # Fetch
-    stage.project.fetch()
-
     if request.method == 'POST':
         tasks_ids = request.form.getlist('selected')
+
+        if tasks_ids == []:
+            return "You must select tasks for deployment."
+
         tasks = [get_or_404(Task, id=int(task_id)) for task_id in tasks_ids]
         branch = request.form.get('branch')
         commit = request.form.get('commit')
@@ -34,6 +35,9 @@ def create(id):
 
         deploy(deployment.id)
         return redirect(url_for('deployments.view', id=deployment.id))
+
+    # Fetch
+    stage.project.fetch()
 
     branches = stage.project.get_branches()
     if clone_id:
