@@ -39,11 +39,11 @@ def view(id):
 @must_be_able_to('edit_stage')
 def edit(id):
     stage = get_or_404(Stage, id=id)
-    deployments = stage.deployments
     form = StageForm(request.form, stage)
 
     if form.validate_on_submit():
-        form.deployments.data = deployments
+        # Since we don't show deployments in form, we need to set them here.
+        form.deployments.data = stage.deployments
         form.populate_obj(stage)
         db.session.add(stage)
         db.session.commit()
