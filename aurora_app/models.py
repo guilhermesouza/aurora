@@ -70,10 +70,13 @@ class Project(db.Model):
     def __init__(self, *args, **kwargs):
         super(Project, self).__init__(*args, **kwargs)
 
+    def get_name_for_path(self):
+        return self.name.lower().replace(' ', '_')
+
     def get_path(self):
         """Returns path of project's git repository on local machine."""
         return os.path.join(app.config['AURORA_PROJECTS_PATH'],
-                            self.name.lower().replace(' ', '_'))
+                            self.get_name_for_path())
 
     def repository_folder_exists(self):
         return os.path.exists(self.get_path())

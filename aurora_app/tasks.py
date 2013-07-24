@@ -93,7 +93,7 @@ def deploy(deployment_id):
     os.makedirs(deployment_tmp_path)
 
     deployment_project_tmp_path = os.path.join(
-        deployment_tmp_path, deployment.stage.project.name.lower())
+        deployment_tmp_path, deployment.stage.project.get_name_for_path())
 
     # Copy project's repo if exists, else create an empty folder
     if deployment.stage.project.repository_folder_exists():
