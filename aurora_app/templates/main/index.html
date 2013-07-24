@@ -141,20 +141,16 @@
           {{ '{{message}}' }}\
         </div>\
       </li>';
-      setInterval(function() {
-        $.ajax({
-          url:'{{ url_for('notifications.unseen') }}',
-          type:'get',
-          success: function(data){
-            var notifications = $.parseJSON(data);
-            for (var i = 0; i < notifications.length; i++) {
-              var html = Mustache.to_html(notification_template, notifications[i]);
-              var hiding_html = $(html).show(0).delay(4000).hide(0);
-              $("#notifications").children('ul').append(hiding_html);
-            }
-          }
-        });
-      }, 5000);
+
+      if (!!window.EventSource) {
+        var source = new EventSource("{{ url_for('notifications.unseen') }}");
+        source.onmessage = function(e) {
+          var notification = $.parseJSON(e.data);
+          var html = Mustache.to_html(notification_template, notification);
+          var hiding_html = $(html).show(0).delay(4000).hide(0);
+          $("#notifications").children('ul').append(hiding_html);
+        }
+      }
     });
   </script>
 {% endblock %}

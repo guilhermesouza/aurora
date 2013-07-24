@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, g, json
+from flask import Blueprint, render_template, g, Response
 
 from aurora_app.database import db
 from aurora_app.models import Notification
@@ -27,4 +27,14 @@ def unseen():
                                            'category': notification.category})
     db.session.commit()
 
-    return json.dumps(notifications_for_response)
+    def generate():
+        for notification in notifications_for_response:
+            result = "data: {\n"
+            result += 'data: "message": "{0}",\n'.format(
+                notification['message'].replace('\"', '\\\"'))
+            result += 'data: "category": "{0}"\n'.format(
+                notification['category'])
+            result += "data: }\n\n"
+            yield result
+
+    return Response(generate(), mimetype='text/event-stream')
