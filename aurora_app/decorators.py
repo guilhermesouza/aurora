@@ -3,7 +3,7 @@ from functools import wraps
 
 from flask import g, redirect, request
 
-from aurora_app.helpers import notify
+from aurora_app.helpers import notify, get_session
 
 
 def public(location):
@@ -37,6 +37,7 @@ def notify_result(function):
 def task(function):
     """Runs function using multiprocessing."""
     def decorated_function(*args, **kwargs):
-        process = Process(target=function, args=args, kwargs=kwargs)
+        process = Process(target=function, args=args + (get_session(),),
+                          kwargs=kwargs)
         process.start()
     return decorated_function

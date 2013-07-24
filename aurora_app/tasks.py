@@ -7,7 +7,6 @@ from multiprocessing import Process
 from git import Repo
 from fabric.api import local, execute
 
-from aurora_app.database import db
 from aurora_app.decorators import notify_result, task
 from aurora_app.models import Deployment
 from aurora_app.constants import STATUSES
@@ -15,9 +14,10 @@ from aurora_app.constants import STATUSES
 
 @task
 @notify_result
-def clone_repository(project, user_id=None):
+def clone_repository(project, session, user_id=None):
     """Clones project's repository to Aurora folder."""
     result = {
+        'session': session,
         'action': 'clone_repository',
         'user_id': user_id,
         'category': 'error'
@@ -30,8 +30,9 @@ def clone_repository(project, user_id=None):
 
     project_path = project.get_path()
     if os.path.exists(project_path):
-        result['message'] = """Can't clone "{0}" repository. "{1}" is exists."""\
-            .format(project.name, project_path)
+        result['message'] = """Can't clone "{0}" repository.""" \
+            .format(project.name) + \
+            """ "{0}" is exists.""".format(project_path)
         return result
 
     local('git clone {0} {1}'.format(project.repository_path, project_path))
@@ -50,9 +51,10 @@ def clone_repository(project, user_id=None):
 
 @task
 @notify_result
-def remove_repository(project, user_id=None):
+def remove_repository(project, session, user_id=None):
     """Removes project's repository in Aurora folder."""
     result = {
+        'session': session,
         'action': 'remove_repository',
         'category': 'error',
         'user_id': user_id
@@ -78,11 +80,12 @@ def remove_repository(project, user_id=None):
 
 @task
 @notify_result
-def deploy(deployment_id):
+def deploy(deployment_id, session):
     """Run's given deployment."""
-    deployment = Deployment.query.filter_by(id=deployment_id).first()
+    deployment = session.query(Deployment).filter_by(id=deployment_id).first()
 
     result = {
+        'session': session,
         'action': 'deploy_stage',
         'category': 'error',
         'user_id': deployment.user_id
@@ -122,8 +125,8 @@ def deploy(deployment_id):
 
     # Update status
     deployment.status = STATUSES['RUNNING']
-    db.session.add(deployment)
-    db.session.commit()
+    session.merge(deployment)
+    session.commit()
 
     try:
         print 'Deployment has started.'
@@ -163,8 +166,8 @@ def deploy(deployment_id):
 
     deployment.log = '\n'.join(log_file.readlines())
     deployment.finished_at = datetime.now()
-    db.session.add(deployment)
-    db.session.commit()
+    session.add(deployment)
+    session.commit()
 
     result['category'] = 'success'
     result['message'] = """"{0}" has been deployed successfully.""" \
