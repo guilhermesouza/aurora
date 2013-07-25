@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>{% block title %}{% endblock %} | Aurora</title>
+        
+        <meta charset="utf-8">
+
+        <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='css/style.css') }}" />
+        <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    </head>
+
+    <body>
+        <div id='content'>
+            {% block body %}
+            {% endblock %}
+        </div>
+    </body>
+
+    {% block footer %}
+    {% endblock %}
+</html>
