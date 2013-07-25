@@ -10,6 +10,7 @@ div.CodeMirror {
 .bigger {font-size: 26px;}
 .arrows {padding: 15px;}
 #actions a {display: none;}
+#notifications_message, #notifications_button {display: none;}
 .wider {width: 100%;}
 /* Loading buttons */
 .btn.loading {
