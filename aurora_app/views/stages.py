@@ -1,8 +1,9 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import (Blueprint, render_template, request, redirect, url_for,
+                   Response)
 
 from aurora_app.decorators import must_be_able_to
 from aurora_app.forms import StageForm
-from aurora_app.models import Project, Stage
+from aurora_app.models import Project, Stage, Deployment
 from aurora_app.database import db, get_or_404
 from aurora_app.helpers import notify
 
@@ -74,3 +75,11 @@ def delete(id):
 def all():
     stages = Stage.query.all()
     return render_template('stages/all.html', stages=stages)
+
+
+@mod.route('/export/<int:id>/fabfile.py')
+def export(id):
+    stage = get_or_404(Stage, id=id)
+
+    deployment = Deployment(stage=stage, tasks=stage.tasks)
+    return Response(deployment.code, mimetype='application/python')

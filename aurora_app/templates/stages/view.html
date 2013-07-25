@@ -16,6 +16,7 @@
     {% if g.user.can('deploy_stage') %}
       <li><a href="{{ url_for('deployments.create', id=stage.id) }}">Deploy</a></li>
     {% endif %}
+    <li><a href="{{ url_for('stages.export', id=stage.id) }}">Export</a></li>
     {% if g.user.can('edit_stage') %}
       <li><a href="{{ url_for('stages.edit', id=stage.id) }}">Edit</a></li>
     {% endif %}
