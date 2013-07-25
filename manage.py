@@ -1,10 +1,13 @@
-from flask.ext.script import Manager
+from flask.ext.script import Manager, Server
 from flask.ext.alembic import ManageMigrations
 
 from aurora_app import app
 from aurora_app.database import db
 
 manager = Manager(app)
+manager.add_command("runserver", Server(host=app.config.get('HOST',
+                                                            '127.0.0.1'),
+                                        port=app.config.get('PORT', 5000)))
 manager.add_command("migrate", ManageMigrations())
 
 
