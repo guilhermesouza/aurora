@@ -134,36 +134,35 @@
 
 {% block js %}
   <script src="{{ url_for('static', filename='js/mustache.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/eventsource.min.js') }}"></script>
   <script>
-    $(function() {
-      if (!!window.EventSource) {
-        /* Notifications settings */
-        var notification_template = '<li>\
-          <div class="alert alert-{{ '{{category}}' }}">\
-            <button type="button" class="close" data-dismiss="alert">&times;</button>\
-            {{ '{{message}}' }}\
-          </div>\
-        </li>';
-        var desktop_notifications_allowed = notify.permissionLevel() == notify.PERMISSION_GRANTED;
-        var notification_timeout = 4000;
+    $(function () {
+      /* Notifications settings */
+      var notification_template = '<li>\
+        <div class="alert alert-{{ '{{category}}' }}">\
+          <button type="button" class="close" data-dismiss="alert">&times;</button>\
+          {{ '{{message}}' }}\
+        </div>\
+      </li>';
+      var desktop_notifications_allowed = notify.permissionLevel() == notify.PERMISSION_GRANTED;
+      var notification_timeout = 4000;
 
-        var source = new EventSource("{{ url_for('notifications.unseen') }}");
-        source.onmessage = function(e) {
-          var notification = $.parseJSON(e.data);
-          var html = Mustache.to_html(notification_template, notification);
-          var hiding_html = $(html).show(0).delay(notification_timeout).hide(0);
-          $("#notifications").children('ul').append(hiding_html);
+      var eventSource = new EventSource("{{ url_for('notifications.unseen') }}");
+      eventSource.onmessage = function(e) {
+        var notification = $.parseJSON(e.data);
+        var html = Mustache.to_html(notification_template, notification);
+        var hiding_html = $(html).show(0).delay(notification_timeout).hide(0);
+        $("#notifications").children('ul').append(hiding_html);
 
-          if (desktop_notifications_allowed) {
-            var desktop_notification = notify.createNotification("Aurora notification",
-              {
-                body: notification.message,
-                icon: {'x16': "{{ url_for('static', filename='img/favicon.ico') }}", 'x32': "{{ url_for('static', filename='img/favicon.png') }}"}
-              }
-            );
+        if (desktop_notifications_allowed) {
+          var desktop_notification = notify.createNotification("Aurora notification",
+            {
+              body: notification.message,
+              icon: {'x16': "{{ url_for('static', filename='img/favicon.ico') }}", 'x32': "{{ url_for('static', filename='img/favicon.png') }}"}
+            }
+          );
 
-            setTimeout(function() { desktop_notification.close() }, notification_timeout);
-          }
+          setTimeout(function() { desktop_notification.close() }, notification_timeout);
         }
       }
     });

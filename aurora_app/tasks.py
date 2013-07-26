@@ -123,11 +123,6 @@ def deploy(deployment_id, session):
     old_stderr = sys.stderr
     sys.stdout = sys.stderr = open(log_path, 'w', 0)
 
-    # Update status
-    deployment.status = STATUSES['RUNNING']
-    session.merge(deployment)
-    session.commit()
-
     try:
         print 'Deployment has started.'
 

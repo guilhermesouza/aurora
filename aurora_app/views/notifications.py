@@ -29,12 +29,12 @@ def unseen():
 
     def generate():
         for notification in notifications_for_response:
-            result = "data: {\n"
-            result += 'data: "message": "{0}",\n'.format(
-                notification['message'].replace('\"', '\\\"'))
-            result += 'data: "category": "{0}"\n'.format(
-                notification['category'])
-            result += "data: }\n\n"
+            result = 'data: {\n' + \
+                     'data: "message": "{0}",\n'.format(
+                         notification['message'].replace('\"', '\\\"')) +\
+                     'data: "category": "{0}"\n'.format(
+                         notification['category']) +\
+                     'data: }\n\n'
             yield result
 
     return Response(generate(), mimetype='text/event-stream')

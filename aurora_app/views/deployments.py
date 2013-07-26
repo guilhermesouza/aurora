@@ -5,6 +5,8 @@ from aurora_app.database import get_or_404, db
 from aurora_app.models import Stage, Task, Deployment
 from aurora_app.decorators import must_be_able_to
 from aurora_app.tasks import deploy
+from aurora_app.constants import STATUSES
+from aurora_app.helpers import build_log_result
 
 mod = Blueprint('deployments', __name__, url_prefix='/deployments')
 
@@ -29,7 +31,8 @@ def create(id):
             commit = stage.project.get_last_commit(branch).hexsha
 
         deployment = Deployment(stage=stage, tasks=tasks,
-                                branch=branch, user=g.user, commit=commit)
+                                branch=branch, user=g.user, commit=commit,
+                                status=STATUSES['RUNNING'])
         db.session.add(deployment)
         db.session.commit()
 
@@ -74,6 +77,28 @@ def raw_code(id):
 
 @mod.route('/log/<int:id>')
 def log(id):
+    """
+    Function for getting log for deployment in real time.
+    Built on server-sent events.
+    """
     deployment = get_or_404(Deployment, id=id)
+    last_event_id = request.args.get('lastEventId')
+
     lines = deployment.get_log_lines()
-    return render_template('deployments/log.html', lines=lines)
+    # If client just connected return all existing log
+    result = ['id: {0}'.format(len(lines))]
+    if not last_event_id:
+        result.extend(build_log_result(lines))
+    # else return new lines.
+    else:
+        new_lines = lines[int(last_event_id):]
+        result.extend(build_log_result(new_lines))
+
+    # len(result) == 1 means that no new lines were added
+    # and then deployment is completed.
+    if len(result) == 1:
+        result = 'data: {"event": "completed"}\n'
+    else:
+        result = '\n'.join(result)
+
+    return Response(result + '\n\n', mimetype='text/event-stream')

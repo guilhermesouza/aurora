@@ -11,7 +11,7 @@
           {% endif %} <a href="{{ url_for('stages.view', id=deployment.stage.id) }}">{{ deployment.stage.name }}</a>
       </h1>
     </li>
-    <li><h3>- {{ deployment.show_status() }}</h3></li>
+    <li><h3>- <span id="deployment_status">{{ deployment.show_status() }}</span></h3></li>
   </ul>
 
   <hr />
@@ -65,13 +65,13 @@
     {% endif %}
   </p>
   <div id="log" class='well' style='height: 300px; overflow: auto'>
-    {% if deployment.log %}
-      <ul class='unstyled'>
-        {% for line in deployment.log.split('\n') %}
+    <ul class='unstyled'>
+      {% if not deployment.is_running() %}
+        {% for line in deployment.get_log_lines() %}
           <li>{{ line }}</li>
         {% endfor %}
-      </ul>
-    {% endif %}
+      {% endif %}
+    </ul>
   </div>
 {% endblock %}
 
@@ -79,32 +79,38 @@
   {{ super() }}
 
   <script>
-    {% if not deployment.log %}
-      var follow = false;
-      $("#follow").click(function() {
-        if (follow) {
-          $("#follow").text('Follow');
-          follow = false;
-        } else {
-          $("#follow").text('Unfollow');
-          follow = true;
-        }
-      });
-
-      function update_log() {
-        $.ajax({
-          url: "{{ url_for('deployments.log', id=deployment.id) }}",
-          success: function (response) {
-            $("#log").html(response);
-
-            if (follow) {
-              $("#log").scrollTop($("#log")[0].scrollHeight);
-            }
+    {% if deployment.is_running() %}
+      $(function () {
+        var follow = false;
+        $("#follow").click(function() {
+          if (follow) {
+            $("#follow").text('Follow');
+            follow = false;
+          } else {
+            $("#follow").text('Unfollow');
+            follow = true;
           }
         });
-      }
 
-      setInterval(function(){update_log()}, 1000);
+        var eventSource = new EventSource("{{ url_for('deployments.log', id=deployment.id) }}");
+        eventSource.addEventListener("message",  function(e) {
+          var data = $.parseJSON(e.data);
+          var log = $("#log");
+
+          if (data.message) {
+            log.find('ul').append("<li>" + data.message + "</li>");
+          }
+
+          if (follow) {
+            log.scrollTop(log[0].scrollHeight);
+          }
+
+          if (data.event && data.event == "completed") {
+            $("#deployment_status").text("COMPLETED");
+            eventSource.close();
+          }
+        });
+      });
     {% endif %}
   </script>
 {% endblock %}

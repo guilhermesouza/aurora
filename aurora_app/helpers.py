@@ -30,7 +30,7 @@ def create_folder(path):
         if os.path.isdir(path):
             return
         else:
-            raise "Can't create folder because of existing file."
+            raise Exception("Can't create folder because of existing file.")
 
     os.system('mkdir -p {0}'.format(path))
 
@@ -44,3 +44,13 @@ def get_session():
     session = Session()
     setattr(session, '_model_changes', dict())
     return session
+
+
+def build_log_result(lines):
+    result = []
+    for line in lines:
+        result.append('data: {\n' +
+                      'data: "message": "{0}"\n'.format(
+                          line.replace('\"', '\\\"').replace('\n', '')) +
+                      'data: }\n')
+    return result

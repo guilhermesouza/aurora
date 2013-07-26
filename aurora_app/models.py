@@ -208,10 +208,16 @@ class Deployment(db.Model):
             if number == self.status:
                 return status
 
+    def is_running(self):
+        return self.status == STATUSES['RUNNING']
+
     def show_tasks_list(self):
         template = '<a href="{0}">{1}</a>'
         return ', '.join([template.format(url_for('tasks.view', id=task.id),
                                           task.name) for task in self.tasks])
+
+    def get_log_path(self):
+        return os.path.join(self.get_tmp_path(), 'log')
 
     def get_log_lines(self):
         path = os.path.join(self.get_tmp_path(), 'log')
