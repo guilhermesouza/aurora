@@ -220,12 +220,13 @@ class Deployment(db.Model):
         return os.path.join(self.get_tmp_path(), 'log')
 
     def get_log_lines(self):
+        if self.log:
+            return self.log.split('\n')
+
         path = os.path.join(self.get_tmp_path(), 'log')
         if os.path.exists(path):
             return open(path).readlines()
 
-        if self.log:
-            return self.log.split('\n')
         return []
 
     def show_time(self):

@@ -42,6 +42,8 @@ def edit(id):
     form = TaskForm(request.form, task)
 
     if form.validate_on_submit():
+        # Since we don't show deployments in form, we need to set them here.
+        form.deployments.data = task.deployments
         form.populate_obj(task)
         db.session.add(task)
         db.session.commit()

@@ -28,9 +28,11 @@ def must_be_able_to(action):
 
 def notify_result(function):
     """Notifies using result from decorated function."""
+    @wraps(function)
     def decorated_function(*args, **kwargs):
         result = function(*args, **kwargs)
         notify(**result)
+        return function
     return decorated_function
 
 
@@ -39,5 +41,11 @@ def task(function):
     def decorated_function(*args, **kwargs):
         process = Process(target=function, args=args + (get_session(),),
                           kwargs=kwargs)
+
+        if function.__name__ == 'deploy':
+            from aurora_app.views.deployments import current_deployments
+            deployment_id = str(args[0])
+            current_deployments[deployment_id] = process
+
         process.start()
     return decorated_function

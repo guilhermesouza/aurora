@@ -1,3 +1,6 @@
+import json
+from datetime import datetime
+
 from flask import (Blueprint, Response, render_template, request, g, redirect,
                    url_for)
 
@@ -6,13 +9,15 @@ from aurora_app.models import Stage, Task, Deployment
 from aurora_app.decorators import must_be_able_to
 from aurora_app.tasks import deploy
 from aurora_app.constants import STATUSES
-from aurora_app.helpers import build_log_result
+from aurora_app.helpers import build_log_result, notify
 
 mod = Blueprint('deployments', __name__, url_prefix='/deployments')
 
+current_deployments = {}
+
 
 @mod.route('/create/stage/<int:id>', methods=['POST', 'GET'])
-@must_be_able_to('deploy_stage')
+@must_be_able_to('create_deployment')
 def create(id):
     stage = get_or_404(Stage, id=id)
     clone_id = request.args.get('clone')
@@ -95,10 +100,44 @@ def log(id):
         result.extend(build_log_result(new_lines))
 
     # len(result) == 1 means that no new lines were added
-    # and then deployment is completed.
+    # and then deployment's log is not updating.
     if len(result) == 1:
-        result = 'data: {"event": "completed"}\n'
+        status = deployment.show_status()
+        result = 'data: {"event": "finished", "status": "' + status + '"}\n'
     else:
         result = '\n'.join(result)
 
     return Response(result + '\n\n', mimetype='text/event-stream')
+
+
+@mod.route('/stop', methods=['POST'])
+def cancel():
+    id = request.form.get('id')
+    deployment = get_or_404(Deployment, id=id)
+    action = 'cancel_deployment'
+    if g.user.can(action) and id:
+        try:
+            current_deployments[id].terminate()
+            current_deployments[id].join()
+            current_deployments.pop(id)
+
+            deployment.log = '\n'.join(deployment.get_log_lines())
+            deployment.log += "Deployment has canceled."
+            deployment.finished_at = datetime.now()
+            deployment.status = STATUSES['CANCELED']
+
+            db.session.add(deployment)
+            db.session.commit()
+
+            message = "Deployment has canceled successfully."
+            category = 'success'
+        except Exception, e:
+            message = "Can't cancel deployment.\n" + \
+                      "Error: {0}".format(e.message)
+            category = 'error'
+
+        notify(message, category=category, action=action)
+        return json.dumps({'error': True if category == 'error' else False})
+
+    notify("You can't execute this action.", category='error', action=action)
+    return json.dumps({'error': True})

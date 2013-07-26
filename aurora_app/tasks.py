@@ -2,7 +2,6 @@ import os
 import imp
 import sys
 from datetime import datetime
-from multiprocessing import Process
 
 from git import Repo
 from fabric.api import local, execute
@@ -86,7 +85,7 @@ def deploy(deployment_id, session):
 
     result = {
         'session': session,
-        'action': 'deploy_stage',
+        'action': 'create_deployment',
         'category': 'error',
         'user_id': deployment.user_id
     }
@@ -130,21 +129,15 @@ def deploy(deployment_id, session):
 
         for task in deployment.tasks:
             # Execute task
-            process = Process(target=execute,
-                              args=(eval('module.' +
-                                    task.get_function_name()),))
-            process.start()
-            process.join()
+            execute(eval('module.' + task.get_function_name()))
 
-            if process.exitcode != 0:
-                raise Exception('Process has died')
         print 'Deployment has finished.'
     except Exception as e:
         deployment.status = STATUSES['FAILED']
         print 'Deployment has failed.'
         print 'Error: {0}'.format(e.message)
 
-        result['message'] = """"{0}" deployement has failed.""" \
+        result['message'] = """"{0}" deployment has failed.""" \
             .format(deployment.stage)
 
     finally:
@@ -164,8 +157,10 @@ def deploy(deployment_id, session):
     session.add(deployment)
     session.commit()
 
-    result['category'] = 'success'
-    result['message'] = """"{0}" has been deployed successfully.""" \
-        .format(deployment.stage)
+    # If deployment is successfull
+    if deployment.status == STATUSES['COMPLETED']:
+        result['category'] = 'success'
+        result['message'] = """"{0}" has been deployed successfully.""" \
+            .format(deployment.stage)
 
     return result

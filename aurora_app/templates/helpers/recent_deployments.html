@@ -6,49 +6,7 @@
     <ul class='unstyled'>
       {% for deployment in deployments %}
         <li>
-          <div class="alert alert-{{ deployment.bootstrap_status() }}">
-            <div class='row'>
-              <div class='span4'>
-                <a href="{{ url_for('deployments.view', id=deployment.id) }}">
-                  <strong>#{{ deployment.id }} - {{ deployment.show_status() }}</strong>
-                </a>
-                <a href='{{ url_for('deployments.create', id=deployment.stage.id, clone=deployment.id) }}' title='Repeat'><i class='icon-repeat'></i></a>
-              </div>
-            </div>
-            <div class='row'>
-              <div class="span3">
-                <ul class='unstyled'>
-                  <li>
-                    <strong>Stage:</strong> <a href="{{ url_for('stages.view', id=deployment.stage.id) }}">{{ deployment.stage }}</a>
-                  </li>
-                  <li><strong>Branch:</strong> {{ deployment.branch }}</li>
-                  <li>
-                    <strong>Commit:</strong> {{ deployment.show_commit() }}
-                  </li>
-                </ul>
-              </div>
-              <div class="span3">
-                <ul class='unstyled'>
-                  <li><strong>Time:</strong>
-                    {% if deployment.finished_at %}
-                      {{ deployment.show_time() }}
-                    {% endif %}
-                  </li>
-                  <li><strong>Started at:</strong> {{ deployment.started_at.strftime('%Y-%m-%d %H:%M:%S') }}</li>
-                  <li><strong>Finished at:</strong>
-                    {% if deployment.finished_at %}
-                      {{ deployment.finished_at.strftime('%Y-%m-%d %H:%M:%S') }}
-                    {% endif %}
-                  </li>
-                </ul>
-              </div>    
-              <div class='span3'>
-                <ul class='unstyled'>
-                  <li><strong>Tasks:</strong> {{ deployment.show_tasks_list()|safe }}</li>
-                </ul>
-              </div>
-            </div>
-          </div>
+          {% include 'deployments/deployment.html' %}
         </li>
       {% endfor %}
     </ul>

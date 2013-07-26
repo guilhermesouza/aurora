@@ -1,0 +1,11 @@
+{% if g.user.can('create_deployment') %}
+  <a href='{{ url_for('deployments.create', id=deployment.stage.id, clone=deployment.id) }}' title='Repeat'>
+    <i class='icon-repeat'></i>
+  </a>
+{% endif %}
+
+{% if deployment.is_running() and g.user.can('cancel_deployment') %}
+  <a id="cancel_deployment_button" data-id="{{ deployment.id }}" title='Cancel'>
+    <i class='icon-ban-circle'></i>
+  </a>
+{% endif %}

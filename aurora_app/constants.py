@@ -12,7 +12,9 @@ PERMISSIONS = {
         # Repositories
         "clone_repository", "remove_repository",
         # Stages
-        "create_stage", "edit_stage", "delete_stage", "deploy_stage",
+        "create_stage", "edit_stage", "delete_stage",
+        # Deploment
+        "create_deployment", "cancel_deployment",
         # Tasks
         "create_task", "edit_task", "delete_task"
     ],

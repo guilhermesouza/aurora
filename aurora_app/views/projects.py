@@ -84,7 +84,7 @@ def execute(id):
         TASKS[action](project)
         return json.dumps({'error': False})
 
-    notify(u"""Can't execute "{0}.{1}".""".format(project.name, action),
+    notify(u"""You can't execute "{0}.{1}".""".format(project.name, action),
            category='error', action=action, user_id=g.user.id)
     return json.dumps({'error': True})
 
