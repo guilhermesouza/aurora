@@ -24,6 +24,8 @@ def recent_deployments():
         if object.__tablename__ == 'tasks':
             result = Deployment.query.filter(
                 Deployment.tasks.any(Task.id.in_([object.id])))
+        if object.__tablename__ == 'users':
+            result = Deployment.query.filter_by(user_id=object.id)
         return result.order_by('started_at desc').limit(3).all()
     return dict(get_recent_deployments=get_recent_deploments)
 

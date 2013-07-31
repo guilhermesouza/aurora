@@ -25,9 +25,12 @@ class User(db.Model):
     deployments = db.relationship("Deployment", backref="user")
     notifications = db.relationship("Notification", backref="user")
 
-    def __init__(self, username, password, email=None, role=None):
+    def __init__(self, username=None, password=None, email=None, role=None):
         self.username = username
-        self.set_password(password)
+
+        if password:
+            self.set_password(password)
+
         self.email = email
         self.role = role
 
@@ -51,6 +54,11 @@ class User(db.Model):
 
     def can(self, action):
         return action in PERMISSIONS[self.role]
+
+    def show_role(self):
+        for role, number in ROLES.iteritems():
+            if number == self.role:
+                return role
 
     def __repr__(self):
         return u'<User {0}>'.format(self.username)

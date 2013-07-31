@@ -1,0 +1,33 @@
+{% import 'helpers/errors.html' as errors %}
+
+<form method="post" action="">
+  {{ form.hidden_tag() }}
+
+  <ul class='unstyled'>
+    {% if g.user.can('edit_user') %}
+      <li>{{ form.username.label }}</li>
+      <li>{{ form.username }}</li>
+
+      {{ errors.show(form.username) }}
+    {% endif %}
+
+    <li>{{ form.password.label }}</li>
+    <li>{{ form.password }}</li>
+
+    {{ errors.show(form.password) }}
+
+    <li>{{ form.email.label }}</li>
+    <li>{{ form.email }}</li>
+
+    {{ errors.show(form.email) }}
+
+    {% if g.user.can('edit_user') %}
+      <li>{{ form.role.label }}</li>
+      <li>{{ form.role }}</li>
+
+      {{ errors.show(form.role) }}
+    {% endif %}
+
+    <li><button class='btn btn-primary'>Submit</button></li>
+  </ul>
+</form>

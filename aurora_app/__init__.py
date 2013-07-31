@@ -43,7 +43,7 @@ def check_login():
         return redirect(url_for('main.login', next=request.path))
 
 from aurora_app.views import (main, projects, stages, tasks, notifications,
-                              deployments)
+                              deployments, users)
 
 app.register_blueprint(main.mod)
 app.register_blueprint(projects.mod)
@@ -51,6 +51,8 @@ app.register_blueprint(stages.mod)
 app.register_blueprint(tasks.mod)
 app.register_blueprint(notifications.mod)
 app.register_blueprint(deployments.mod)
+app.register_blueprint(users.mod)
+
 
 # Enable context processors
 import aurora_app.context_processors

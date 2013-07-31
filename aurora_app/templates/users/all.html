@@ -1,0 +1,30 @@
+{% extends 'main/index.html' %}
+
+{% block title %}Users{% endblock %}
+
+{% block content %}
+  <ul class='unstyled inline view-title'>
+    <li><h1>Users</h1></li>
+      {% if g.user.can('create_user') %}
+      <li><a href="{{ url_for('users.create') }}">New</a></li>
+    {% endif %}
+  </ul>
+  <hr />
+
+  <table class="table table-striped table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Role</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users %}
+        <tr>
+          <td><a href="{{ url_for('users.view', id=user.id) }}">{{ user.username }}</a></td>
+          <td>{{ user.show_role() }}</td>
+        </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

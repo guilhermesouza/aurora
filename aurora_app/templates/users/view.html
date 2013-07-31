@@ -1,0 +1,44 @@
+{% import 'helpers/recent_deployments.html' as recent_deployments %}
+
+{% extends 'main/index.html' %}
+
+{% block title %}{{ user.username }}{% endblock %}
+
+{% block content %}
+  <ul class='unstyled inline view-title'>
+    <li><h1>{{ user.username }}</h1></li>
+    {% if g.user.can('edit_user') or g.user.id == user.id %}
+      <li><a href="{{ url_for('users.edit', id=user.id) }}">Edit</a></li>
+    {% endif %}
+    {% if g.user.can('delete_user') %}
+      <li><a id="delete">Delete</a></li>
+    {% endif %}
+  </ul>
+
+  <hr />
+
+  <div class='well'>
+    <p><strong>Role:</strong> {{ user.show_role() }}</p>
+    <p><strong>Email:</strong> {% if user.email %}<a href="mailto:{{ user.email }}">{{ user.email }}</a>{% endif %}</p>
+  </div>
+
+  {{ recent_deployments.show(get_recent_deployments(user)) }}
+{% endblock %}
+
+{% block js %}
+  {{ super() }}
+
+  <script src="{{ url_for('static', filename='js/bootbox.min.js') }}"></script>
+
+  <script>
+    $(function() {
+      $("#delete").click(function() {
+        bootbox.confirm("Are you sure?", function(result) {
+          if (result) {
+            document.location.href = "{{ url_for('users.delete', id=user.id) }}";
+          }
+        }); 
+      });
+    });
+  </script>
+{% endblock %}

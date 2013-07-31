@@ -1,0 +1,9 @@
+{% extends 'main/index.html' %}
+
+{% block title %}Edit | {{ user.username }}{% endblock %}
+
+{% block content %}
+  <h1>Editing user: {{ user.username }}</h1>
+  <hr />
+  {% include 'users/form.html' %}
+{% endblock %}

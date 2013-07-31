@@ -1,3 +1,5 @@
+{% import 'helpers/errors.html' as errors %}
+
 {% extends 'layout.html' %}
 
 {% block title %}Log in{% endblock %}
@@ -21,8 +23,12 @@
               <p>{{ form.username.label }}</p>
               <p>{{ form.username }}</p>
 
+              {{ errors.show(form.username) }}
+
               <p>{{ form.password.label }}</p>
               <p>{{ form.password }}</p>
+
+              {{ errors.show(form.password) }}
 
               <p>{{ form.remember_me.label }}</p>
               <p>{{ form.remember_me }}</p>

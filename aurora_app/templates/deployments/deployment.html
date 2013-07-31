@@ -36,6 +36,7 @@
     </div>    
     <div class='span3'>
       <ul class='unstyled'>
+        <li><strong>User:</strong> <a href="{{ url_for('users.view', id=deployment.user.id) }}">{{ deployment.user.username }}</a></li>
         <li><strong>Tasks:</strong> {{ deployment.show_tasks_list()|safe }}</li>
       </ul>
     </div>

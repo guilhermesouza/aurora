@@ -34,11 +34,14 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        if user is not None and user.check_password(form.password.data):
-            login_user(user, remember=form.remember_me.data)
-            next = request.args.get('next', False)
-            return (redirect(next) if next else
-                    redirect(url_for('main.index')))
+        if user is not None:
+            if user.check_password(form.password.data):
+                login_user(user, remember=form.remember_me.data)
+                next = request.args.get('next', False)
+                return (redirect(next) if next else
+                        redirect(url_for('main.index')))
+
+            form.password.errors = [u'Invalid password.']
 
     return render_template('main/login.html', form=form)
 

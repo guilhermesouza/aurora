@@ -1,4 +1,3 @@
-# User's roles
 ROLES = {
     "USER": 1,
     "ADMIN": 2
@@ -13,10 +12,12 @@ PERMISSIONS = {
         "clone_repository", "remove_repository",
         # Stages
         "create_stage", "edit_stage", "delete_stage",
-        # Deploment
+        # Deploments
         "create_deployment", "cancel_deployment",
         # Tasks
-        "create_task", "edit_task", "delete_task"
+        "create_task", "edit_task", "delete_task",
+        # Users
+        "create_user", "edit_user", "delete_user"
     ],
     ROLES["USER"]: []
 }
