@@ -2,6 +2,7 @@ Fabric==1.6.0
 Flask==0.10.1
 Flask-Alembic==0.1
 Flask-DebugToolbar==0.8.0
+Flask-Gravatar==0.3.0
 Flask-Login==0.2.6
 Flask-SQLAlchemy==0.16
 Flask-Script==0.5.3

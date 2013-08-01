@@ -6,6 +6,7 @@
 
 {% block content %}
   <ul class='list-unstyled list-inline'>
+    <li><img src="{{ g.user.email | gravatar(size=40) }}" title="{{ g.user.username }}" /></li>
     <li><h1>{{ user.username }}</h1></li>
     {% if g.user.can('edit_user') or g.user.id == user.id %}
       <li><a href="{{ url_for('users.edit', id=user.id) }}">Edit</a></li>

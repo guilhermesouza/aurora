@@ -14,9 +14,9 @@
       </ul>
 
       <ul class="nav navbar-nav pull-right">
-        <li><a href="{{ url_for('users.view', id=g.user.id) }}"><i class="glyphicon glyphicon-user"></i> <strong>{{ g.user.username }}</strong></a></li>
+        <li><a href="{{ url_for('users.view', id=g.user.id) }}"><img src="{{ g.user.email | gravatar(size=16) }}" title="{{ g.user.username }}" /> <strong>{{ g.user.username }}</strong></a></li>
         <li><a href="{{ url_for('notifications.all') }}"><i class="glyphicon glyphicon-exclamation-sign"></i> Notifications</a></li>
-        <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
+        <li><a href="{{ url_for('main.logout') }}"><i class="glyphicon glyphicon-off"></i> Logout</a></li>
       </ul>
   </div>
 {% endblock %}

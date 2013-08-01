@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from flask import Flask, render_template, url_for, g, request, redirect
 from flask.ext.login import LoginManager, current_user
 from flask.ext.debugtoolbar import DebugToolbarExtension
+from flask.ext.gravatar import Gravatar
 
 app = Flask(__name__)
 app.config.from_object('settings')
@@ -13,6 +14,9 @@ login_manager.setup_app(app)
 
 # Enable debug toolbar
 toolbar = DebugToolbarExtension(app)
+
+# Enable gravatar
+gravatar = Gravatar(app, default='identicon', rating='g')
 
 # Make Aurora folders if not exists
 from aurora_app.helpers import create_folder
