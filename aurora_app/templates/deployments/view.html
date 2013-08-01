@@ -41,9 +41,9 @@
       </div>
       <div class='col-lg-4'>
         <ul class='list-unstyled'>
-          <li><strong>Time:</strong>
+          <li><strong>Duration:</strong>
             {% if deployment.finished_at %}
-              {{ deployment.show_time() }}
+              {{ deployment.show_duration() }}
             {% endif %}
           </li>
           <li><strong>Started at:</strong> {{ deployment.started_at.strftime('%Y-%m-%d %H:%M:%S') }}</li>

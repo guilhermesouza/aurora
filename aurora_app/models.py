@@ -237,7 +237,7 @@ class Deployment(db.Model):
 
         return []
 
-    def show_time(self):
+    def show_duration(self):
         delta = self.finished_at - self.started_at
         return time.strftime("%H:%M:%S", time.gmtime(delta.seconds))
 
