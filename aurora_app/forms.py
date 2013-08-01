@@ -31,12 +31,11 @@ TaskForm = model_form(Task, db.session, Form, field_args={
 })
 
 class EditUserForm(Form):
-    username = TextField('Username')
+    username = TextField('Username', validators=[Required()])
     password = PasswordField('Password')
     email = TextField('Email', validators=[Email()])
     role = SelectField(u'Role', coerce=int,
                        choices=[(v, k) for k, v in ROLES.iteritems()])
 
 class CreateUserForm(EditUserForm):
-    username = TextField('Username', validators=[Required()])
     password = PasswordField('Password', validators=[Required()])

@@ -70,17 +70,10 @@ def edit(id):
     form = EditUserForm(request.form, user)
 
     if form.validate_on_submit():
+        form.populate_obj(user)
+
         if form.password.data:
             user.set_password(form.password.data)
-
-        if form.role.data:
-            user.role = form.role.data
-
-        if form.username.data:
-            user.username = form.username.data
-
-        if form.email.data:
-            user.email = form.email.data
 
         db.session.add(user)
         db.session.commit()
