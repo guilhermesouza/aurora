@@ -11,8 +11,7 @@ How to run
 * Run `pip install -r requirements.txt` in aurora folder;
 * `python manage.py init_db`;
 * `python manage.py runserver`;
-* Open http://127.0.0.1:5000 in browser;
-* Default username and password `admin:admin`.
+* Open http://127.0.0.1:5000 in web browser and login with your credentials;
 
 Now you can try [this tutorial](https://github.com/ak3n/aurora/wiki/Tutorial).
 

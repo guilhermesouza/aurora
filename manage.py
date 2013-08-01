@@ -20,6 +20,32 @@ def setup_submodules():
     os.system('git submodule update')
 
 
+def create_superuser_dialog():
+    import getpass
+    from email.utils import parseaddr
+
+    print "You need to create a superuser!"
+
+    username = raw_input('Username [{0}]: '.format(getpass.getuser()))
+    if not username:
+        username = getpass.getuser()
+
+    email = None
+    while not email:
+        email = parseaddr(raw_input('Email: '))[1]
+
+    passwords = lambda: (getpass.getpass(),
+                         getpass.getpass('Password (retype): '))
+
+    password, retyped_password = passwords()
+
+    while password == '' or password != retyped_password:
+        print 'Passwords do not match or your password is empty!'
+        password, retyped_password = passwords()
+
+    return username, email, password
+
+
 @manager.command
 def init_db():
     """Creates aurora database."""
@@ -28,7 +54,10 @@ def init_db():
 
     db.create_all()
 
-    admin = User(username='admin', password='admin', role=ROLES['ADMIN'])
+    username, email, password = create_superuser_dialog()
+
+    admin = User(username=username, password=password, email=email,
+                 role=ROLES['ADMIN'])
     db.session.add(admin)
     db.session.commit()
 
