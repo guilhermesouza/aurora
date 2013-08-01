@@ -56,9 +56,9 @@ def init_db():
 
     username, email, password = create_superuser_dialog()
 
-    admin = User(username=username, password=password, email=email,
+    superuser = User(username=username, password=password, email=email,
                  role=ROLES['ADMIN'])
-    db.session.add(admin)
+    db.session.add(superuser)
     db.session.commit()
 
 if __name__ == "__main__":
