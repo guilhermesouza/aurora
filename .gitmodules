@@ -21,3 +21,7 @@
 [submodule "aurora_app/static/mustache"]
 	path = aurora_app/static/mustache
 	url = https://github.com/janl/mustache.js.git
+
+[submodule "aurora_app/static/bootstrap-glyphicons"]
+	path = aurora_app/static/bootstrap-glyphicons
+	url = https://github.com/twbs/bootstrap-glyphicons.git

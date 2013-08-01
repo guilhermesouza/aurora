@@ -3,7 +3,7 @@
 {% block title %}Stages{% endblock %}
 
 {% block content %}
-  <ul class='unstyled inline view-title'>
+  <ul class='list-unstyled list-inline'>
     <li><h1>Stages</h1></li>
     {% if g.user.can('create_stage') %}
       <li><a href="{{ url_for('stages.create') }}">New</a></li>
@@ -25,7 +25,7 @@
           <td><a href="{{ url_for('stages.view', id=stage.id) }}">{{ stage.name }}</a></td>
           <td>
             {% if stage.project %}
-              <ul class="unstyled">
+              <ul class="list-unstyled">
                 <li><a href="{{ url_for('projects.view', id=stage.project.id) }}">{{ stage.project }}</a></li>
               </ul>
             {% else %}

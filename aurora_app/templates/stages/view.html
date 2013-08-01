@@ -5,7 +5,7 @@
 {% block title %}{{ stage }}{% endblock %}
 
 {% block content %}
-  <ul class='unstyled inline view-title'>
+  <ul class='list-unstyled list-inline'>
     <li>
       <h1>
         {% if stage.project %}
@@ -32,7 +32,7 @@
     <pre><code lang="python">{{ stage.code }}</code></pre>
   </div>
 
-  <ul class='unstyled inline'>
+  <ul class='list-unstyled list-inline'>
     <li><h4>Tasks</h4></li>
     {% if g.user.can('create_task') %}
       <li><a href="{{ url_for('tasks.create', stage_id=stage.id) }}">New</a></li>

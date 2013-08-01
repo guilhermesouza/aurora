@@ -1,6 +1,6 @@
 <div class="alert alert-{{ deployment.bootstrap_status() }}">
   <div class='row'>
-    <div class='span4'>
+    <div class='col-lg-4'>
       <a href="{{ url_for('deployments.view', id=deployment.id) }}">
         <strong>#{{ deployment.id }} - {{ deployment.show_status() }}</strong>
       </a>
@@ -8,8 +8,8 @@
     </div>
   </div>
   <div class='row'>
-    <div class="span3">
-      <ul class='unstyled'>
+    <div class="col-lg-4">
+      <ul class='list-unstyled'>
         <li>
           <strong>Stage:</strong> <a href="{{ url_for('stages.view', id=deployment.stage.id) }}">{{ deployment.stage }}</a>
         </li>
@@ -19,8 +19,8 @@
         </li>
       </ul>
     </div>
-    <div class="span3">
-      <ul class='unstyled'>
+    <div class="col-lg-4">
+      <ul class='list-unstyled'>
         <li><strong>Time:</strong>
           {% if deployment.finished_at %}
             {{ deployment.show_time() }}
@@ -34,8 +34,8 @@
         </li>
       </ul>
     </div>    
-    <div class='span3'>
-      <ul class='unstyled'>
+    <div class='col-lg-3'>
+      <ul class='list-unstyled'>
         <li><strong>User:</strong> <a href="{{ url_for('users.view', id=deployment.user.id) }}">{{ deployment.user.username }}</a></li>
         <li><strong>Tasks:</strong> {{ deployment.show_tasks_list()|safe }}</li>
       </ul>

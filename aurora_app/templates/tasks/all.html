@@ -3,7 +3,7 @@
 {% block title %}Tasks{% endblock %}
 
 {% block content %}
-  <ul class='unstyled inline view-title'>
+  <ul class='list-unstyled list-inline'>
     <li><h1>Tasks</h1></li>
     {% if g.user.can('create_task') %}
       <li><a href="{{ url_for('tasks.create') }}">New</a></li>
@@ -23,7 +23,7 @@
           <td><a href="{{ url_for('tasks.view', id=task.id) }}">{{ task.name }}</a></td>
           <td>
             {% if task.stages %}
-              <ul class="unstyled">
+              <ul class="list-unstyled">
                 {% for stage in task.stages %}
                   <li><a href="{{ url_for('stages.view', id=stage.id) }}">{{ stage }}</a></li>
                 {% endfor %}

@@ -3,7 +3,7 @@
 {% block title %}Users{% endblock %}
 
 {% block content %}
-  <ul class='unstyled inline view-title'>
+  <ul class='list-unstyled list-inline'>
     <li><h1>Users</h1></li>
       {% if g.user.can('create_user') %}
       <li><a href="{{ url_for('users.create') }}">New</a></li>

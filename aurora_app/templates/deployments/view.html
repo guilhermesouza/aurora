@@ -3,7 +3,7 @@
 {% block title %}#{{ deployment.id }} - {{ deployment.stage }} {% endblock %}
 
 {% block content %}
-  <ul class='unstyled inline view-title'>
+  <ul class='list-unstyled list-inline'>
     <li>
       <h1>#{{ deployment.id }} -
           {% if deployment.stage.project %}
@@ -18,8 +18,8 @@
 
   <div class='well'>
     <div class='row'>
-      <div class='span2'>
-        <ul class='unstyled'>
+      <div class='col-lg-2'>
+        <ul class='list-unstyled'>
           <li>
             <strong>Actions:</strong>
             {% include 'deployments/deployment_actions.html' %}
@@ -28,8 +28,8 @@
       </div>
     </div>
     <div class='row'>
-      <div class="span2">
-        <ul class='unstyled'>
+      <div class="col-lg-3">
+        <ul class='list-unstyled'>
           <li>
             <strong>Code:</strong> <a href="{{ url_for('deployments.raw_code', id=deployment.id) }}">Raw</a>
           </li>
@@ -39,8 +39,8 @@
           </li>
         </ul>
       </div>
-      <div class='span4'>
-        <ul class='unstyled'>
+      <div class='col-lg-4'>
+        <ul class='list-unstyled'>
           <li><strong>Time:</strong>
             {% if deployment.finished_at %}
               {{ deployment.show_time() }}
@@ -54,8 +54,8 @@
           </li>
         </ul>
       </div>
-      <div class='span3'>
-        <ul class='unstyled'>
+      <div class='col-lg-3'>
+        <ul class='list-unstyled'>
           <li><strong>User:</strong> <a href="{{ url_for('users.view', id=deployment.user.id) }}">{{ deployment.user.username }}</a></li>
           <li><strong>Tasks:</strong> {{ deployment.show_tasks_list()|safe }}</li>
         </ul>
@@ -69,7 +69,7 @@
     {% endif %}
   </p>
   <div id="log" class='well' style='height: 300px; overflow: auto'>
-    <ul class='unstyled'>
+    <ul class='list-unstyled'>
       {% if not deployment.is_running() %}
         {% for line in deployment.get_log_lines() %}
           <li>{{ line }}</li>

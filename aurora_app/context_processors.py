@@ -13,6 +13,11 @@ def projects():
 
 
 @app.context_processor
+def version():
+    return {'AURORA_VERSION': app.config['AURORA_VERSION']}
+
+
+@app.context_processor
 def recent_deployments():
     def get_recent_deploments(object):
         if object.__tablename__ == 'projects':

@@ -4,92 +4,90 @@
 
 {% block nav %}
   <div class="navbar">
-    <div class="navbar-inner">
-      <a class="brand" href="{{ url_for('main.index') }}">Aurora</a>
+      <a class="navbar-brand" href="{{ url_for('main.index') }}">Aurora</a>
 
-      <ul class="nav">
+      <ul class="nav navbar-nav">
         <li><a href="{{ url_for('projects.all') }}">Projects</a></li>
         <li><a href="{{ url_for('stages.all') }}">Stages</a></li>
         <li><a href="{{ url_for('tasks.all') }}">Tasks</a></li>
         <li><a href="{{ url_for('users.all') }}">Users</a></li>
       </ul>
 
-      <ul class="nav pull-right">
-        <li><a href="{{ url_for('users.view', id=g.user.id) }}"><i class="icon-user"></i> <strong>{{ g.user.username }}</strong></a></li>
-        <li><a href="{{ url_for('notifications.all') }}"><i class="icon-exclamation-sign"></i> Notifications</a></li>
-        <li><a href="{{ url_for('main.settings') }}"><i class="icon-wrench"></i> Personal settings</a></li>
+      <ul class="nav navbar-nav pull-right">
+        <li><a href="{{ url_for('users.view', id=g.user.id) }}"><i class="glyphicon glyphicon-user"></i> <strong>{{ g.user.username }}</strong></a></li>
+        <li><a href="{{ url_for('notifications.all') }}"><i class="glyphicon glyphicon-exclamation-sign"></i> Notifications</a></li>
+        <li><a href="{{ url_for('main.settings') }}"><i class="glyphicon glyphicon-wrench"></i> Personal settings</a></li>
         <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
       </ul>
-    </div>
   </div>
 {% endblock %}
 
 {% block body %}
-  <div class='container-fluid'>
-    <div class="span3 sidebar center">
-      <ul class='nav nav-list well'>
-        {% if projects %}
-          {% for project in projects %}
-            <li>
-              <a href="{{ url_for('projects.view', id=project.id) }}"><strong>{{ project.name }}</strong></a>
-              {% if project.stages %}
-                <ul>
-                  {% for stage in project.stages %}
-                    <li><a href="{{ url_for('stages.view', id=stage.id) }}">{{ stage.name }}</a></li>
-                  {% endfor %}
-                </ul>
-              {% else %}
-                <ul>
-                  {% if g.user.can('create_stage') %}
-                    <li><a href="{{ url_for('stages.create', project_id=project.id) }}">New stage</a></li>
-                  {% endif %}
-                </ul>
-              {% endif %}
-            </li>
-
-            {% if not loop.last %}
-              <li class="divider"></li>
-            {% endif %}
-          {% endfor %}
-        {% else %}
-          {% if g.user.can('create_project') %}
-            <li><a href="{{ url_for('projects.create') }}"><strong>New project</strong></a></li>
-          {% endif %}
-        {% endif %}
-      </ul>
-    </div>
-    <div class="span10">
-      {% block notifications %}
-        <div id='notifications'>
-          <ul class='unstyled'>
-          </ul>
-        </div>
-      {% endblock %}
-
-      {% block content %}
-        {% if not deployments %}
-          <h4 class='alert'>
-            No available deployments.
-          </h4>
-        {% else %}
-          <ul class='unstyled inline view-title'>
-            <li><h1>Last deployments</h1></li>
-          </ul>
-
-          <hr />
-
-          <ul class='unstyled'>
-            {% for deployment in deployments %}
-              <li>{% include 'deployments/deployment.html' %}</li>
+  <div class="container">
+    <div class="row indent-bottom">
+      <div class="col-lg-3 text-center">
+        <ul class='nav nav-pills nav-stacked well'>
+          {% if projects %}
+            {% for project in projects %}
+              <li>
+                <a href="{{ url_for('projects.view', id=project.id) }}"><strong>{{ project.name }}</strong></a>
+                {% if project.stages %}
+                  <ul>
+                    {% for stage in project.stages %}
+                      <li><a href="{{ url_for('stages.view', id=stage.id) }}">{{ stage.name }}</a></li>
+                    {% endfor %}
+                  </ul>
+                {% else %}
+                  <ul>
+                    {% if g.user.can('create_stage') %}
+                      <li><a href="{{ url_for('stages.create', project_id=project.id) }}">New stage</a></li>
+                    {% endif %}
+                  </ul>
+                {% endif %}
+              </li>
             {% endfor %}
-          </ul>
-        {% endif %}
-      {% endblock %}
+          {% else %}
+            {% if g.user.can('create_project') %}
+              <li><a href="{{ url_for('projects.create') }}"><strong>New project</strong></a></li>
+            {% endif %}
+          {% endif %}
+        </ul>
+      </div>
+      <div class="col-lg-9">
+        {% block notifications %}
+          <div id='notifications'>
+            <ul class='list-unstyled'>
+            </ul>
+          </div>
+        {% endblock %}
+
+        {% block content %}
+          {% if not deployments %}
+            <h4 class='alert'>
+              No available deployments.
+            </h4>
+          {% else %}
+            <ul class='list-unstyled list-inline'>
+              <li><h1>Last deployments</h1></li>
+            </ul>
+
+            <hr />
+
+            <ul class='list-unstyled'>
+              {% for deployment in deployments %}
+                <li>{% include 'deployments/deployment.html' %}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endblock %}
+      </div>
     </div>
   </div>
 {% endblock %}
 
 {% block js %}
+  {{ super() }}
+
   <script src="{{ url_for('static', filename='mustache/mustache.js') }}"></script>
   <script src="{{ url_for('static', filename='eventsource/eventsource.js') }}"></script>
   <script>

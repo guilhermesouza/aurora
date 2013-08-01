@@ -5,7 +5,7 @@
 {% block title %}{{ project.name }}{% endblock %}
 
 {% block content %}
-  <ul class='unstyled inline view-title'>
+  <ul class='list-unstyled list-inline'>
     <li><h1>{{ project.name }}</h1></li>
     {% if g.user.can('edit_project') %}
       <li><a href="{{ url_for('projects.edit', id=project.id) }}">Edit</a></li>
@@ -21,15 +21,15 @@
     <p><strong>Description:</strong> {{ project.description }}</p>
     <p><strong>Repository path:</strong> {{ project.repository_path }}
       <span id="actions">
-        <a data-action="clone_repository" data-toggle='tooltip' data-placement='top' data-original-title="Clone repository"><i class='icon-download-alt'></i></a>
-        <a data-action="remove_repository" data-toggle='tooltip' data-placement='top' data-original-title="Remove repository"><i class='icon-remove'></i></a>
+        <a data-action="clone_repository" data-toggle='tooltip' data-placement='top' data-original-title="Clone repository"><i class='glyphicon glyphicon-download-alt'></i></a>
+        <a data-action="remove_repository" data-toggle='tooltip' data-placement='top' data-original-title="Remove repository"><i class='glyphicon glyphicon-remove'></i></a>
       </span>
     </p>
     <p><strong>Code:</strong></p>
     <pre><code lang="python">{{ project.code }}</code></pre>
   </div>
 
-  <ul class='unstyled inline'>
+  <ul class='list-unstyled list-inline'>
     <li><h4>Stages</h4></li>
     {% if g.user.can('create_stage') %}
       <li><a href="{{ url_for('stages.create', project_id=project.id) }}">New</a></li>
