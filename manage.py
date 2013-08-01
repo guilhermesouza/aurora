@@ -19,18 +19,6 @@ def setup_submodules():
     os.system('git submodule init')
     os.system('git submodule update')
 
-    submodules_tags = {
-        'bootstrap': 'v3.0.0-rc1',
-        'bootbox': 'v3.3.0',
-        'select2': '3.4.1'
-    }
-
-    submodules_path_prefix = 'aurora_app/static/'
-
-    for submodule_name, tag in submodules_tags.iteritems():
-        os.system('cd {0}; git checkout {1}'.format(
-            os.path.join(submodules_path_prefix, submodule_name), tag))
-
 
 @manager.command
 def init_db():
