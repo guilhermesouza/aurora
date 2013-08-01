@@ -105,11 +105,9 @@
       });
       // Delete button hook
       $("#delete").click(function() {
-        bootbox.confirm("Are you sure?<br />All stages will be removed.", function(result) {
-          if (result) {
-            document.location.href = "{{ url_for('projects.delete', id=project.id) }}";
-          }
-        }); 
+        if (confirm("Are you sure?\nAll stages will be removed.")) {
+          document.location.href = "{{ url_for('projects.delete', id=project.id) }}";
+        }
       });
     });
   </script>

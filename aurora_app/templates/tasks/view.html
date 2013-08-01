@@ -44,16 +44,12 @@
 {% block js %}
   {{ super() }}
 
-  <script src="{{ url_for('static', filename='bootbox/bootbox.min.js') }}"></script>
-
   <script>
     $(function() {
       $("#delete").click(function() {
-        bootbox.confirm("Are you sure?", function(result) {
-          if (result) {
-            document.location.href = "{{ url_for('tasks.delete', id=task.id) }}";
-          }
-        }); 
+        if (confirm("Are you sure?")) {
+          document.location.href = "{{ url_for('tasks.delete', id=task.id) }}";
+        }
       });
     });
   </script>
