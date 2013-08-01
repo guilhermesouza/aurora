@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, render_template, redirect, url_for, request, g
 
 from aurora_app.decorators import must_be_able_to
 from aurora_app.models import User
@@ -60,6 +60,13 @@ def delete(id):
 @mod.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id):
     user = get_or_404(User, id=id)
+
+    if not (g.user.can('edit_user') or user.id == g.user.id):
+        notify(u"You can't do that. You don't have permission.",
+               category='error', action='edit_user')
+        return redirect(request.referrer) if request.referrer \
+            else redirect(url_for('main.index'))
+
     form = EditUserForm(request.form, user)
 
     if form.validate_on_submit():

@@ -1,7 +1,7 @@
 from multiprocessing import Process
 from functools import wraps
 
-from flask import g, redirect, request
+from flask import g, redirect, request, url_for
 
 from aurora_app.helpers import notify, get_session
 
@@ -20,7 +20,8 @@ def must_be_able_to(action):
             if not g.user.can(action):
                 notify(u"You can't do that. You don't have permission.",
                        category='error', action=action)
-                return redirect(request.referrer)
+                return redirect(request.referrer) if request.referrer \
+                    else redirect(url_for('main.index'))
             return f(*args, **kwargs)
         return decorated_function
     return decorator
