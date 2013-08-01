@@ -12,6 +12,15 @@ manager.add_command("migrate", ManageMigrations())
 
 
 @manager.command
+def setup_submodules():
+    """Clones git submodules"""
+    import os
+
+    os.system('git submodule init')
+    os.system('git submodule update')
+
+
+@manager.command
 def init_db():
     """Creates aurora database."""
     from aurora_app.constants import ROLES

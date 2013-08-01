@@ -1,6 +1,6 @@
-<link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='css/codemirror.css') }}" />
+<link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='codemirror/lib/codemirror.css') }}" />
 
-<script src="{{ url_for('static', filename='js/codemirror.js') }}"></script>
+<script src="{{ url_for('static', filename='codemirror/lib/codemirror.js') }}"></script>
 <script>
 var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
   mode: {name: "python",
@@ -10,6 +10,6 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
   indentUnit: 4,
   tabMode: "shift",
   matchBrackets: true,
-  border: 1,
+  border: 1
 });
 </script>

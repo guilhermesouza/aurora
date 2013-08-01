@@ -12,9 +12,9 @@
 
   <form method='post' action=''>
     <div class='row'>
-      <div class='span4 center'>
+      <div class='col-lg-4 text-center'>
         <h4>Available tasks:</h4>
-        <select name="available" id="available" multiple="multiple" size="10">
+        <select class="form-control" name="available" id="available" multiple="multiple" size="10">
           {% for task in stage.tasks %}
             {% if (not clone_deployment) or task not in clone_deployment.tasks %}
               <option value="{{ task.id }}">{{ task.name }}</option>
@@ -23,17 +23,17 @@
         </select>
       </div>
 
-      <div class='span1 center bigger'>
-        <ul class='unstyled arrows' style='padding-top: 50px;'>
+      <div class='col-lg-1 text-center bigger'>
+        <ul class='list-unstyled arrows' style='padding-top: 50px;'>
           <li class='pointer'><a id="add">&raquo;</a></li>
           <li>&nbsp;</li>
           <li class='pointer'><a id="remove">&laquo;</a></li>
         </ul>
       </div>
 
-      <div class='span4 center'>
+      <div class='col-lg-4 text-center'>
         <h4>Selected tasks:</h4>
-        <select name="selected" id="selected" multiple="multiple" size="10">
+        <select class="form-control" name="selected" id="selected" multiple="multiple" size="10">
           {% if clone_deployment %}
             {% for task in clone_deployment.tasks %}
               <option value="{{ task.id }}">{{ task.name }}</option>
@@ -42,8 +42,8 @@
         </select>
       </div>
 
-      <div class='span0 center bigger'>
-        <ul class='unstyled arrows' style='padding-top: 50px;'>
+      <div class='col-lg-0 text-center bigger'>
+        <ul class='list-unstyled arrows' style='padding-top: 50px;'>
           <li class='pointer'><a id="up">&uarr;</a></li>
           <li>&nbsp;</li>
           <li class='pointer'><a id="down">&darr;</a></li>
@@ -53,9 +53,9 @@
 
     {% if branch %}
       <div class='row'>
-        <div class='span4 center'>
+        <div class='col-lg-4 text-center'>
           <h4>Branch:</h4>
-          <select name="branch" id="branches">
+          <select class="form-control" name="branch" id="branches">
             {% for branch_item in stage.project.get_branches() %}
               <option value="{{ branch_item.name }}"
               {% if branch == branch_item %}
@@ -66,7 +66,7 @@
           </select>
         </div>
 
-        <div class='span6 center'>
+        <div class='col-lg-6 text-center'>
           <h4>Commit:</h4>
           <input type='hidden' id="commits" class='wider' name='commit' {% if clone_deployment %}value='{{ clone_deployment.commit }}'{% endif %} />
         </div>
@@ -75,7 +75,7 @@
 
     <hr />
 
-    <input type='submit' id="deploy" class='btn btn-primary' value="Deploy!" />
+    <button type='submit' id="deploy" class='btn btn-default'>Deploy</button>
 
   </form>
 {% endblock %}
@@ -83,12 +83,12 @@
 
 {% block css %}
   {{ super() }}
-  <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='css/select2.css') }}" />
+  <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='select2/select2.css') }}" />
 {% endblock %}
 
 {% block js %}
   {{ super() }}
-  <script src="{{ url_for('static', filename='js/select2.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='select2/select2.min.js') }}"></script>
 
   <script>
     $(function() {

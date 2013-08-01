@@ -5,7 +5,7 @@
 {% block title %}{{ user.username }}{% endblock %}
 
 {% block content %}
-  <ul class='unstyled inline view-title'>
+  <ul class='list-unstyled list-inline'>
     <li><h1>{{ user.username }}</h1></li>
     {% if g.user.can('edit_user') or g.user.id == user.id %}
       <li><a href="{{ url_for('users.edit', id=user.id) }}">Edit</a></li>
@@ -28,7 +28,7 @@
 {% block js %}
   {{ super() }}
 
-  <script src="{{ url_for('static', filename='js/bootbox.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='bootbox/bootbox.min.js') }}"></script>
 
   <script>
     $(function() {

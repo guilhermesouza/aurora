@@ -1,9 +1,9 @@
 {% macro show(deployments) -%}
   {% if deployments %}
-    <ul class='unstyled inline'>
+    <ul class='list-unstyled list-inline'>
       <li><h4>Recent deployments</h4></li>
     </ul>
-    <ul class='unstyled'>
+    <ul class='list-unstyled'>
       {% for deployment in deployments %}
         <li>
           {% include 'deployments/deployment.html' %}

@@ -1,26 +1,32 @@
 {% import 'helpers/errors.html' as errors %}
 
 <form method="post" action="">
-  {{ form.hidden_tag() }}
+  <fieldset>
+    {{ form.hidden_tag() }}
 
-  <ul class='unstyled'>
-    <li>{{ form.name.label }}</li>
-    <li>{{ form.name }}</li>
+    <div class="form-group">
+      {{ form.name.label }}
+      {{ form.name(class="form-control") }}
 
-    {{ errors.show(form.name) }}
+      {{ errors.show(form.name) }}
+    </div>
 
-    <li>{{ form.code.label }}</li>
-    <li>{{ form.code }}</li>
+    <div class="form-group">
+      {{ form.code.label }}
+      {{ form.code(class="form-control") }}
 
-    {{ errors.show(form.code) }}
+      {{ errors.show(form.code) }}
+    </div>
 
-    <li>{{ form.stages.label }}</li>
-    <li>{{ form.stages }}</li>
+    <div class="form-group">
+      {{ form.stages.label }}
+      {{ form.stages(class="form-control") }}
 
-    {{ errors.show(form.stages) }}
+      {{ errors.show(form.stages) }}
+    </div>
 
-    <li><button class='btn btn-primary'>Submit</button></li>
-  </ul>
+    <button class='btn btn-default'>Submit</button>
+  </fieldset>
 </form>
 
 {% include 'helpers/codemirror.html' %}

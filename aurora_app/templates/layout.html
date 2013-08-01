@@ -2,33 +2,47 @@
 <html lang="en">
   <head>
     <title>{% block title %}{% endblock %} | Aurora</title>
-    
+
     <meta charset="utf-8">
 
-    <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
-    <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='css/style.css') }}" />
-    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.png') }}">
+    <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='bootstrap/dist/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='bootstrap-glyphicons/css/bootstrap-glyphicons.css') }}" />
+    <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='aurora/css/style.css') }}" />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='aurora/img/favicon.png') }}">
 
     {% block css %}
     {% endblock %}
 
-    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='aurora/js/jquery.min.js') }}"></script>
 
   </head>
 
   <body>
-    {% block nav %}
-    {% endblock %}
+    <div id="wrap">
+      {% block nav %}
+      {% endblock %}
 
-    {% block body %}
-    {% endblock %}
+      {% block body %}
+      {% endblock %}
+    </div>
+
+    <div id="footer">
+      <div class="container">
+         <p class="text-muted credit">
+           <span>Aurora {{ AURORA_VERSION }}</span>
+           <span class="pull-right">
+             <a href="https://github.com/ak3n/aurora">
+               <img src="{{ url_for('static', filename='aurora/img/github-mark.png') }}" width="24px" title="Aurora on Github" />
+             </a>
+           </span>
+         </p>
+      </div>
+    </div>
   </body>
 
-  <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/desktop-notify-min.js') }}"></script>
   {% block js %}
+    <script src="{{ url_for('static', filename='bootstrap/dist/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='aurora/js/desktop-notify-min.js') }}"></script>
   {% endblock %}
 
-  {% block footer %}
-  {% endblock %}
 </html>

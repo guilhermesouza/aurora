@@ -12,6 +12,7 @@ SECRET_KEY = 'aurora-app'
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(_basedir, 'aurora.db')
 
 # aurora settings
+AURORA_VERSION = "0.0.3"
 AURORA_PATH = '/home/{0}/.aurora/'.format(getpass.getuser())
 AURORA_PROJECTS_PATH = os.path.join(AURORA_PATH, 'projects')
 AURORA_TMP_PATH = '/tmp/aurora'

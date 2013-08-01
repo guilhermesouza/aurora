@@ -5,7 +5,7 @@
 {% block title %}{{ task.name }}{% endblock %}
 
 {% block content %}
-  <ul class='unstyled inline view-title'>
+  <ul class='list-unstyled list-inline'>
     <li><h1>{{ task.name }}</h1></li>
     {% if g.user.can('edit_task') %}
       <li><a href="{{ url_for('tasks.edit', id=task.id) }}">Edit</a></li>
@@ -22,7 +22,7 @@
     <pre><code lang="python">{{ task.code }}</code></pre>
   </div>
 
-  <ul class='unstyled inline'>
+  <ul class='list-unstyled list-inline'>
     <li><h4>Stages</h4></li>
   </ul>
 
@@ -44,7 +44,7 @@
 {% block js %}
   {{ super() }}
 
-  <script src="{{ url_for('static', filename='js/bootbox.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='bootbox/bootbox.min.js') }}"></script>
 
   <script>
     $(function() {

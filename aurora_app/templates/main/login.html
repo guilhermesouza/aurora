@@ -5,39 +5,38 @@
 {% block title %}Log in{% endblock %}
 
 {% block body %}
-    <div class='container'>
-      <div class='row'>
-        <div class='offset3 span6'>
-
-          <div id='logo'>
-            <!-- Photo address: http://www.flickr.com/photos/lit_foto/329884074/in/set-72157610911446183/ -->
-            <a href="{{ url_for('main.index') }}"><img src="{{ url_for('static', filename='img/logo.jpg') }}" /></a>
-          </div>
-
-          <hr/>
-
-          <div id="login-block">
-            <h1 class='center'>Please, log in:</h1>
-            <form class='center' action="" method="post" name="login" >
-              {{ form.hidden_tag() }}
-              <p>{{ form.username.label }}</p>
-              <p>{{ form.username }}</p>
-
-              {{ errors.show(form.username) }}
-
-              <p>{{ form.password.label }}</p>
-              <p>{{ form.password }}</p>
-
-              {{ errors.show(form.password) }}
-
-              <p>{{ form.remember_me.label }}</p>
-              <p>{{ form.remember_me }}</p>
-
-              <p><input type="submit" value="Sign In"></p>
-            </form>
-          </div>
-
-      </div>
+  <div class="container">
+    <div class="text-center page-header">
+      <h1>Aurora</h1>
     </div>
+    <form class="col-lg-4 col-offset-4 form-horizontal" action="" method="post" name="login" >
+      <fieldset>
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+          {{ form.username.label(class="col-lg-3 control-label") }}
+          <div class="col-lg-6">
+            {{ form.username(class="form-control") }}
+
+            {{ errors.show(form.username) }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          {{ form.password.label(class="col-lg-3 control-label") }}
+          <div class="col-lg-6">
+            {{ form.password(class="form-control") }}
+
+            {{ errors.show(form.password) }}
+
+            <div class="checkbox">
+              {{ form.remember_me.label }}
+              {{ form.remember_me }}
+            </div>
+
+            <button type="submit" class="btn btn-default">Sign In</button>
+          </div>
+        </div>
+      </fieldset>
+    </form>
   </div>
 {% endblock %}
