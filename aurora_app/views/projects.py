@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, url_for, redirect, request, g
 
 from aurora_app.decorators import must_be_able_to
 from aurora_app.forms import ProjectForm
-from aurora_app.models import Project
+from aurora_app.models import Project, ProjectParameter
 from aurora_app.database import db, get_or_404
 from aurora_app.helpers import notify
 from aurora_app.tasks import clone_repository, remove_repository
@@ -22,6 +22,8 @@ def create():
         form.populate_obj(project)
         db.session.add(project)
         db.session.commit()
+
+        project.create_params()
 
         notify(u'Project "{0}" has been created.'.format(project.name),
                category='success', action='create_project')
@@ -43,6 +45,7 @@ def edit(id):
     form = ProjectForm(request.form, project)
 
     if form.validate_on_submit():
+        form.params.data = project.params
         form.populate_obj(project)
         db.session.add(project)
         db.session.commit()
@@ -82,7 +85,19 @@ def execute(id):
     project = get_or_404(Project, id=id)
     action = request.form.get('action')
     if g.user.can(action):
-        TASKS[action](project)
+        if action == 'edit_project':
+            name, value = request.form.get('name'), request.form.get('value')
+            parameter = ProjectParameter.query.filter_by(name=name).first()
+
+            try:
+                parameter.set_value(value)
+                db.session.add(parameter)
+                db.session.commit()
+            except Exception as e:
+                notify(e.message, category='error', action='edit_project')
+                return json.dumps({'error': True})
+        else:
+            TASKS[action](project)
         return json.dumps({'error': False})
 
     notify(u"""You can't execute "{0}.{1}".""".format(project.name, action),

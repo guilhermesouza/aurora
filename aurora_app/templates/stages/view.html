@@ -13,7 +13,7 @@
         {% endif %} {{ stage.name }}
       </h1>
     </li>
-    {% if g.user.can('create_deployment') %}
+    {% if g.user.can('create_deployment') and stage.project %}
       <li><a href="{{ url_for('deployments.create', id=stage.id) }}">Deploy</a></li>
     {% endif %}
     <li><a href="{{ url_for('stages.export', id=stage.id) }}">Export</a></li>
@@ -27,10 +27,8 @@
 
   <hr />
 
-  <div class='well'>
-    <p><strong>Code:</strong></p>
-    <pre><code lang="python">{{ stage.code }}</code></pre>
-  </div>
+  <p><strong>Code:</strong></p>
+  <pre><code lang="python">{{ stage.code }}</code></pre>
 
   <ul class='list-unstyled list-inline'>
     <li><h4>Tasks</h4></li>

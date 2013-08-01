@@ -38,3 +38,9 @@ BOOTSTRAP_ALERTS = {
     STATUSES['RUNNING']: 'info',
     STATUSES['CANCELED']: 'error'
 }
+
+PARAMETER_TYPES = {
+    "INT": 1,
+    "STR": 2,
+    "BOOL": 3
+}

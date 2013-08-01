@@ -65,7 +65,7 @@
 
   <p><strong>Log:</strong>
     {% if not deployment.log %}
-      <button id='follow' class='btn btn-mini'>Follow</button>
+      <button id='follow' class='btn btn-default btn-small'>Follow</button>
     {% endif %}
   </p>
   <div id="log" class='well' style='height: 300px; overflow: auto'>
@@ -112,6 +112,7 @@
           if (data.event && data.event == "finished") {
             $("#deployment_status").text(data.status);
             $("#cancel_deployment_button").hide();
+            $("#follow").hide();
             eventSource.close();
           }
         });

@@ -8,7 +8,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask import url_for
 
 from aurora_app import app
-from aurora_app.constants import ROLES, PERMISSIONS, STATUSES, BOOTSTRAP_ALERTS
+from aurora_app.constants import (ROLES, PERMISSIONS, STATUSES,
+                                  BOOTSTRAP_ALERTS, PARAMETER_TYPES)
 from aurora_app.database import db
 
 FUNCTION_NAME_REGEXP = '^def (\w+)\(.*\):'
@@ -73,10 +74,23 @@ class Project(db.Model):
     code = db.Column(db.Text(), default='')
     # Relations
     stages = db.relationship("Stage", backref="project")
-    # Other
+    params = db.relationship("ProjectParameter", backref="project")
 
     def __init__(self, *args, **kwargs):
         super(Project, self).__init__(*args, **kwargs)
+
+    def create_params(self):
+        fetch_before_deploy = ProjectParameter(name='fetch_before_deploy',
+                                               value='True',
+                                               type=PARAMETER_TYPES['BOOL'],
+                                               project_id=self.id)
+        db.session.add(fetch_before_deploy)
+        db.session.commit()
+
+    def get_parameter_value(self, name):
+        for parameter in self.params:
+            if parameter.name == name:
+                return parameter.value
 
     def get_name_for_path(self):
         return self.name.lower().replace(' ', '_')
@@ -132,6 +146,33 @@ class Project(db.Model):
 
     def __repr__(self):
         return self.name
+
+
+class ProjectParameter(db.Model):
+    __tablename__ = "project_parameters"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False, unique=True)
+    value = db.Column(db.String(128), nullable=False)
+    type = db.Column(db.SmallInteger, nullable=False)
+    # Relations
+    project_id = db.Column(db.Integer(), db.ForeignKey('projects.id'),
+                           nullable=False)
+
+    def set_value(self, value):
+        if self.type == PARAMETER_TYPES['BOOL']:
+            values = ['True', 'False']
+            if value not in values:
+                raise Exception('Wrong value for bool parameter.')
+        elif self.type == PARAMETER_TYPES['INT']:
+            try:
+                int(value)
+            except ValueError:
+                 raise Exception('Wrong value for int parameter.')
+
+        self.value = value
+
+    def __init__(self, *args, **kwargs):
+        super(ProjectParameter, self).__init__(*args, **kwargs)
 
 
 stages_tasks_table = db.Table('stages_tasks', db.Model.metadata,

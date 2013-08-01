@@ -23,8 +23,10 @@ def unseen():
     # Update notifications
     for notification in notifications:
         notification.seen = True
+        category = 'danger' if notification.category == 'error' else \
+            notification.category
         notifications_for_response.append({'message': notification.message,
-                                           'category': notification.category})
+                                           'category': category})
     db.session.commit()
 
     def generate():

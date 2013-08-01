@@ -25,9 +25,28 @@
         <a data-action="remove_repository" data-toggle='tooltip' data-placement='top' data-original-title="Remove repository"><i class='glyphicon glyphicon-remove'></i></a>
       </span>
     </p>
-    <p><strong>Code:</strong></p>
-    <pre><code lang="python">{{ project.code }}</code></pre>
   </div>
+
+  <p><strong>Code:</strong></p>
+  <pre><code lang="python">{{ project.code }}</code></pre>
+
+  <p><strong>Parameters:</strong></p>
+  <table class="table table-striped table-bordered table-hover">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for parameter in project.params %}
+          <tr>
+            <td>{{ parameter.name }}</td>
+            <td data-parameter-name="{{ parameter.name }}" class="parameter-value">{{ parameter.value }}</td>
+          </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
   <ul class='list-unstyled list-inline'>
     <li><h4>Stages</h4></li>
@@ -105,6 +124,33 @@
       $("#delete").click(function() {
         if (confirm("Are you sure?\nAll stages will be removed.")) {
           document.location.href = "{{ url_for('projects.delete', id=project.id) }}";
+        }
+      });
+      // Params hooks
+      $(".parameter-value").click(function() {
+        var _this = this;
+        if ($(_this).data('editing') != 'true') {
+          $(_this).data('editing', 'true');
+          var value = $(_this).text();
+          $(_this).html("<input type='text' value='" + value + "'/>");
+          var input = $(_this).find('input');
+          input.focus();
+          input.focusout(function() {
+            $.ajax({
+                url:'{{ url_for('projects.execute', id=project.id) }}',
+                data: {'action': 'edit_project',
+                       'name': $(_this).data('parameter-name'),
+                       'value': input.val()
+                },
+                type:'post',
+                success: function(data) {
+                  if ($.parseJSON(data).error != true) {
+                    $(_this).data('editing', 'false');
+                    $(_this).html(input.val());
+                  }
+                }
+              });
+          });
         }
       });
     });
