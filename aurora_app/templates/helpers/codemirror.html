@@ -8,7 +8,11 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
          singleLineStringErrors: false},
   lineNumbers: true,
   indentUnit: 4,
-  tabMode: "shift",
+  extraKeys: {
+    "Tab": function(){
+    editor.replaceSelection("   ");
+    editor.setCursor(editor.getCursor());}
+  },
   matchBrackets: true,
   border: 1
 });
