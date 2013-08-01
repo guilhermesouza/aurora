@@ -9,3 +9,19 @@
 [submodule "aurora_app/static/select2"]
 	path = aurora_app/static/select2
 	url = https://github.com/ivaynberg/select2.git
+
+[submodule "aurora_app/static/eventsource"]
+	path = aurora_app/static/eventsource
+	url = https://github.com/Yaffle/EventSource.git
+
+[submodule "aurora_app/static/codemirror"]
+	path = aurora_app/static/codemirror
+	url = https://github.com/marijnh/CodeMirror.git
+
+[submodule "aurora_app/static/mustache"]
+	path = aurora_app/static/mustache
+	url = https://github.com/janl/mustache.js.git
+
+[submodule "aurora_app/static/jquery"]
+	path = aurora_app/static/jquery
+	url = https://github.com/jquery/jquery.git
