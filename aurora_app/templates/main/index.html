@@ -90,8 +90,8 @@
 {% endblock %}
 
 {% block js %}
-  <script src="{{ url_for('static', filename='js/mustache.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/eventsource.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='mustache/mustache.js') }}"></script>
+  <script src="{{ url_for('static', filename='eventsource/eventsource.js') }}"></script>
   <script>
     $(function () {
       /* Hooks */
@@ -125,7 +125,7 @@
           var desktop_notification = notify.createNotification("Aurora notification",
             {
               body: notification.message,
-              icon: {'x16': "{{ url_for('static', filename='img/favicon.ico') }}", 'x32': "{{ url_for('static', filename='img/favicon.png') }}"}
+              icon: {'x16': "{{ url_for('static', filename='aurora/img/favicon.ico') }}", 'x32': "{{ url_for('static', filename='aurora/img/favicon.png') }}"}
             }
           );
 
