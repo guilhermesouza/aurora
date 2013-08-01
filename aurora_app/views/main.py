@@ -20,11 +20,6 @@ def index():
     return render_template('main/index.html', deployments=deployments)
 
 
-@mod.route('/settings')
-def settings():
-    return render_template('main/settings.html')
-
-
 @mod.route('/login', methods=['GET', 'POST'])
 @public
 def login():
