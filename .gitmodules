@@ -1,0 +1,11 @@
+[submodule "aurora_app/static/bootstrap"]
+	path = aurora_app/static/bootstrap
+	url = https://github.com/twbs/bootstrap.git
+
+[submodule "aurora_app/static/bootbox"]
+	path = aurora_app/static/bootbox
+	url = https://github.com/makeusabrew/bootbox.git
+
+[submodule "aurora_app/static/select2"]
+	path = aurora_app/static/select2
+	url = https://github.com/ivaynberg/select2.git
