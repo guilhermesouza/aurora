@@ -61,14 +61,19 @@ def edit(id):
 def delete(id):
     stage = get_or_404(Stage, id=id)
 
-    project_id = stage.project.id
+    project_id = stage.project.id if stage.project else None
+
     notify(u'Stage "{0}" has been deleted.'.format(stage),
            category='success', action='delete_stage')
 
     db.session.delete(stage)
     db.session.commit()
 
-    return redirect(url_for('projects.view', id=project_id))
+    if project_id:
+        return redirect(url_for('projects.view', id=project_id))
+
+    return redirect(request.args.get('next')
+                    or url_for('main.index'))
 
 
 @mod.route('/')

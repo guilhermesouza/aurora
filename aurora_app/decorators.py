@@ -20,8 +20,9 @@ def must_be_able_to(action):
             if not g.user.can(action):
                 notify(u"You can't do that. You don't have permission.",
                        category='error', action=action)
-                return redirect(request.referrer) if request.referrer \
-                    else redirect(url_for('main.index'))
+                return redirect(request.args.get('next')
+                                or request.referrer
+                                or url_for('main.index'))
             return f(*args, **kwargs)
         return decorated_function
     return decorator

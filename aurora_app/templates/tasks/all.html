@@ -32,8 +32,16 @@
               No available stages.
             {% endif %}
           </td>
+          <td class="small-width"><a href="{{ url_for('tasks.edit', id=task.id) }}">Edit</a></td>
+          <td class="small-width"><a href="{{ url_for('tasks.delete', id=task.id, next=url_for('tasks.all')) }}" class='delete'>Delete</a></td>
         </tr>
     {% endfor %}
   </tbody>
 </table>
+{% endblock %}
+
+{% block js %}
+  {{ super() }}
+
+  <script src="{{ url_for('static', filename='aurora/js/delete_handler.js') }}"></script>
 {% endblock %}

@@ -54,7 +54,8 @@ def delete(id):
     db.session.delete(user)
     db.session.commit()
 
-    return redirect(url_for('main.index'))
+    return redirect(request.args.get('next')
+                    or url_for('main.index'))
 
 
 @mod.route('/edit/<int:id>', methods=['GET', 'POST'])
@@ -64,8 +65,10 @@ def edit(id):
     if not (g.user.can('edit_user') or user.id == g.user.id):
         notify(u"You can't do that. You don't have permission.",
                category='error', action='edit_user')
-        return redirect(request.referrer) if request.referrer \
-            else redirect(url_for('main.index'))
+
+        return redirect(request.args.get('next')
+                        or request.referrer
+                        or url_for('main.index'))
 
     form = EditUserForm(request.form, user)
 

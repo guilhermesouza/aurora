@@ -60,6 +60,10 @@ div.CodeMirror {
     width: 100%;
 }
 
+.small-width {
+    width: 5%;
+}
+
 #actions a {
     display: none;
 }

@@ -68,7 +68,8 @@ def delete(id):
     db.session.delete(project)
     db.session.commit()
 
-    return redirect(url_for('main.index'))
+    return redirect(request.args.get('next')
+                    or url_for('main.index'))
 
 TASKS = {
     'clone_repository': clone_repository,

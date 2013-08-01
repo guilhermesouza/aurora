@@ -66,7 +66,9 @@ def delete(id):
     db.session.delete(task)
     db.session.commit()
 
-    return redirect(url_for('main.index'))
+
+    return redirect(request.args.get('next')
+                    or url_for('main.index'))
 
 
 @mod.route('/')
