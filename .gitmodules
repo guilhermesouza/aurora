@@ -21,7 +21,3 @@
 [submodule "aurora_app/static/mustache"]
 	path = aurora_app/static/mustache
 	url = https://github.com/janl/mustache.js.git
-
-[submodule "aurora_app/static/jquery"]
-	path = aurora_app/static/jquery
-	url = https://github.com/jquery/jquery.git
