@@ -19,7 +19,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
     password_hash = db.Column(db.String(160), nullable=False)
-    email = db.Column(db.String(120), unique=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
     role = db.Column(db.SmallInteger, default=ROLES['USER'])
     # Relations
     deployments = db.relationship("Deployment", backref="user")

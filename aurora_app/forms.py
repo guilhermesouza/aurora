@@ -1,8 +1,7 @@
 import re
 
-from flask.ext.wtf import (Form, Email, Required, Optional, TextField,
-                           BooleanField, PasswordField, ValidationError,
-                           SelectField)
+from flask.ext.wtf import (Form, Email, Required, TextField, BooleanField,
+                           PasswordField, ValidationError, SelectField)
 
 from wtforms.ext.sqlalchemy.orm import model_form
 
@@ -19,7 +18,7 @@ def task_code(form, field):
 
 
 class LoginForm(Form):
-    username = TextField('Username', validators=[Required()])
+    email = TextField('Email', validators=[Required(), Email()])
     password = PasswordField('Password', validators=[Required()])
     remember_me = BooleanField('Remember me', default=False)
 
@@ -34,7 +33,7 @@ TaskForm = model_form(Task, db.session, Form, field_args={
 class EditUserForm(Form):
     username = TextField('Username')
     password = PasswordField('Password')
-    email = TextField('Email', validators=[Email(), Optional()])
+    email = TextField('Email', validators=[Email()])
     role = SelectField(u'Role', coerce=int,
                        choices=[(v, k) for k, v in ROLES.iteritems()])
 
