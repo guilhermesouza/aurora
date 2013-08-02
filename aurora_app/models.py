@@ -9,8 +9,10 @@ from flask import url_for
 
 from aurora_app import app
 from aurora_app.constants import (ROLES, PERMISSIONS, STATUSES,
-                                  BOOTSTRAP_ALERTS, PARAMETER_TYPES)
+                                  BOOTSTRAP_ALERTS, PARAMETER_TYPES,
+                                  DEFAULT_PARAMETERS)
 from aurora_app.database import db
+from aurora_app.exceptions import ParameterValueError
 
 FUNCTION_NAME_REGEXP = '^def (\w+)\(.*\):'
 
@@ -79,18 +81,25 @@ class Project(db.Model):
     def __init__(self, *args, **kwargs):
         super(Project, self).__init__(*args, **kwargs)
 
-    def create_params(self):
-        fetch_before_deploy = ProjectParameter(name='fetch_before_deploy',
-                                               value='True',
-                                               type=PARAMETER_TYPES['BOOL'],
-                                               project_id=self.id)
-        db.session.add(fetch_before_deploy)
-        db.session.commit()
+    def create_default_params(self):
+        for parameter_name in DEFAULT_PARAMETERS.keys():
+            self.create_default_parameter(parameter_name)
 
-    def get_parameter_value(self, name):
+    def create_default_parameter(self, name):
+        parameter_dict = DEFAULT_PARAMETERS[name]
+        parameter_dict['name'] = name
+        parameter_dict['project_id'] = self.id
+        parameter = ProjectParameter(**parameter_dict)
+        db.session.add(parameter)
+        db.session.commit()
+        return parameter
+
+    def get_or_create_parameter_value(self, name):
         for parameter in self.params:
             if parameter.name == name:
                 return parameter.value
+
+        return self.create_default_parameter(name).value
 
     def get_name_for_path(self):
         return self.name.lower().replace(' ', '_')
@@ -162,12 +171,12 @@ class ProjectParameter(db.Model):
         if self.type == PARAMETER_TYPES['BOOL']:
             values = ['True', 'False']
             if value not in values:
-                raise Exception('Wrong value for bool parameter.')
+                raise ParameterValueError('Wrong value for bool parameter.')
         elif self.type == PARAMETER_TYPES['INT']:
             try:
                 int(value)
             except ValueError:
-                 raise Exception('Wrong value for int parameter.')
+                 raise ParameterValueError('Wrong value for int parameter.')
 
         self.value = value
 

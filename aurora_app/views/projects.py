@@ -8,6 +8,7 @@ from aurora_app.models import Project, ProjectParameter
 from aurora_app.database import db, get_or_404
 from aurora_app.helpers import notify
 from aurora_app.tasks import clone_repository, remove_repository
+from aurora_app.exceptions import ParameterValueError
 
 mod = Blueprint('projects', __name__, url_prefix='/projects')
 
@@ -23,7 +24,7 @@ def create():
         db.session.add(project)
         db.session.commit()
 
-        project.create_params()
+        project.create_default_params()
 
         notify(u'Project "{0}" has been created.'.format(project.name),
                category='success', action='create_project')
@@ -93,7 +94,7 @@ def execute(id):
                 parameter.set_value(value)
                 db.session.add(parameter)
                 db.session.commit()
-            except Exception as e:
+            except ParameterValueError as e:
                 notify(e.message, category='error', action='edit_project')
                 return json.dumps({'error': True})
         else:

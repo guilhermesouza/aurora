@@ -44,7 +44,8 @@ def create(id):
         deploy(deployment.id)
         return redirect(url_for('deployments.view', id=deployment.id))
 
-    if stage.project.get_parameter_value('fetch_before_deploy') == 'True':
+    if stage.project.get_or_create_parameter_value('fetch_before_deploy')\
+            == 'True':
         # Fetch
         stage.project.fetch()
 
