@@ -126,33 +126,35 @@
           document.location.href = "{{ url_for('projects.delete', id=project.id) }}";
         }
       });
-      // Params hooks
-      $(".parameter-value").click(function() {
-        var _this = this;
-        if ($(_this).data('editing') != 'true') {
-          $(_this).data('editing', 'true');
-          var value = $(_this).text();
-          $(_this).html("<input type='text' value='" + value + "'/>");
-          var input = $(_this).find('input');
-          input.focus();
-          input.focusout(function() {
-            $.ajax({
-                url:'{{ url_for('projects.execute', id=project.id) }}',
-                data: {'action': 'edit_project',
-                       'name': $(_this).data('parameter-name'),
-                       'value': input.val()
-                },
-                type:'post',
-                success: function(data) {
-                  if ($.parseJSON(data).error != true) {
-                    $(_this).data('editing', 'false');
-                    $(_this).html(input.val());
+      {% if g.user.can('edit_project') %}
+        // Params hooks
+        $(".parameter-value").click(function() {
+          var _this = this;
+          if ($(_this).data('editing') != 'true') {
+            $(_this).data('editing', 'true');
+            var value = $(_this).text();
+            $(_this).html("<input type='text' value='" + value + "'/>");
+            var input = $(_this).find('input');
+            input.focus();
+            input.focusout(function() {
+              $.ajax({
+                  url:'{{ url_for('projects.execute', id=project.id) }}',
+                  data: {'action': 'edit_project',
+                         'name': $(_this).data('parameter-name'),
+                         'value': input.val()
+                  },
+                  type:'post',
+                  success: function(data) {
+                    if ($.parseJSON(data).error != true) {
+                      $(_this).data('editing', 'false');
+                      $(_this).html(input.val());
+                    }
                   }
-                }
-              });
-          });
-        }
-      });
+                });
+            });
+          }
+        });
+      {% endif %}
     });
   </script>
 {% endblock %}
