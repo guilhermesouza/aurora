@@ -29,6 +29,7 @@ pip-log.txt
 # PyCharm
 .idea
 
+docs/_build
 aurora.db
 *~
 local_settings.py

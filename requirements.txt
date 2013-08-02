@@ -11,8 +11,10 @@ GitPython==0.3.2.RC1
 Jinja2==2.7
 Mako==0.8.1
 MarkupSafe==0.18
+Pygments==1.6
 SQLAlchemy==0.8.0
 SQLAlchemy-Utils==0.10.0
+Sphinx==1.2b1
 Tempita==0.5.1
 WTForms==1.0.3
 WTForms-Components==0.5.4
@@ -27,6 +29,7 @@ blinker==1.2
 colour==0.0.2
 decorator==3.4.0
 distribute==0.6.38
+docutils==0.11
 gitdb==0.5.4
 itsdangerous==0.22
 kombu==2.5.11
