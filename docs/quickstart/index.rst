@@ -40,7 +40,7 @@ Configuration
 
 Aurora uses default config object and you can override it with commands::
 
-    # 1. Will create config at ``~/.aurora/settings.py`` by default.
+    # 1. Will create config at ~/.aurora/settings.py by default.
     aurora init_config
 
     # 2. Specified config.
@@ -62,7 +62,7 @@ If you are using PostgreSQL and want to migrate::
 
 
 Starting an application
---------------------
+-----------------------
 
 Aurora dev server can be started with command::
 
