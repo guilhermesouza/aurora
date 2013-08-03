@@ -1,0 +1,4 @@
+include setup.py README.rst MANIFEST.in LICENSE alembic.ini
+recursive-include alembic *
+recursive-include aurora_app *
+global-exclude *~ *.pyc

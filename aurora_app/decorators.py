@@ -3,7 +3,7 @@ from functools import wraps
 
 from flask import g, redirect, request, url_for
 
-from aurora_app.helpers import notify, get_session
+from .utils import notify, get_session
 
 
 def public(location):
@@ -22,7 +22,7 @@ def must_be_able_to(action):
                        category='error', action=action)
                 return redirect(request.args.get('next')
                                 or request.referrer
-                                or url_for('main.index'))
+                                or url_for('frontend.index'))
             return f(*args, **kwargs)
         return decorated_function
     return decorator
@@ -45,7 +45,7 @@ def task(function):
                           kwargs=kwargs)
 
         if function.__name__ == 'deploy':
-            from aurora_app.views.deployments import current_deployments
+            from .deployments.views import current_deployments
             deployment_id = str(args[0])
             current_deployments[deployment_id] = process
 
