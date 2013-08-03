@@ -1,4 +1,5 @@
 from setuptools import setup, find_packages
+from setuptools.command import install
 
 install_requires = [
     'Fabric==1.6.0',
@@ -15,6 +16,16 @@ install_requires = [
     'Flask-DebugToolbar',
 ]
 
+
+class install_with_submodules(install.install):
+
+    def run(self):
+        import os
+        if os.path.exists('.git'):
+            os.system('git submodule init')
+            os.system('git submodule update')
+        install.install.run(self)
+
 setup(
     name='Aurora',
     version='0.0.3',
@@ -23,6 +34,7 @@ setup(
     url='https://github.com/ak3n/aurora',
     description='A web interface for Fabric',
     long_description=open('README.rst').read(),
+    cmdclass={"install": install_with_submodules},
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
