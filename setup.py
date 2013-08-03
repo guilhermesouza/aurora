@@ -1,9 +1,5 @@
 from setuptools import setup, find_packages
 
-dev_requires = [
-    'Flask-DebugToolbar',
-]
-
 install_requires = [
     'Fabric==1.6.0',
     'Flask==0.10.1',
@@ -16,6 +12,7 @@ install_requires = [
     'GitPython==0.3.2.RC1',
     'alembic==0.6.0',
     'psycopg2==2.5',
+    'Flask-DebugToolbar',
 ]
 
 setup(
@@ -30,9 +27,6 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=install_requires,
-    extras_require={
-        'dev': dev_requires,
-    },
     license='MIT',
     entry_points={
         'console_scripts': [

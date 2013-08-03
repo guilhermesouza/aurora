@@ -33,7 +33,7 @@ Now you can install aurora::
     # or
     pip install aurora
     # or from git
-    pip install git+https://github.com/ak3n/aurora.git#egg=aurora
+    pip install git+https://github.com/ak3n/aurora.git
 
 Configuration
 -------------
