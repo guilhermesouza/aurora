@@ -1,5 +1,5 @@
 develop: update-submodules
-	pip install -q "file://`pwd`#egg=aurora[dev]" --use-mirrors
+	python setup.py develop
 
 
 update-submodules:
