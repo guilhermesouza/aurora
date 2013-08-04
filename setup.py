@@ -45,6 +45,15 @@ setup(
             'aurora = aurora_app.runner:main',
         ],
     },
+    classifiers=[
+        "Development Status :: 2 - Pre-Alpha",
+        "Environment :: Web Environment",
+        "Framework :: Flask",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python",
+        "Topic :: Internet :: WWW/HTTP",
+        "Topic :: Internet :: WWW/HTTP :: WSGI :: Application"
+    ],
     dependency_links=['https://github.com/ak3n/flask-alembic/' +
                       'tarball/master#egg=flask-alembic-0.1']
 )
