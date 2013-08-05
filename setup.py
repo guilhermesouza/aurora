@@ -1,6 +1,8 @@
 from setuptools import setup, find_packages
 from setuptools.command import install
 
+import aurora_app
+
 install_requires = [
     'Fabric==1.6.0',
     'Flask==0.10.1',
@@ -28,7 +30,7 @@ class install_with_submodules(install.install):
 
 setup(
     name='Aurora',
-    version='0.0.3',
+    version=aurora_app.__version__,
     author='Eugene Akentyev',
     author_email='ak3ntev@gmail.com',
     url='https://github.com/ak3n/aurora',

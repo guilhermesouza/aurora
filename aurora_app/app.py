@@ -87,7 +87,8 @@ def configure_hook(app):
         g.user = current_user if current_user.is_authenticated() else None
 
         if (request.endpoint and request.endpoint != 'static' and
-           (not getattr(app.view_functions[request.endpoint], 'is_public', False)
+           (not getattr(app.view_functions[request.endpoint],
+            'is_public', False)
            and g.user is None)):
             return redirect(url_for('frontend.login', next=request.path))
 
@@ -150,12 +151,8 @@ def configure_context_processors(app):
 
     @app.context_processor
     def version():
-        try:
-            VERSION = __import__('pkg_resources') \
-                .get_distribution('aurora').version
-        except Exception:
-            VERSION = 'unknown'
-        return {'AURORA_VERSION': VERSION}
+        from . import __version__
+        return {'AURORA_VERSION': __version__}
 
     @app.context_processor
     def recent_deployments():
