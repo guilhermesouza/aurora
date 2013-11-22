@@ -25,3 +25,5 @@ Screenshots
 .. image:: http://i.imgur.com/RfiIyM8.png
 .. image:: http://i.imgur.com/4gWt119.png
 .. image:: http://i.imgur.com/hPTmNy3.png
+.. image:: http://i.imgur.com/aY078Q3.png
+.. image:: http://i.imgur.com/SVQZSVL.png
