@@ -10,7 +10,8 @@ Resources
 
 * `Documentation <https://aurora-web.readthedocs.org/>`_
 
-Similar projects:
+Similar projects
+----------------
 
 * https://github.com/worthwhile/fabric-bolt
 * https://github.com/divisible-by-hero/tailor
