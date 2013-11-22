@@ -16,3 +16,12 @@ Similar projects:
 * https://github.com/divisible-by-hero/tailor
 * https://github.com/daniellawrence/fabric-web
 * https://github.com/sniku/Likebanana
+
+Screenshots
+-----------
+
+.. image:: http://i.imgur.com/Hfc5vQ3.png
+.. image:: http://i.imgur.com/vk8V4MF.png
+.. image:: http://i.imgur.com/RfiIyM8.png
+.. image:: http://i.imgur.com/4gWt119.png
+.. image:: http://i.imgur.com/hPTmNy3.png
