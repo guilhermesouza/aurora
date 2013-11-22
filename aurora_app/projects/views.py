@@ -64,14 +64,17 @@ def edit(id):
 def delete(id):
     project = get_or_404(Project, id=id)
 
-    notify(u'Project "{0}" has been deleted.'.format(project.name),
-           category='success', action='delete_project')
-
     # Delete stages
     for stage in project.stages:
         db.session.delete(stage)
+    # Delete params
+    for param in project.params:
+        db.session.delete(param)
     db.session.delete(project)
     db.session.commit()
+    
+    notify(u'Project "{0}" has been deleted.'.format(project.name),
+           category='success', action='delete_project')
 
     return redirect(request.args.get('next')
                     or url_for('frontend.index'))
