@@ -61,10 +61,17 @@ def create_app(config=None, app_name=None, blueprints=None):
 
 
 def configure_app(app, config=None):
+    # Default configuration
     app.config.from_object(BaseConfig)
 
+    app.template_folder = BaseConfig.template_folder
+    app.static_folder = BaseConfig.static_folder
+
     if config:
-        app.config.from_pyfile(config)
+        if isinstance(config, basestring):
+            app.config.from_pyfile(config)
+        else:
+            app.config.from_object(config)
     elif os.path.exists(BaseConfig.AURORA_SETTINGS):
         app.config.from_pyfile(BaseConfig.AURORA_SETTINGS)
 

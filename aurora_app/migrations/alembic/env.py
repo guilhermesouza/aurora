@@ -2,6 +2,7 @@ from __future__ import with_statement
 from alembic import context
 from alembic.config import Config
 from sqlalchemy import engine_from_config, pool
+from flask.ext.sqlalchemy import SQLAlchemy
 from logging.config import fileConfig
 from flask.ext.alembic import FlaskAlembicConfig
 
@@ -19,10 +20,9 @@ from flask import current_app
 with current_app.app_context():
     # set the database url
     config.set_main_option('sqlalchemy.url', current_app.config.get('SQLALCHEMY_DATABASE_URI'))
-    flask_app = __import__('%s' % (current_app.name), fromlist=[current_app.name])
+    flask_app = __import__('%s' % ('aurora_app'), fromlist=[current_app.name]).create_app()
 
-db_obj_name = config.get_main_option("flask_sqlalchemy")
-db_obj = getattr(flask_app.database, db_obj_name)
+db_obj = SQLAlchemy(flask_app)
 target_metadata = db_obj.metadata
 
 # other values from the config, defined by the needs of env.py,

@@ -103,7 +103,7 @@ class Project(db.Model):
 class ProjectParameter(db.Model):
     __tablename__ = "project_parameters"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128), nullable=False, unique=True)
+    name = db.Column(db.String(128), nullable=False)
     value = db.Column(db.String(128), nullable=False)
     type = db.Column(db.SmallInteger, nullable=False)
     # Relations
@@ -119,7 +119,7 @@ class ProjectParameter(db.Model):
             try:
                 int(value)
             except ValueError:
-                 raise ParameterValueError('Wrong value for int parameter.')
+                raise ParameterValueError('Wrong value for int parameter.')
 
         self.value = value
 
