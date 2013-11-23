@@ -1,3 +1,10 @@
+Version 0.0.4
+-------------
+
+* Fixed problem with parameters.
+* Fixed problem with configuration.
+* Fixed problem with migrations.
+
 Version 0.0.3
 -------------
 
